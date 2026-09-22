@@ -38,6 +38,11 @@ a {
   color: inherit;
 }
 
+html[data-custom-cursor='true'],
+html[data-custom-cursor='true'] * {
+  cursor: none !important;
+}
+
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 4px;

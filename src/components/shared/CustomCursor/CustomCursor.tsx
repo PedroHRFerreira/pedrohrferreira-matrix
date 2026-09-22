@@ -33,6 +33,7 @@ export function CustomCursor({ reality }: CustomCursorProps) {
 
     const cursor = cursorRef.current
     if (!cursor) return
+    document.documentElement.dataset.customCursor = 'true'
 
     const move = (event: PointerEvent) => {
       cursor.style.setProperty('--cursor-x', `${event.clientX}px`)
@@ -55,6 +56,7 @@ export function CustomCursor({ reality }: CustomCursorProps) {
     window.addEventListener('blur', hide)
 
     return () => {
+      delete document.documentElement.dataset.customCursor
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerover', updateTarget)
       document.documentElement.removeEventListener('mouseleave', hide)

@@ -29,17 +29,18 @@
   transform: translateX(-50%);
 
   &[data-reality='red'] {
-    top: 0.65rem;
-    min-height: 3.85rem;
-    padding-left: 0.75rem;
-    border: 1px solid rgba(98, 255, 138, 0.2);
-    border-radius: 1rem;
-    background: linear-gradient(135deg, rgba(3, 12, 7, 0.88), rgba(4, 18, 10, 0.7));
-    box-shadow:
-      0 0.8rem 2.5rem rgba(0, 0, 0, 0.32),
-      inset 0 1px rgba(223, 255, 231, 0.04);
-    backdrop-filter: blur(18px) saturate(135%);
-    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    left: 0;
+    width: 100%;
+    min-height: 3.0625rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 10.5rem 0 max(2rem, calc((100vw - 76rem) / 2));
+    border-bottom: 1px solid #1e2e23;
+    background: rgba(6, 9, 7, 0.9);
+    font-family: var(--font-mono);
+    transform: none;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 
   &[data-reality='blue'] {
@@ -65,6 +66,49 @@
 .brand[aria-current='page'] {
   border-color: var(--accent);
   box-shadow: 0 0 1.2rem color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.navigation[data-reality='red'] .brand {
+  display: flex;
+  width: auto;
+  height: 3rem;
+  gap: 0.55rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.77rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.brandIcon {
+  font-size: 1.15rem;
+}
+
+.systemStatus {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+
+.navigation[data-reality='red'] .list {
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.navigation[data-reality='red'] .link {
+  height: 3.0625rem;
+  padding-block: 1rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.navigation[data-reality='red'] .link[aria-current='page']::after {
+  height: 2px;
+  margin-top: 0.65rem;
 }
 
 .list {
@@ -117,9 +161,32 @@
   }
 
   .navigation[data-reality='red'] {
-    top: auto;
-    min-height: 3.5rem;
-    padding: 0.4rem 0.65rem;
+    top: 0;
+    bottom: auto;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0 7.5rem 0 0.75rem;
+    border: 0;
+    border-bottom: 1px solid #1e2e23;
+    border-radius: 0;
+    background: rgba(6, 9, 7, 0.94) !important;
+    box-shadow: none;
+  }
+
+  .navigation[data-reality='red'] .brand {
+    display: none;
+  }
+  .navigation[data-reality='red'] .systemStatus {
+    display: none;
+  }
+  .navigation[data-reality='red'] .list {
+    justify-content: flex-start;
+    gap: 0.3rem;
+  }
+  .navigation[data-reality='red'] .link {
+    height: 3.25rem;
+    padding: 1.1rem 0.1rem 0.6rem;
+    font-size: 0.55rem;
   }
 
   .brand {

@@ -1,0 +1,114 @@
+.section {
+  display: grid;
+  width: min(calc(100% - 2rem), var(--red-content-width, 76rem));
+  min-height: 0;
+  align-content: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-inline: auto;
+  padding-block: clamp(3rem, 5vw, 5rem);
+}
+.heading p {
+  margin: 0 0 0.8rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+}
+.heading h2 {
+  max-width: 20ch;
+  font-family: var(--font-sans);
+  font-size: clamp(2.1rem, 4.6vw, 4.5rem);
+}
+.terminal {
+  border: 1px solid var(--line);
+  background: rgba(2, 10, 5, 0.86);
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.35);
+}
+.bar,
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+.lights {
+  color: #ff5f56;
+  letter-spacing: 0.35em;
+}
+.commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.commands button {
+  min-height: 2.7rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+.commands button:hover,
+.commands button:focus-visible,
+.commands button[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(98, 255, 138, 0.08);
+}
+.output {
+  min-height: 11rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.prompt {
+  margin: 0 0 1.25rem;
+  color: var(--accent);
+  font-size: 0.82rem;
+}
+.answer {
+  max-width: 64ch;
+  margin: 0;
+  color: #d3e7d6;
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.6;
+}
+.cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.25rem;
+  vertical-align: -0.14em;
+  background: var(--accent);
+  animation: blink 0.75s steps(1) infinite;
+}
+.bottom {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  color: var(--accent);
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (max-width: 48rem) {
+  .section {
+    min-height: 0;
+  }
+  .bar span:last-child,
+  .bottom span:last-child {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+}

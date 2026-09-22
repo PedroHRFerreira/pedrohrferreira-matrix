@@ -84,7 +84,7 @@ export const portfolioContent = {
       title: 'Engenheiro de Software',
       organization: 'Braip',
       summary:
-        'Atuação ponta a ponta em produtos digitais e pagamentos para uma plataforma com mais de 900 mil usuários.',
+        'Na Braip desde 2022 e engenheiro de software desde 2023, atuo em produtos digitais e pagamentos para uma plataforma com mais de 900 mil usuários.',
       highlights: [
         'Microsserviços com Go, Node.js e Laravel, além de interfaces com Vue, React e TypeScript',
         'Soluções de IA/LLM em Python e FastAPI com contexto via RAG',
@@ -124,7 +124,7 @@ export const portfolioContent = {
       summary:
         'Framework TypeScript/npm open source para recuperação de contexto, governança e fluxos com agentes de IA.',
       technologies: ['TypeScript', 'IA', 'MCP', 'Codex', 'Claude Code', 'Gemini'],
-      links: [{ label: 'GitHub', href: githubUrl }],
+      links: [{ label: 'Ver repositório', href: `${githubUrl}/rods-sdk` }],
       status: 'Open source'
     },
     {
@@ -133,7 +133,7 @@ export const portfolioContent = {
       summary:
         'Sistema completo de gestão administrativa construído do zero com arquitetura modularizada e BFF.',
       technologies: ['Go', 'Echo', 'GORM', 'Nuxt 4', 'PostgreSQL'],
-      links: [{ label: 'GitHub', href: githubUrl }],
+      links: [{ label: 'Ver repositório', href: `${githubUrl}/erp-empi` }],
       status: 'Projeto público'
     },
     {
@@ -141,14 +141,14 @@ export const portfolioContent = {
       title: 'ARCA Tracker',
       summary: 'Aplicativo local-first para acompanhamento de carteira.',
       technologies: ['React Native', 'Expo', 'SQLite', 'Cloudflare Workers'],
-      links: [{ label: 'GitHub', href: githubUrl }]
+      links: [{ label: 'Ver repositório', href: `${githubUrl}/arca-pessoal` }]
     },
     {
       slug: 'rods-themes',
       title: 'Rods Themes',
       summary: 'Extensão de temas publicada para VS Code e JetBrains.',
       technologies: ['VS Code', 'JetBrains', 'Developer Tools'],
-      links: [{ label: 'GitHub', href: githubUrl }],
+      links: [{ label: 'Ver repositório', href: `${githubUrl}/rods-themes` }],
       status: 'Publicado'
     }
   ],

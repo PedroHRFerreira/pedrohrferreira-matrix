@@ -13,7 +13,7 @@ export type ExperienceState =
   | 'ready-red'
   | 'ready-blue'
 
-export type SectionId = 'about' | 'experience' | 'projects' | 'stack' | 'contact'
+export type SectionId = 'about' | 'experience' | 'projects' | 'dialogue' | 'stack' | 'contact'
 
 export interface NavigationItem {
   id: SectionId

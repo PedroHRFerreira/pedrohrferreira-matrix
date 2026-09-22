@@ -1,98 +1,256 @@
 .hero {
-  position: relative;
-  display: flex;
-  width: min(calc(100% - (var(--red-page-gutter, 1rem) * 2)), var(--red-content-width, 76rem));
-  min-height: 100svh;
-  flex-direction: column;
-  justify-content: center;
+  width: min(calc(100% - 2rem), var(--red-content-width, 76rem));
   margin-inline: auto;
-  padding: var(--red-section-padding-y, clamp(4.75rem, 7vw, 6.5rem)) 0;
+  padding-block: 5rem 2rem;
+  scroll-margin-top: 3.5rem;
 }
-
-.heroPrompt,
-.heroStatus {
-  margin: 0 0 1rem;
+.heroCard {
+  overflow: hidden;
+  border: 1px solid #1e2e23;
+  background: rgba(9, 15, 12, 0.9);
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.32);
+}
+.heroChrome {
+  display: flex;
+  min-height: 2.4rem;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 1.4rem;
+  border-bottom: 1px solid #1e2e23;
+  color: #93a99a;
+  background: rgba(4, 9, 6, 0.75);
+  font-size: 0.66rem;
+}
+.windowLights {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+.windowLights i {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: #ff5f56;
+}
+.windowLights i:nth-child(2) {
+  background: #ffbd2e;
+}
+.windowLights i:nth-child(3) {
+  background: #27c93f;
+}
+.chromeStatus {
+  margin-left: auto;
+  color: #6c8d74;
+}
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(15rem, 0.7fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(1.5rem, 2.5vw, 2rem);
+}
+.heroMain {
+  min-width: 0;
+}
+.prompt {
+  margin: 0 0 0.8rem;
   color: var(--accent);
-  font-size: 0.875rem;
-  letter-spacing: 0.12em;
+  font-size: 0.78rem;
 }
-
-.heroStatus {
-  width: fit-content;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--line);
-  background: rgba(20, 255, 82, 0.06);
+.cursor {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1em;
+  margin-left: 0.35ch;
+  vertical-align: -0.15em;
+  background: var(--accent);
+  animation: blink 0.75s steps(1) infinite;
 }
-
 .heroTitle {
-  max-width: 12ch;
   margin: 0;
+  color: #eef7ef;
   font-family: var(--font-sans);
-  font-size: clamp(3.7rem, 11vw, 9.5rem);
-  line-height: 0.82;
-  letter-spacing: -0.075em;
-  text-shadow: 0 0 2.5rem rgba(98, 255, 138, 0.15);
+  font-size: clamp(2rem, 3.35vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
-
-.heroRole {
-  margin: 1.5rem 0 0;
+.heroTitle span {
   color: var(--accent);
-  font-size: clamp(1.2rem, 2.5vw, 2rem);
 }
-
 .heroIntroduction {
-  max-width: 42rem;
-  margin: 1.75rem 0 0;
-  color: #b0c8b6;
-  font-family: var(--font-sans);
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  max-width: 68ch;
+  margin: 1rem 0 0;
+  color: #aebdb2;
+  font-size: 0.76rem;
+  line-height: 1.65;
 }
-
+.heroIntroduction strong {
+  color: #e1ebe3;
+  font-weight: 500;
+}
+.quote {
+  margin-top: 1.2rem;
+  padding: 0.55rem 0.85rem;
+  border-left: 2px solid var(--accent);
+  background: rgba(3, 10, 6, 0.65);
+}
+.quote p {
+  margin: 0 0 0.4rem;
+  color: #d9e9dc;
+  font-size: 0.7rem;
+}
+.quote span {
+  color: #7d9e85;
+  font-size: 0.57rem;
+  line-height: 1.5;
+}
 .heroActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-top: 2.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.3rem;
 }
-
 .primaryAction,
-.secondaryAction {
-  min-height: 3rem;
-  padding: 0.72rem 1.1rem;
-  border: 1px solid var(--accent);
+.secondaryAction,
+.textAction {
+  display: inline-flex;
+  min-height: 2.45rem;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.64rem;
+  font-weight: 700;
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 750;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
-
 .primaryAction {
-  color: #031006;
+  border: 1px solid var(--accent);
+  color: #051108;
   background: var(--accent);
 }
 .secondaryAction {
+  border: 1px solid #315a39;
   color: var(--accent);
-  background: rgba(0, 0, 0, 0.55);
+  background: #0a1710;
 }
-
-.scrollCue {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  display: grid;
-  width: 3rem;
-  height: 3rem;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 50%;
+.textAction {
+  color: #9bbca2;
+}
+.primaryAction:hover,
+.secondaryAction:hover,
+.textAction:hover,
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible,
+.textAction:focus-visible {
+  transform: translateY(-2px);
+}
+.textAction:hover,
+.textAction:focus-visible {
   color: var(--accent);
+}
+.identityPanel {
+  align-self: stretch;
+  border: 1px solid #23402b;
+  background: rgba(3, 11, 6, 0.7);
+}
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid #23402b;
+  color: var(--accent);
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+.identityPanel dl {
+  margin: 0;
+  padding: 0 0.8rem;
+}
+.identityPanel dl div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(98, 255, 138, 0.12);
+}
+.identityPanel dt {
+  color: #78947d;
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+}
+.identityPanel dd {
+  margin: 0;
+  color: #d4e4d7;
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+.resumeLink {
+  display: block;
+  padding: 0.75rem 0.8rem;
+  color: var(--accent);
+  font-size: 0.64rem;
   text-decoration: none;
 }
-
-@media (max-width: 40rem) {
-  .heroTitle {
-    font-size: clamp(3.4rem, 18vw, 6rem);
+.resumeLink:hover,
+.resumeLink:focus-visible {
+  text-decoration: underline;
+}
+.mobileResume {
+  display: none;
+  color: var(--accent);
+  font-size: 0.64rem;
+  text-decoration: none;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
-  .scrollCue {
-    left: 0;
+}
+@media (max-width: 70rem) {
+  .heroTitle {
+    white-space: normal;
+  }
+}
+@media (max-width: 54rem) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+  .identityPanel {
+    display: none;
+  }
+  .mobileResume {
+    display: inline-flex;
+  }
+}
+@media (max-width: 40rem) {
+  .hero {
+    width: min(calc(100% - 1.25rem), var(--red-content-width, 76rem));
+    padding-block: 4.5rem 1.25rem;
+  }
+  .heroChrome {
+    padding-inline: 0.9rem;
+    font-size: 0.55rem;
+  }
+  .chromeStatus {
+    display: none;
+  }
+  .heroGrid {
+    padding: 1.2rem;
+  }
+  .heroTitle {
+    font-size: clamp(2.2rem, 9vw, 3rem);
+  }
+  .heroIntroduction {
+    font-size: 0.72rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
   }
 }

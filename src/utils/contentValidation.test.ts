@@ -30,8 +30,12 @@ describe('portfolio content validation', () => {
 
   it('reports duplicate project slugs, empty links, and duplicate experience ids', () => {
     const content = copyContent()
-    content.projects[1] = { ...content.projects[1], slug: content.projects[0].slug, links: [] }
-    content.experience[1] = { ...content.experience[1], id: content.experience[0].id }
+    content.projects = content.projects.map((project, index) =>
+      index === 1 ? { ...project, slug: content.projects[0].slug, links: [] } : project
+    )
+    content.experience = content.experience.map((entry, index) =>
+      index === 1 ? { ...entry, id: content.experience[0].id } : entry
+    )
 
     expect(validatePortfolioContent(content)).toEqual([
       'projects[1].slug: duplicate value "rods-sdk"',

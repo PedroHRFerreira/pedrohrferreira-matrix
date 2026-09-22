@@ -25,6 +25,9 @@ export function RealityNavigation({
       .map((item) => item.id)
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section))
+      .sort((first, second) =>
+        first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+      )
     let frame = 0
 
     const updateActiveSection = () => {
@@ -69,7 +72,16 @@ export function RealityNavigation({
           href="#main-content"
           aria-label="Pedro Henrique — Início"
         >
-          PH
+          {reality === 'red' ? (
+            <>
+              <span className={styles.brandIcon} aria-hidden="true">
+                ▣
+              </span>
+              pedro@matrix:~#
+            </>
+          ) : (
+            'PH'
+          )}
         </a>
         <ul className={styles.list}>
           {items.map((item) => (
@@ -84,6 +96,9 @@ export function RealityNavigation({
             </li>
           ))}
         </ul>
+        {reality === 'red' ? (
+          <span className={styles.systemStatus}>● &nbsp;SYS: ONLINE</span>
+        ) : null}
       </nav>
     </>
   )

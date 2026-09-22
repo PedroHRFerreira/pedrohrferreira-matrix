@@ -1,105 +1,79 @@
-.section {
-  width: min(calc(100% - 2rem), 70rem);
-  margin-inline: auto;
-  padding: clamp(6rem, 12vw, 10rem) 0;
+.card {
+  display: flex;
+  width: min(76vw, 35rem);
+  min-height: clamp(25rem, 52svh, 36rem);
+  flex: 0 0 auto;
+  flex-direction: column;
+  border: 1px solid rgba(98, 255, 138, 0.26);
+  background: linear-gradient(155deg, rgba(9, 25, 13, 0.96), rgba(2, 9, 5, 0.94));
+  box-shadow:
+    inset 0 1px rgba(224, 255, 229, 0.06),
+    0 1rem 4rem rgba(0, 0, 0, 0.35);
 }
-.sectionHeader {
-  max-width: 50rem;
-  margin-bottom: 3rem;
-}
-.eyebrow {
-  margin: 0 0 0.9rem;
-  color: var(--accent);
-  font-size: 0.875rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.stackGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.topline,
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
-}
-.stackPanel {
-  position: relative;
-  min-width: 0;
-  padding: clamp(1.25rem, 4vw, 2rem);
-  border: 1px solid var(--line);
-  background: var(--surface-raised);
-}
-.stackPanel::before {
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 2.75rem;
-  height: 2px;
-  background: var(--accent);
-  content: '';
-}
-.stackPanel h3 {
-  margin: 0 0 1.2rem;
+  padding: 0.85rem 1.25rem;
   color: var(--accent);
-  font-size: 1rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
 }
-.stackPanel ul {
-  display: grid;
-  gap: 0.55rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.topline {
+  border-bottom: 1px solid var(--line);
 }
-.stackPanel li {
-  overflow-wrap: anywhere;
+.bottom {
+  border-top: 1px solid var(--line);
+}
+.content {
+  flex: 1;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.path {
+  margin: 0 0 1.75rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+}
+.content h3 {
+  margin: 0 0 2rem;
   font-family: var(--font-sans);
+  font-size: clamp(1.8rem, 3vw, 2.65rem);
 }
-.stackPanel li span {
-  color: var(--accent);
-}
-
-.stackConsole {
-  position: relative;
-  width: min(100%, 68rem);
-  padding: clamp(1.5rem, 4vw, 3rem);
-  border: 1px solid var(--line);
-  background:
-    linear-gradient(90deg, rgba(98, 255, 138, 0.045) 1px, transparent 1px) 0 0 / 2rem 2rem,
-    rgba(3, 13, 7, 0.74);
-  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22);
-}
-
-.moduleLabel {
-  margin: 0 0 1.5rem;
-  color: var(--accent);
-  font-size: 0.8rem;
+.label {
+  color: var(--muted);
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
 }
-
-.stackConsole h3 {
-  margin: 0 0 1.5rem;
-  font-family: var(--font-sans);
-  font-size: clamp(1.7rem, 4vw, 3.25rem);
-}
-
-.stackConsole ul {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem 1.25rem;
-  margin: 0;
+.content ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
   padding: 0;
   list-style: none;
-  font-family: var(--font-sans);
 }
-
-.stackConsole li span {
+.content li {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  color: #c6e1ca;
+  font-size: 0.85rem;
+}
+.content li span {
+  margin-right: 0.4rem;
   color: var(--accent);
 }
 
-@media (max-width: 38rem) {
-  .stackConsole ul {
-    grid-template-columns: 1fr;
+@media (max-width: 48rem) {
+  .card {
+    width: calc(100vw - 2rem);
+    min-height: 27rem;
   }
 }
-@media (max-width: 42rem) {
-  .stackGrid {
-    grid-template-columns: 1fr;
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    width: 100%;
+    min-height: auto;
   }
 }

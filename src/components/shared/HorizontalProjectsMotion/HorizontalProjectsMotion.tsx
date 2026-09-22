@@ -4,81 +4,66 @@ import { useLayoutEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+/** The document keeps vertical scrolling while each gallery crosses the viewport. */
 export function HorizontalProjectsMotion() {
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
-
     const media = gsap.matchMedia()
 
-    media.add(
-      {
-        motionEnabled: '(prefers-reduced-motion: no-preference)'
-      },
-      (context) => {
-        const { motionEnabled } = context.conditions ?? {}
-        if (!motionEnabled) return
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      const galleries = gsap.utils.toArray<HTMLElement>('[data-horizontal-gallery]')
+      const cleanups = galleries.map((gallery) => {
+        const stage = gallery.querySelector<HTMLElement>('[data-horizontal-stage]')
+        const viewport = gallery.querySelector<HTMLElement>('[data-horizontal-viewport]')
+        const track = gallery.querySelector<HTMLElement>('[data-horizontal-track]')
+        const first = track?.firstElementChild as HTMLElement | null
+        if (!stage || !viewport || !track || !first) return null
 
-        const root = document.querySelector<HTMLElement>('[data-projects-root]')
-        const viewport = root?.querySelector<HTMLElement>('[data-projects-viewport]')
-        const track = root?.querySelector<HTMLElement>('[data-projects-track]')
-        if (!root || !viewport || !track) return
-        const panels = Array.from(track.children).filter(
-          (element): element is HTMLElement => element instanceof HTMLElement
-        )
-
-        const centerCards = () => {
-          const firstCard = track.querySelector<HTMLElement>('[data-project-card]')
-          if (!firstCard) return
-
-          const sideInset = Math.max(0, (viewport.clientWidth - firstCard.offsetWidth) / 2)
-          track.style.setProperty('--projects-side-inset', `${sideInset}px`)
-        }
-
-        centerCards()
-
-        const distance = () => {
-          centerCards()
+        const measure = () => {
+          const inset = Math.max(20, (viewport.clientWidth - first.offsetWidth) / 2)
+          track.style.setProperty('--gallery-inset', `${inset}px`)
           return Math.max(0, track.scrollWidth - viewport.clientWidth)
         }
-        const centeredTop = () => {
-          const availableCenter = (window.innerHeight - viewport.offsetHeight) / 2
-          return Math.max(88, Math.round(availableCenter))
-        }
-        if (distance() === 0) return
 
-        const tween = gsap.to(track, {
-          x: () => -distance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: viewport,
-            start: () => `top ${centeredTop()}px`,
-            end: () => `+=${distance() + window.innerHeight * 1.5}`,
-            pin: true,
-            scrub: 1.05,
-            snap:
-              panels.length > 1
-                ? {
-                    snapTo: 1 / (panels.length - 1),
-                    duration: { min: 0.2, max: 0.45 },
-                    delay: 0.08,
-                    ease: 'power1.inOut'
-                  }
-                : undefined,
-            onUpdate: (self) => {
-              const activeIndex = Math.round(self.progress * Math.max(0, panels.length - 1))
-              panels.forEach((panel, index) => {
-                panel.dataset.active = index === activeIndex ? 'true' : 'false'
-                panel.setAttribute('aria-hidden', index === activeIndex ? 'false' : 'true')
-              })
+        if (measure() < 1) return null
+        gallery.dataset.enhanced = 'true'
+        const movesRight = gallery.dataset.direction === 'right'
+
+        const context = gsap.context(() => {
+          gsap.fromTo(
+            track,
+            {
+              x: () => (movesRight ? -measure() : 0)
             },
-            invalidateOnRefresh: true,
-            anticipatePin: 1
-          }
-        })
+            {
+              x: () => (movesRight ? 0 : -measure()),
+              ease: 'none',
+              scrollTrigger: {
+                trigger: stage,
+                start: 'top top',
+                end: () => `+=${measure()}`,
+                pin: true,
+                scrub: 0.7,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+                onUpdate: (self) =>
+                  gallery.style.setProperty('--gallery-progress', `${self.progress * 100}%`)
+              }
+            }
+          )
+        }, gallery)
 
-        return () => tween.kill()
-      }
-    )
+        return () => {
+          context.revert()
+          delete gallery.dataset.enhanced
+          gallery.style.removeProperty('--gallery-progress')
+          track.style.removeProperty('--gallery-inset')
+        }
+      })
+
+      ScrollTrigger.refresh()
+      return () => cleanups.forEach((cleanup) => cleanup?.())
+    })
 
     return () => media.revert()
   }, [])

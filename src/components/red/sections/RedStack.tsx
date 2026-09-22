@@ -1,6 +1,6 @@
-import { TerminalScene, type TerminalCommand } from '@/components/red/effects/TerminalScene'
 import type { PortfolioContent } from '@/types'
 
+import { HorizontalGallery } from './HorizontalGallery'
 import styles from './RedStack/styles.module.scss'
 
 interface RedStackProps {
@@ -8,31 +8,41 @@ interface RedStackProps {
 }
 
 export function RedStack({ content }: RedStackProps) {
-  const { sections, skillGroups } = content
-  const commands: readonly TerminalCommand[] = skillGroups.map((group) => ({
-    id: group.id,
-    label: group.title,
-    panel: (
-      <article className={styles.stackConsole}>
-        <p className={styles.moduleLabel}>MÓDULO // {group.id.toUpperCase()}</p>
-        <h3>{group.title}</h3>
-        <ul>
-          {group.skills.map((skill) => (
-            <li key={skill}>
-              <span aria-hidden="true">&gt;</span> {skill}
-            </li>
-          ))}
-        </ul>
-      </article>
-    )
-  }))
+  const { skillGroups } = content
 
   return (
-    <TerminalScene
-      commands={commands}
-      eyebrow={sections.stack.eyebrow}
+    <HorizontalGallery
       id="stack"
-      title={sections.stack.title}
-    />
+      eyebrow="SISTEMA / CAPACIDADES_E_ARQUITETURA"
+      title="Stack Principal & Arquitetura"
+      description="Ferramentas escolhidas conforme o problema, da interface à infraestrutura e à inteligência aplicada."
+      count={skillGroups.length}
+      direction="right"
+    >
+      {skillGroups.map((group, index) => (
+        <article className={styles.card} key={group.id}>
+          <div className={styles.topline}>
+            <span>MOD_{String(index + 1).padStart(2, '0')}</span>
+            <span>ONLINE ●</span>
+          </div>
+          <div className={styles.content}>
+            <p className={styles.path}>/system/capabilities/{group.id}</p>
+            <h3>{group.title}</h3>
+            <p className={styles.label}>TECNOLOGIAS & PRÁTICAS</p>
+            <ul>
+              {group.skills.map((skill) => (
+                <li key={skill}>
+                  <span aria-hidden="true">›</span>
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.bottom}>
+            ARQUITETURA ORIENTADA A PRODUTO <span aria-hidden="true">↗</span>
+          </div>
+        </article>
+      ))}
+    </HorizontalGallery>
   )
 }

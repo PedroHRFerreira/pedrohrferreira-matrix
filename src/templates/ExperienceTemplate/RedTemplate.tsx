@@ -1,10 +1,17 @@
 import { MatrixRain } from '@/components/red/effects/MatrixRain'
-import { RedFooter } from '@/components/red/effects/RedFooter'
-import { RedAbout, RedExperience, RedHero, RedProjects, RedStack } from '@/components/red/sections'
+import {
+  RedAbout,
+  RedContact,
+  RedDialogue,
+  RedExperience,
+  RedHero,
+  RedProjects,
+  RedStack
+} from '@/components/red/sections'
 import { CustomCursor } from '@/components/shared/CustomCursor'
 import { HorizontalProjectsMotion } from '@/components/shared/HorizontalProjectsMotion'
 import { RealityNavigation } from '@/components/shared/RealityNavigation'
-import type { PortfolioContent } from '@/types'
+import type { NavigationItem, PortfolioContent } from '@/types'
 
 import styles from './styles.module.scss'
 
@@ -13,14 +20,18 @@ interface RedTemplateProps {
   onReviewChoice: () => void
 }
 
+const redNavigation: readonly NavigationItem[] = [
+  { id: 'projects', label: '//PROJETOS' },
+  { id: 'stack', label: '//STACK' },
+  { id: 'dialogue', label: '//TERMINAL' },
+  { id: 'about', label: '//DOSSIER' }
+]
+
 export function RedTemplate({ content, onReviewChoice }: RedTemplateProps) {
   return (
     <div className={`${styles.shell} ${styles.red}`} data-reality="red">
       <MatrixRain className={styles.backdrop} />
-      <RealityNavigation
-        items={content.navigation.filter((item) => item.id !== 'contact')}
-        reality="red"
-      />
+      <RealityNavigation items={redNavigation} reality="red" />
       <button className={styles.reviewChoice} type="button" onClick={onReviewChoice}>
         {content.actions.reviewChoice}
       </button>
@@ -31,16 +42,14 @@ export function RedTemplate({ content, onReviewChoice }: RedTemplateProps) {
         <RedAbout content={content} />
         <RedExperience content={content} />
         <RedProjects content={content} />
+        <RedDialogue />
         <RedStack content={content} />
+        <RedContact content={content} />
       </main>
-      <RedFooter
-        message={content.footer.closingMessage}
-        copyright={content.footer.copyright}
-        contacts={content.contacts}
-        name={content.profile.name}
-        role={content.profile.role}
-        resume={content.actions.resume}
-      />
+      <footer className={styles.redEnding}>
+        <span>SYS://CONEXÃO_PERMANECE_ABERTA</span>
+        <span>{content.footer.copyright}</span>
+      </footer>
     </div>
   )
 }

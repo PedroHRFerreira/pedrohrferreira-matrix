@@ -1,8 +1,8 @@
 import Image from 'next/image'
 
-import { TerminalScene, type TerminalCommand } from '@/components/red/effects/TerminalScene'
 import type { PortfolioContent } from '@/types'
 
+import { HorizontalGallery } from './HorizontalGallery'
 import styles from './RedProjects/styles.module.scss'
 
 interface RedProjectsProps {
@@ -10,61 +10,53 @@ interface RedProjectsProps {
 }
 
 export function RedProjects({ content }: RedProjectsProps) {
-  const { actions, projects, sections } = content
-  const commands: readonly TerminalCommand[] = projects.map((project, index) => ({
-    id: project.slug,
-    label: project.title,
-    panel: (
-      <article className={styles.redProjectCard} data-project-card>
-        <div className={styles.projectNumber} aria-hidden="true">
-          PROJETO_{String(index + 1).padStart(2, '0')}
-        </div>
-        {project.image && (
-          <Image
-            className={styles.projectImage}
-            src={project.image.src}
-            alt={project.image.alt}
-            width={project.image.width}
-            height={project.image.height}
-            loading="lazy"
-          />
-        )}
-        <div className={styles.projectBody}>
-          <div className={styles.projectHeading}>
-            <h3>{project.title}</h3>
-            {project.status && <span className={styles.projectStatus}>{project.status}</span>}
+  const { projects, sections } = content
+
+  return (
+    <HorizontalGallery
+      id="projects"
+      eyebrow="ARQUIVO / PROJETOS_SELECIONADOS"
+      title="Projetos em Destaque"
+      description={sections.projects.description}
+      count={projects.length}
+    >
+      {projects.map((project, index) => (
+        <article className={styles.card} key={project.slug}>
+          <div className={styles.topline}>
+            <span>
+              {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+            </span>
+            <span>{project.status ?? 'PROJETO'}</span>
           </div>
-          <p>{project.summary}</p>
-          <ul className={styles.tags} aria-label="Tecnologias">
-            {project.technologies.map((technology) => (
-              <li key={technology}>{technology}</li>
-            ))}
-          </ul>
-          <div className={styles.projectLinks}>
+          {project.image && (
+            <Image
+              className={styles.image}
+              src={project.image.src}
+              alt={project.image.alt}
+              width={project.image.width}
+              height={project.image.height}
+              loading="lazy"
+            />
+          )}
+          <div className={styles.body}>
+            <p className={styles.command}>$ inspect --project {project.slug}</p>
+            <h3>{project.title}</h3>
+            <p className={styles.summary}>{project.summary}</p>
+            <ul className={styles.tags} aria-label="Tecnologias">
+              {project.technologies.slice(0, 5).map((technology) => (
+                <li key={technology}>{technology}</li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.links}>
             {project.links.map((link) => (
               <a href={link.href} key={link.href} rel="noreferrer" target="_blank">
-                {link.label || actions.visitProject}
-                <span aria-hidden="true"> ↗</span>
+                {link.label || content.actions.visitProject} <span aria-hidden="true">↗</span>
               </a>
             ))}
           </div>
-        </div>
-      </article>
-    )
-  }))
-
-  return (
-    <TerminalScene
-      className={styles.projectsSection}
-      commands={commands}
-      description={sections.projects.description}
-      eyebrow={sections.projects.eyebrow}
-      horizontal
-      id="projects"
-      panelClassName={styles.projectPanel}
-      panelsClassName={styles.projectsTrack}
-      title={sections.projects.title}
-      viewportClassName={styles.projectsViewport}
-    />
+        </article>
+      ))}
+    </HorizontalGallery>
   )
 }

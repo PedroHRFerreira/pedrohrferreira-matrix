@@ -1,4 +1,3 @@
-import { TerminalScene, type TerminalCommand } from '@/components/red/effects/TerminalScene'
 import type { PortfolioContent } from '@/types'
 
 import styles from './RedExperience/styles.module.scss'
@@ -9,33 +8,46 @@ interface RedExperienceProps {
 
 export function RedExperience({ content }: RedExperienceProps) {
   const { experience, sections } = content
-  const commands: readonly TerminalCommand[] = experience.map((entry) => ({
-    id: entry.id,
-    label: entry.organization ?? entry.title,
-    meta: entry.period,
-    panel: (
-      <article className={styles.experiencePanel}>
-        <p className={styles.period}>{entry.period}</p>
-        <h3>{entry.title}</h3>
-        {entry.organization && <p className={styles.organization}>{entry.organization}</p>}
-        <p className={styles.summary}>{entry.summary}</p>
-        <ul className={styles.highlights}>
-          {entry.highlights.map((highlight) => (
-            <li key={highlight}>{highlight}</li>
-          ))}
-        </ul>
-      </article>
-    )
-  }))
 
   return (
-    <TerminalScene
-      commands={commands}
-      description={sections.experience.description}
-      eyebrow={sections.experience.eyebrow}
-      id="experience"
-      title={sections.experience.title}
-      variant="timeline"
-    />
+    <section className={styles.section} id="experience" aria-labelledby="experience-title">
+      <div className={styles.heading}>
+        <div>
+          <p className={styles.eyebrow}>{'// TRAJETÓRIA / EXECUTION_LOG'}</p>
+          <h2 id="experience-title">{sections.experience.title}</h2>
+          {sections.experience.description && (
+            <p className={styles.description}>{sections.experience.description}</p>
+          )}
+        </div>
+        <span className={styles.count}>0{experience.length} REGISTROS ENCONTRADOS</span>
+      </div>
+
+      <ol className={styles.timeline}>
+        {experience.map((entry, index) => (
+          <li className={styles.milestone} key={entry.id}>
+            <div className={styles.meta}>
+              <span className={styles.index}>LOG_{String(index + 1).padStart(2, '0')}</span>
+              <span className={styles.period}>{entry.period}</span>
+            </div>
+            <span className={styles.node} aria-hidden="true" />
+            <article className={styles.card}>
+              <div className={styles.cardTop}>
+                <span className={styles.organization}>
+                  {entry.organization ?? 'Projeto independente'}
+                </span>
+                <span className={styles.signal}>● ATIVO NO HISTÓRICO</span>
+              </div>
+              <h3>{entry.title}</h3>
+              <p className={styles.summary}>{entry.summary}</p>
+              <ul className={styles.highlights}>
+                {entry.highlights.map((highlight) => (
+                  <li key={highlight}>{highlight}</li>
+                ))}
+              </ul>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </section>
   )
 }

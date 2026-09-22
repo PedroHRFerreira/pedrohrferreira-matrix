@@ -50,10 +50,13 @@ test('mantém a introdução obrigatória e publica o conteúdo profissional em 
     page.getByRole('heading', { level: 1, name: 'Pedro Henrique Rodrigues', exact: true })
   ).toBeVisible()
   await expect(
-    page.locator('[data-section="hero"]').getByText(/Engenheiro de Software Full Stack/)
+    page
+      .locator('[data-section="hero"]')
+      .getByText(/Engenheiro de Software Full Stack/)
+      .first()
   ).toBeVisible()
   await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toContainText(
-    'Projetos'
+    'PROJETOS'
   )
   await expect(page.getByRole('button', { name: /^(EN|PT)$/ })).toHaveCount(0)
 
@@ -107,84 +110,72 @@ test('a escolha e o salto para conteúdo funcionam por teclado', async ({ page }
   await expect(page).toHaveURL(/#main-content$/)
 })
 
-test('os comandos Matrix trocam o conteúdo em foco', async ({ page }) => {
+test('a trajetória e os comandos Matrix respondem à navegação', async ({ page }) => {
   await openPersistedReality(page, 'red')
 
-  await page.getByRole('button', { name: /Freelancer/ }).click()
+  await page.locator('#experience').scrollIntoViewIfNeeded()
   await expect(page.getByRole('heading', { name: 'Desenvolvedor Full Stack' })).toBeVisible()
 
-  await page.getByRole('button', { name: /Back-end/ }).click()
-  await expect(page.getByRole('heading', { name: 'Back-end' })).toBeVisible()
+  await page.getByRole('button', { name: 'Como ele constrói?' }).click()
+  await expect(page.locator('[aria-labelledby="dialogue-title"]')).toContainText(
+    'sistemas modulares'
+  )
 })
 
-test('atalho Enter avança da faixa de projetos para a próxima seção', async ({ page }) => {
+test('a timeline mostra os três marcos em ordem antes dos projetos', async ({ page }) => {
   await openPersistedReality(page, 'red')
-  await page.locator('#projects').scrollIntoViewIfNeeded()
+  const milestones = page.locator('#experience ol > li')
+  await expect(milestones).toHaveCount(3)
 
-  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur())
-  const beforeEnter = await page.evaluate(() => window.scrollY)
-  await page.keyboard.press('Enter')
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(beforeEnter)
-})
-
-test('o scroll percorre os três marcos da timeline antes de liberar projetos', async ({ page }) => {
-  await openPersistedReality(page, 'red')
-  const timeline = page.locator('#experience [data-workspace-variant="timeline"]')
-
-  for (const [progress, heading] of [
-    [0.08, 'Engenheiro de Software'],
-    [0.5, 'Desenvolvedor Full Stack'],
-    [0.92, 'Curador Front-end']
+  for (const [index, heading] of [
+    [0, 'Engenheiro de Software'],
+    [1, 'Desenvolvedor Full Stack'],
+    [2, 'Curador Front-end']
   ] as const) {
-    await timeline.evaluate((element, ratio) => {
-      const bounds = element.getBoundingClientRect()
-      const top = window.scrollY + bounds.top
-      const travel = Math.max(1, bounds.height - window.innerHeight * 0.58)
-      window.scrollTo({
-        top: top + travel * ratio - window.innerHeight * 0.22,
-        behavior: 'instant'
-      })
-    }, progress)
-    await expect(page.getByRole('heading', { name: heading })).toBeVisible()
+    await milestones.nth(index).scrollIntoViewIfNeeded()
+    await expect(milestones.nth(index).getByRole('heading', { name: heading })).toBeVisible()
   }
 
   await page.locator('#projects').scrollIntoViewIfNeeded()
   await expect(page).toHaveURL(/#projects$/)
 })
 
-test('projetos percorrem uma faixa horizontal e liberam o scroll após Rods Themes', async ({
-  page
-}) => {
+test('projetos e stack atravessam na horizontal com o scroll vertical', async ({ page }) => {
   await openPersistedReality(page, 'red')
-  await page.locator('#projects').scrollIntoViewIfNeeded()
-
-  const cards = page.locator('#projects [data-project-card]')
-  await expect(cards).toHaveCount(4)
-  const positions = await cards.evaluateAll((elements) =>
-    elements.map((element) => element.getBoundingClientRect().left)
-  )
-  expect(positions[1]).toBeGreaterThan(positions[0])
-  expect(positions[2]).toBeGreaterThan(positions[1])
-
-  const activeCard = page.locator('#projects [data-active="true"] [data-project-card]')
-  await expect(activeCard).toBeVisible()
-
-  for (let index = 0; index < 10; index += 1) {
+  for (const [id, direction] of [
+    ['projects', 'left'],
+    ['stack', 'right']
+  ] as const) {
+    const gallery = page.locator(`#${id}`)
+    await expect(gallery).toHaveAttribute('data-enhanced', 'true')
+    await gallery.scrollIntoViewIfNeeded()
+    const cards = gallery.locator('article')
+    await expect(cards).toHaveCount(4)
+    const firstLeft = await cards
+      .first()
+      .evaluate((element) => element.getBoundingClientRect().left)
     await page.mouse.wheel(0, 650)
-    if ((await activeCard.textContent())?.includes('Rods Themes')) break
+    if (direction === 'left') {
+      await expect
+        .poll(() => cards.first().evaluate((element) => element.getBoundingClientRect().left))
+        .toBeLessThan(firstLeft)
+    } else {
+      await expect
+        .poll(() => cards.first().evaluate((element) => element.getBoundingClientRect().left))
+        .toBeGreaterThan(firstLeft)
+    }
   }
-
-  await expect(activeCard).toContainText('Rods Themes')
-  await page.mouse.wheel(0, 1800)
-  await expect(page).toHaveURL(/#stack$/)
 })
 
-test('movimento reduzido mantém os projetos em fluxo vertical legível', async ({ page }) => {
+test('movimento reduzido mantém as duas galerias em fluxo vertical legível', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await openPersistedReality(page, 'red')
-  await page.locator('#projects').scrollIntoViewIfNeeded()
-  await expect(page.locator('[data-project-card]')).toHaveCount(4)
-  await expect(page.getByRole('heading', { name: 'Rods Themes' })).toBeVisible()
+  for (const id of ['projects', 'stack']) {
+    const gallery = page.locator(`#${id}`)
+    await expect(gallery).not.toHaveAttribute('data-enhanced', 'true')
+    await expect(gallery.locator('article')).toHaveCount(4)
+    await expect(gallery.locator('article').last()).toBeVisible()
+  }
 })
 
 test('carrega as duas realidades sem erros de console', async ({ page }) => {

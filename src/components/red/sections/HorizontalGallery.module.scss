@@ -1,0 +1,138 @@
+.gallery {
+  position: relative;
+  padding-block: 1.5rem;
+  scroll-margin-top: 4rem;
+}
+
+.stage {
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-block: 3.5rem 1.5rem;
+  background: linear-gradient(
+    90deg,
+    rgba(2, 10, 5, 0.82),
+    rgba(2, 10, 5, 0.44) 50%,
+    rgba(2, 10, 5, 0.82)
+  );
+}
+
+.header,
+.guide {
+  display: flex;
+  width: min(calc(100% - 2rem), var(--red-content-width, 76rem));
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-inline: auto;
+}
+.header {
+  margin-bottom: clamp(1.5rem, 3vw, 3rem);
+}
+.eyebrow,
+.counter,
+.guide {
+  color: var(--accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.eyebrow {
+  margin: 0 0 0.65rem;
+}
+.header h2 {
+  max-width: 18ch;
+  font-family: var(--font-sans);
+  font-size: clamp(2.1rem, 4.2vw, 4.2rem);
+  line-height: 1;
+}
+.description {
+  max-width: 48rem;
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+}
+.counter {
+  flex: 0 0 auto;
+}
+.viewport {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.track {
+  --gallery-inset: max(1rem, calc((100vw - 33rem) / 2));
+  display: flex;
+  width: max-content;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding-inline: var(--gallery-inset);
+}
+.gallery[data-enhanced='true'] .viewport {
+  overflow: hidden;
+}
+.gallery[data-enhanced='true'][data-direction='right'] .track {
+  flex-direction: row-reverse;
+}
+.guide {
+  align-items: center;
+  margin-top: 2rem;
+}
+.progress {
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+.progress span {
+  display: block;
+  width: var(--gallery-progress, 0%);
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 0.7rem var(--accent);
+}
+
+@media (max-width: 48rem) {
+  .gallery {
+    padding-block: 1rem;
+  }
+  .stage {
+    min-height: 100svh;
+    padding-block: 4rem 4rem;
+  }
+  .header {
+    align-items: start;
+    gap: 0.5rem;
+  }
+  .counter {
+    display: none;
+  }
+  .header h2 {
+    font-size: clamp(2rem, 9vw, 3.25rem);
+  }
+  .guide {
+    margin-top: 1.25rem;
+  }
+  .track {
+    --gallery-inset: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    min-height: auto;
+    padding-block: 2rem;
+  }
+  .viewport {
+    overflow: visible;
+  }
+  .track {
+    display: grid;
+    width: min(calc(100% - 2rem), var(--red-content-width, 76rem));
+    margin-inline: auto;
+    padding: 0;
+  }
+  .guide {
+    display: none;
+  }
+}
