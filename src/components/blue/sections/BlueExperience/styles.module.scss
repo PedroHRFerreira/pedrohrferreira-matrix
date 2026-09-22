@@ -1,0 +1,89 @@
+.section {
+  width: min(calc(100% - 2rem), 70rem);
+  margin-inline: auto;
+  padding: clamp(6rem, 12vw, 10rem) 0;
+}
+.sectionHeader {
+  max-width: 50rem;
+  margin-bottom: 4rem;
+}
+.sectionHeader > p:last-child {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.blueTimeline {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.blueTimeline::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.8rem;
+  width: 2px;
+  background: linear-gradient(var(--accent), transparent);
+  content: '';
+}
+.timelineItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.7rem 1fr;
+  gap: clamp(1rem, 4vw, 2.5rem);
+}
+.timelineMarker {
+  z-index: 1;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0.5rem 1.5rem rgba(31, 102, 170, 0.3);
+}
+.timelineItem article {
+  margin-bottom: 3rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.46);
+  backdrop-filter: blur(16px);
+}
+.timelineItem h3 {
+  margin: 0.35rem 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+.period {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.organization {
+  margin: 0;
+  color: var(--muted);
+}
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.highlights li {
+  padding: 0.38rem 0.7rem;
+  border-radius: 999px;
+  color: #264e73;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.875rem;
+}

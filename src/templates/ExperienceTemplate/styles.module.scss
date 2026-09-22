@@ -1,0 +1,116 @@
+.shell {
+  --content-width: 76rem;
+  position: relative;
+  min-height: 100svh;
+  isolation: isolate;
+  overflow: clip;
+
+  &.red {
+    --red-content-width: 76rem;
+    --red-page-gutter: 1rem;
+    --red-section-padding-y: clamp(4.75rem, 7vw, 6.5rem);
+    --surface: #050806;
+    --surface-raised: rgba(5, 15, 9, 0.88);
+    --text: #dfffe7;
+    --muted: #86a58e;
+    --accent: #62ff8a;
+    --line: rgba(98, 255, 138, 0.25);
+    color: var(--text);
+    background: var(--surface);
+    font-family: var(--font-mono);
+  }
+
+  &.blue {
+    --surface: #dff3ff;
+    --surface-raised: rgba(250, 253, 255, 0.72);
+    --text: #173254;
+    --muted: #4f6f8c;
+    --accent: #226ad5;
+    --line: rgba(51, 104, 166, 0.2);
+    color: var(--text);
+    background: #76c8ff;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+}
+
+.reviewChoice {
+  position: fixed;
+  z-index: 45;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  background: var(--surface-raised);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(18px);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--accent);
+  }
+}
+
+.portfolio {
+  h1,
+  h2,
+  h3,
+  p {
+    overflow-wrap: anywhere;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 4.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+  }
+
+  :global([data-red-type][data-red-typing='true'])::after {
+    display: inline-block;
+    width: 0.58ch;
+    height: 1em;
+    margin-left: 0.16ch;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    content: '';
+    animation: terminal-cursor 0.72s steps(1, end) infinite;
+  }
+}
+
+@keyframes terminal-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio :global([data-red-type][data-red-typing='true'])::after {
+    display: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  .shell {
+    --content-width: 100%;
+  }
+
+  .reviewChoice {
+    top: 0.75rem;
+    right: 0.75rem;
+    min-height: 2.75rem;
+  }
+}

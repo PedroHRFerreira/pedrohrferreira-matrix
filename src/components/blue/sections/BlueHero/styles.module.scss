@@ -1,0 +1,103 @@
+.hero {
+  position: relative;
+  display: flex;
+  width: min(calc(100% - 2rem), 76rem);
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
+  padding: 8rem clamp(0rem, 5vw, 3rem) 7rem;
+  text-shadow: 0 1px 1rem rgba(242, 247, 255, 0.3);
+}
+.heroKicker {
+  margin: 0 0 1.25rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.heroTitle {
+  max-width: 11ch;
+  margin: 0;
+  color: #071c33;
+  font-size: clamp(4rem, 12vw, 10.5rem);
+  font-weight: 520;
+  line-height: 0.82;
+  letter-spacing: -0.08em;
+  text-shadow: 0 0.2rem 2rem rgba(242, 247, 255, 0.72);
+}
+.heroRole {
+  margin: 1.5rem 0 0;
+  color: #28629d;
+  font-family: Georgia, serif;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  font-style: italic;
+}
+.heroIntroduction {
+  max-width: 44rem;
+  margin: 1.6rem 0 0;
+  color: #365b78;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  min-height: 3.75rem;
+  align-items: center;
+  padding: 0.95rem 1.65rem;
+  border: 1px solid rgba(242, 247, 255, 0.7);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 750;
+  text-decoration: none;
+  box-shadow: 0 0.8rem 2rem rgba(7, 28, 51, 0.16);
+  backdrop-filter: blur(20px) saturate(1.2);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+.primaryAction {
+  color: #fff;
+  background: rgba(17, 78, 134, 0.78);
+}
+.secondaryAction {
+  color: #194a7a;
+  background: rgba(242, 247, 255, 0.56);
+}
+.primaryAction:hover,
+.primaryAction:focus-visible,
+.secondaryAction:hover,
+.secondaryAction:focus-visible {
+  box-shadow: 0 1.2rem 3rem rgba(7, 28, 51, 0.22);
+  transform: translateY(-2px);
+}
+.scrollCue {
+  position: absolute;
+  bottom: 2rem;
+  left: clamp(0rem, 5vw, 3rem);
+  color: #315d84;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+@media (max-width: 40rem) {
+  .hero {
+    padding-inline: 0.5rem;
+  }
+  .heroTitle {
+    font-size: clamp(3.7rem, 19vw, 6.5rem);
+  }
+  .scrollCue {
+    left: 0.5rem;
+  }
+}

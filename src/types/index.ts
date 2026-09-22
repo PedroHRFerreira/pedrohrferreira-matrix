@@ -1,0 +1,20 @@
+export type {
+  Contact,
+  EmailContact,
+  EntryNarrative,
+  ExperienceEntry,
+  ExperienceState,
+  NavigationItem,
+  PortfolioActions,
+  PortfolioContent,
+  PortfolioSections,
+  Profile,
+  Project,
+  ProjectImage,
+  ProjectLink,
+  Reality,
+  SectionCopy,
+  SectionId,
+  SkillGroup,
+  SocialContact
+} from './portfolio'

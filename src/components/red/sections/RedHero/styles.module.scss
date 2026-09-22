@@ -1,0 +1,98 @@
+.hero {
+  position: relative;
+  display: flex;
+  width: min(calc(100% - (var(--red-page-gutter, 1rem) * 2)), var(--red-content-width, 76rem));
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
+  padding: var(--red-section-padding-y, clamp(4.75rem, 7vw, 6.5rem)) 0;
+}
+
+.heroPrompt,
+.heroStatus {
+  margin: 0 0 1rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+}
+
+.heroStatus {
+  width: fit-content;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  background: rgba(20, 255, 82, 0.06);
+}
+
+.heroTitle {
+  max-width: 12ch;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(3.7rem, 11vw, 9.5rem);
+  line-height: 0.82;
+  letter-spacing: -0.075em;
+  text-shadow: 0 0 2.5rem rgba(98, 255, 138, 0.15);
+}
+
+.heroRole {
+  margin: 1.5rem 0 0;
+  color: var(--accent);
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+.heroIntroduction {
+  max-width: 42rem;
+  margin: 1.75rem 0 0;
+  color: #b0c8b6;
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 2.5rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 3rem;
+  padding: 0.72rem 1.1rem;
+  border: 1px solid var(--accent);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.primaryAction {
+  color: #031006;
+  background: var(--accent);
+}
+.secondaryAction {
+  color: var(--accent);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.scrollCue {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@media (max-width: 40rem) {
+  .heroTitle {
+    font-size: clamp(3.4rem, 18vw, 6rem);
+  }
+  .scrollCue {
+    left: 0;
+  }
+}

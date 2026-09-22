@@ -1,0 +1,142 @@
+.sky {
+  overflow: hidden;
+  background: #4e8db9;
+}
+
+.skyImage,
+.atmosphere,
+.light,
+.cloudField,
+.horizonHaze {
+  position: absolute;
+  inset: 0;
+}
+
+.skyImage {
+  inset: -3%;
+  background-image: url('/images/blue/cinematic-sky.png');
+  background-position: 50% 50%;
+  background-size: cover;
+  filter: saturate(0.82) contrast(0.92) brightness(0.94);
+  transform: scale(1.06);
+}
+
+.atmosphere {
+  background:
+    linear-gradient(180deg, rgba(7, 28, 51, 0.2), transparent 38%),
+    linear-gradient(90deg, rgba(232, 182, 201, 0.12), transparent 42%, rgba(7, 28, 51, 0.12));
+}
+
+.light {
+  top: -24rem;
+  right: -18rem;
+  width: 62rem;
+  height: 62rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 251, 234, 0.62),
+    rgba(245, 213, 160, 0.13) 36%,
+    transparent 68%
+  );
+  filter: blur(18px);
+}
+
+.cloudField {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  top: var(--cloud-top);
+  left: -70rem;
+  width: var(--cloud-size);
+  aspect-ratio: 2.65;
+  opacity: var(--cloud-opacity);
+  will-change: transform;
+  animation: cloud-drift var(--cloud-duration) linear var(--cloud-delay) infinite;
+}
+
+.cloud[data-depth='far'] {
+  filter: blur(2px);
+}
+
+.cloud[data-depth='near'] {
+  filter: drop-shadow(0 2rem 2rem rgba(23, 63, 96, 0.2));
+}
+
+.cloudTexture,
+.cloudFault {
+  position: absolute;
+  inset: 0;
+  background: url('/images/blue/cloud-bank.png') center / contain no-repeat;
+}
+
+.cloudFault {
+  width: 30%;
+  height: 42%;
+  inset: 31% auto auto 48%;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 5px, rgba(0, 255, 65, 0.16) 6px 7px),
+    repeating-linear-gradient(0deg, transparent 0 8px, rgba(7, 28, 51, 0.14) 9px 10px),
+    url('/images/blue/cloud-bank.png') 58% 48% / 330% auto no-repeat;
+  background-blend-mode: soft-light, multiply, normal;
+  clip-path: polygon(7% 16%, 82% 2%, 100% 54%, 76% 100%, 4% 81%);
+  opacity: 0;
+  mix-blend-mode: multiply;
+}
+
+.cloud[data-faulting='true'] .cloudFault {
+  animation: cloud-corruption 520ms ease-in-out both;
+}
+
+.horizonHaze {
+  top: auto;
+  height: 32%;
+  background: linear-gradient(0deg, rgba(242, 247, 255, 0.38), transparent);
+  filter: blur(8px);
+}
+
+@keyframes cloud-drift {
+  to {
+    transform: translate3d(calc(100vw + 150rem), 0, 0);
+  }
+}
+
+@keyframes cloud-corruption {
+  0%,
+  100% {
+    filter: blur(5px) saturate(0.7);
+    opacity: 0;
+    transform: translate3d(-0.4rem, 0.15rem, 0) scale(0.96);
+  }
+  40%,
+  64% {
+    filter: blur(0) saturate(0.86);
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (max-width: 48rem) {
+  .skyImage {
+    background-position: 58% 50%;
+  }
+
+  .cloud {
+    width: min(var(--cloud-size), 38rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    left: calc(var(--cloud-top) - 20rem);
+    animation: none;
+  }
+
+  .cloudFault {
+    display: none;
+  }
+}

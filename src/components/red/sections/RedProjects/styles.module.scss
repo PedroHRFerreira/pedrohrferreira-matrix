@@ -1,0 +1,167 @@
+.projectsSection {
+  width: min(calc(100% - (var(--red-page-gutter, 1rem) * 2)), var(--red-content-width, 76rem));
+  overflow: visible;
+}
+.sectionHeader {
+  max-width: 50rem;
+  margin-bottom: 3rem;
+}
+.sectionHeader > p:last-child {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+}
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.projectPanel {
+  display: block !important;
+  flex: 0 0 min(72vw, 58rem);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.projectPanel[data-active='false'] {
+  display: block !important;
+  opacity: 0.52;
+  transform: scale(0.965);
+}
+.projectPanel[data-active='true'] {
+  display: block !important;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.projectsViewport {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  background: rgba(1, 7, 4, 0.72);
+}
+
+.projectsTrack {
+  --projects-side-inset: max(1rem, calc((100vw - min(72vw, 58rem)) / 2));
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding-inline: var(--projects-side-inset);
+  will-change: transform;
+}
+.redProjectCard {
+  position: relative;
+  width: 100%;
+  min-height: min(54svh, 34rem);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(3, 13, 7, 0.78);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.24);
+}
+.projectNumber {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 0.875rem;
+}
+.projectImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 18rem;
+  object-fit: cover;
+  filter: saturate(0.7) contrast(1.1);
+}
+.projectBody {
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+}
+.projectHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.projectHeading h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+}
+.projectStatus {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 0.875rem;
+}
+.projectBody > p {
+  color: #aec7b5;
+  font-family: var(--font-sans);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+.tags li {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--line);
+  color: #b8ddc1;
+  font-size: 0.875rem;
+}
+.projectLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.projectLinks a {
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-underline-offset: 0.3rem;
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .projectPanel {
+    flex-basis: calc(100vw - 2rem);
+  }
+
+  .projectsTrack {
+    --projects-side-inset: 1rem;
+  }
+
+  .redProjectCard {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectsViewport {
+    width: 100%;
+    margin-left: 0;
+    overflow: visible;
+  }
+
+  .projectsTrack {
+    display: grid;
+    width: 100%;
+    padding: 0;
+  }
+
+  .projectPanel {
+    display: block !important;
+    margin-top: 1rem;
+    opacity: 1;
+    transform: none;
+  }
+  .projectPanel[data-active='false'] {
+    display: block !important;
+  }
+  .redProjectCard {
+    width: 100%;
+  }
+}

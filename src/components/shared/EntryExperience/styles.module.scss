@@ -1,0 +1,394 @@
+.entry {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #b7d8bf;
+  background: #010201;
+  font-family: var(--font-mono);
+}
+
+.static {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #151615;
+}
+
+.staticCanvas {
+  width: 100%;
+  height: 100%;
+  opacity: 0.66;
+  image-rendering: pixelated;
+  filter: contrast(1.7) brightness(0.58) grayscale(1);
+  transform: scale(1.035);
+}
+
+.static::after {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.38) 2px 4px),
+    radial-gradient(circle at center, transparent 32%, rgba(0, 0, 0, 0.62) 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.staticBand {
+  position: absolute;
+  z-index: 2;
+  inset-inline: -6%;
+  top: -18%;
+  height: 12%;
+  opacity: 0.17;
+  background: rgba(236, 240, 236, 0.72);
+  filter: blur(0.5rem);
+  animation: static-band 1.35s linear infinite;
+}
+
+.staticFlicker {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  opacity: 0.08;
+  background: #fff;
+  animation: static-flicker 420ms steps(4, end) infinite;
+}
+
+.terminal {
+  display: grid;
+  width: 100%;
+  min-height: 100svh;
+  grid-template-rows: auto 1fr;
+  padding: clamp(1rem, 3vw, 2rem);
+  animation: terminal-arrival 900ms ease-out both;
+}
+
+.terminalChrome {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(112, 156, 122, 0.14);
+  color: rgba(145, 182, 153, 0.38);
+  font-size: clamp(0.58rem, 1vw, 0.72rem);
+  letter-spacing: 0.18em;
+}
+
+.terminalOutput {
+  display: flex;
+  width: min(100%, 66rem);
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+  margin-inline: auto;
+  padding: clamp(3.5rem, 9vw, 8rem) clamp(0rem, 4vw, 3rem);
+}
+
+.terminalOutput p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.systemLine,
+.messageLine,
+.emptyLine {
+  margin: 0 0 0.75rem;
+  white-space: pre-wrap;
+}
+
+.systemLine {
+  color: #7caf88;
+  font-size: clamp(0.82rem, 1.5vw, 1rem);
+  letter-spacing: 0.035em;
+}
+
+.messageLine {
+  margin-top: clamp(0.5rem, 2vw, 1.35rem);
+  color: #e3ede5;
+  font-size: clamp(1.2rem, 3vw, 2.4rem);
+  line-height: 1.35;
+  text-shadow: 0 0 1.5rem rgba(82, 190, 108, 0.1);
+}
+
+.questionLine {
+  max-width: 28ch;
+  margin: 0;
+  color: #e6eee8;
+  font-family: inherit;
+  font-size: clamp(1.45rem, 4.2vw, 3.8rem);
+  font-weight: 450;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  text-shadow: 0 0 2rem rgba(82, 190, 108, 0.1);
+}
+
+.emptyLine {
+  min-height: 1.8rem;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.62em;
+  height: 1.08em;
+  margin-left: 0.25em;
+  background: currentColor;
+  vertical-align: -0.16em;
+  animation: cursor-blink 900ms steps(1, end) infinite;
+}
+
+.continueBlock {
+  margin-top: clamp(2rem, 6vw, 4.5rem);
+}
+
+.continuePrompt {
+  margin: 0;
+  color: rgba(188, 219, 194, 0.68);
+  font-size: clamp(0.72rem, 1.35vw, 0.92rem);
+  letter-spacing: 0.12em;
+}
+
+.touchContinue {
+  display: none;
+  min-height: 3.25rem;
+  margin-top: 1.4rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(151, 194, 160, 0.38);
+  border-radius: 0.25rem;
+  color: #cce6d1;
+  background: rgba(12, 23, 14, 0.72);
+  font: inherit;
+  letter-spacing: 0.1em;
+}
+
+.selection {
+  margin-top: clamp(2.2rem, 6vw, 4.8rem);
+  animation: selection-arrival 800ms ease-out both;
+}
+
+.choicePrompt {
+  margin: 0 0 1.8rem;
+  color: #dfe9e1;
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.8rem, 3vw, 2.2rem);
+}
+
+.redPill,
+.bluePill {
+  display: inline-flex;
+  min-width: clamp(10.5rem, 20vw, 14rem);
+  min-height: 3.7rem;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.15rem;
+  border: 1px solid rgba(154, 181, 160, 0.22);
+  border-radius: 0.3rem;
+  color: #c8d8cb;
+  background: rgba(5, 10, 6, 0.74);
+  font-family: inherit;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.redPill:hover,
+.redPill:focus-visible,
+.redPill[data-selected='true'],
+.bluePill:hover,
+.bluePill:focus-visible,
+.bluePill[data-selected='true'] {
+  border-color: currentColor;
+  background: rgba(13, 24, 15, 0.9);
+  outline: 1px solid currentColor;
+  outline-offset: 0.22rem;
+  transform: translateY(-2px);
+}
+
+.redPill {
+  color: #c6787d;
+}
+
+.bluePill {
+  color: #7c9fc4;
+}
+
+.pillShape {
+  width: 1.65rem;
+  height: 0.68rem;
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 58%, #070807);
+  box-shadow: inset 0 0 0.35rem rgba(255, 255, 255, 0.3);
+}
+
+.keyboardHint {
+  margin: 1.1rem 0 0;
+  color: rgba(142, 169, 148, 0.42);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+}
+
+.transition {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  min-height: 100svh;
+  place-content: center;
+  padding: 2rem;
+  color: #dfeae1;
+  background: #010201;
+  font-size: clamp(1rem, 2.4vw, 1.8rem);
+  line-height: 1.45;
+  animation: transition-out 2.1s ease-in-out both;
+}
+
+.transition p {
+  max-width: 38rem;
+  margin: 0.45rem 0;
+}
+
+.entry[data-transition='red'] .transition {
+  color: #bce8c5;
+  background: radial-gradient(circle, rgba(0, 255, 65, 0.08), transparent 48%), #010201;
+}
+
+.entry[data-transition='blue'] .transition {
+  color: #d9e6ec;
+  background: radial-gradient(circle, rgba(118, 200, 255, 0.14), transparent 48%), #030607;
+}
+
+.scanlines,
+.vignette {
+  position: absolute;
+  z-index: 110;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scanlines {
+  opacity: 0.18;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.48) 3px 5px);
+  mix-blend-mode: multiply;
+}
+
+.vignette {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.28), transparent 13% 87%, rgba(0, 0, 0, 0.28)),
+    radial-gradient(ellipse at center, transparent 48%, rgba(0, 0, 0, 0.55) 112%);
+}
+
+@keyframes static-band {
+  to {
+    top: 112%;
+  }
+}
+
+@keyframes static-flicker {
+  0%,
+  100% {
+    opacity: 0.025;
+  }
+  50% {
+    opacity: 0.08;
+  }
+}
+
+@keyframes cursor-blink {
+  0%,
+  48% {
+    opacity: 0.85;
+  }
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes terminal-arrival {
+  from {
+    filter: brightness(1.24);
+    opacity: 0;
+  }
+}
+
+@keyframes selection-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(0.8rem);
+  }
+}
+
+@keyframes transition-out {
+  0% {
+    opacity: 0;
+  }
+  24%,
+  68% {
+    opacity: 1;
+  }
+  100% {
+    filter: brightness(0.4);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .terminal {
+    padding: 1rem;
+  }
+
+  .terminalOutput {
+    justify-content: flex-start;
+    padding-top: clamp(6rem, 22svh, 10rem);
+  }
+
+  .touchContinue {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .continuePrompt,
+  .keyboardHint {
+    display: none;
+  }
+}
+
+@media (max-width: 34rem) {
+  .pills {
+    flex-direction: column;
+  }
+
+  .redPill,
+  .bluePill {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staticBand,
+  .staticFlicker,
+  .cursor,
+  .terminal,
+  .selection,
+  .transition {
+    animation-duration: 1.6s;
+    animation-iteration-count: 1;
+  }
+
+  .staticBand,
+  .staticFlicker {
+    animation: none;
+  }
+}

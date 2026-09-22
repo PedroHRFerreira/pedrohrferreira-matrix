@@ -1,0 +1,64 @@
+.section {
+  width: min(calc(100% - 2rem), 70rem);
+  margin-inline: auto;
+  padding: clamp(6rem, 12vw, 10rem) 0;
+}
+
+.sectionHeader {
+  max-width: 50rem;
+  margin-bottom: 3rem;
+}
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.aboutTerminal {
+  position: relative;
+  max-width: 68rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-left: 1px solid var(--accent);
+  background: linear-gradient(90deg, rgba(98, 255, 138, 0.07), transparent 60%);
+  box-shadow: none;
+}
+.aboutTerminal::before {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 7rem;
+  height: 2px;
+  background: var(--accent);
+  content: '';
+}
+.terminalCommand {
+  margin: 0 0 1.5rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+}
+.aboutCopy {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+}
+.aboutCopy p {
+  margin: 0 0 1rem;
+}
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  color: #a8d8b3;
+  font-size: 0.95rem;
+}
+.statusDot {
+  width: 0.62rem;
+  height: 0.62rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 0 0.35rem rgba(98, 255, 138, 0.1),
+    0 0 1rem var(--accent);
+}

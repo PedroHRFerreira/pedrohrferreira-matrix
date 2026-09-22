@@ -1,0 +1,42 @@
+.cursor {
+  --cursor-x: -100px;
+  --cursor-y: -100px;
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  left: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  pointer-events: none;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  color: #62ff8a;
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  box-shadow: 0 0 1.25rem currentColor;
+  transform: translate3d(calc(var(--cursor-x) - 50%), calc(var(--cursor-y) - 50%), 0);
+  transition:
+    width 140ms ease,
+    height 140ms ease,
+    opacity 140ms ease;
+
+  &[data-reality='blue'] {
+    color: #2567bd;
+    box-shadow: 0 0 1.5rem rgba(37, 103, 189, 0.55);
+  }
+
+  &[data-visible='true'] {
+    opacity: 0.9;
+  }
+
+  &[data-interactive='true'] {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    display: none;
+  }
+}

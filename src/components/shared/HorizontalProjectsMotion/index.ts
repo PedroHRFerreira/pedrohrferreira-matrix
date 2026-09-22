@@ -1,0 +1,1 @@
+export { HorizontalProjectsMotion } from './HorizontalProjectsMotion'

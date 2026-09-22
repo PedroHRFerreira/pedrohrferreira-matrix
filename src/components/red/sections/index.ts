@@ -1,0 +1,6 @@
+export { RedAbout } from './RedAbout'
+export { RedContact } from './RedContact'
+export { RedExperience } from './RedExperience'
+export { RedHero } from './RedHero'
+export { RedProjects } from './RedProjects'
+export { RedStack } from './RedStack'

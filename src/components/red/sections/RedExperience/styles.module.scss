@@ -1,0 +1,105 @@
+.section {
+  width: min(calc(100% - 2rem), 70rem);
+  margin-inline: auto;
+  padding: clamp(6rem, 12vw, 10rem) 0;
+}
+.sectionHeader {
+  max-width: 50rem;
+  margin-bottom: 4rem;
+}
+.sectionHeader > p:last-child {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+}
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.redTimeline {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.redTimeline::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1.55rem;
+  width: 1px;
+  background: var(--line);
+  content: '';
+}
+.timelineItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.2rem 1fr;
+  gap: clamp(1rem, 4vw, 2.4rem);
+}
+.timelineIndex {
+  z-index: 1;
+  display: grid;
+  width: 3.2rem;
+  height: 3.2rem;
+  place-items: center;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: #061009;
+  font-size: 0.875rem;
+}
+.timelineItem article {
+  padding: 0 0 4.5rem;
+}
+.timelineItem h3 {
+  margin: 0.35rem 0;
+  font-family: var(--font-sans);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+.timelineItem article > p:not(.period, .organization) {
+  color: #b0c8b6;
+  font-family: var(--font-sans);
+}
+.period {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+.organization {
+  margin: 0;
+  color: var(--muted);
+}
+.highlights {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: #c7e5ce;
+}
+.highlights li::before {
+  margin-right: 0.7rem;
+  color: var(--accent);
+  content: '>';
+}
+
+.experiencePanel {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  min-height: 100%;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  background: rgba(4, 14, 8, 0.72);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.22);
+}
+
+.summary {
+  max-width: 48rem;
+  color: #b0c8b6;
+  font-family: var(--font-sans);
+}

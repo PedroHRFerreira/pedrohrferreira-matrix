@@ -1,0 +1,63 @@
+.section {
+  width: min(calc(100% - 2rem), 70rem);
+  margin-inline: auto;
+  padding: clamp(6rem, 12vw, 10rem) 0;
+}
+.sectionHeader {
+  max-width: 50rem;
+  margin-bottom: 3rem;
+}
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.stackConstellation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.stackCloud {
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 2rem 2rem 1.1rem 2rem;
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: 0 1.5rem 4rem rgba(47, 113, 164, 0.12);
+  backdrop-filter: blur(18px);
+}
+.stackCloud:nth-child(even) {
+  transform: translateY(1.8rem);
+}
+.stackCloud h3 {
+  margin: 0 0 1.2rem;
+  color: #255982;
+  font-size: 1.15rem;
+}
+.stackCloud ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stackCloud li {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: #385f7d;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 42rem) {
+  .stackConstellation {
+    grid-template-columns: 1fr;
+  }
+  .stackCloud:nth-child(even) {
+    transform: none;
+  }
+}
