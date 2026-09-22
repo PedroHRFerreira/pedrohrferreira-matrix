@@ -1,7 +1,9 @@
 export type Reality = 'red' | 'blue'
 
 export type ExperienceState =
+  | 'cold-boot'
   | 'static-noise'
+  | 'signal-reveal'
   | 'terminal-connecting'
   | 'initial-message'
   | 'waiting-first-enter'

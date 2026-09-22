@@ -2,11 +2,66 @@
   position: fixed;
   z-index: 100;
   inset: 0;
+  display: grid;
   min-height: 100svh;
+  place-items: center;
   overflow: hidden;
+  padding: clamp(0.35rem, 1.5vw, 1rem);
   color: #b7d8bf;
   background: #010201;
   font-family: var(--font-mono);
+}
+
+.television {
+  position: relative;
+  display: flex;
+  width: min(98vw, calc(96svh * 16 / 9));
+  height: auto;
+  aspect-ratio: 16 / 9;
+  flex-direction: column;
+}
+
+.screen {
+  --static-opacity: 0.66;
+  --static-animation-speed: 150ms;
+  --noise-grain-size: 2px;
+  position: relative;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  border-radius: 48% / 8%;
+  background: #000;
+  box-shadow:
+    inset 0 0 3rem #000,
+    0 1.5rem 3rem rgba(0, 0, 0, 0.82);
+  isolation: isolate;
+}
+
+.coldBoot,
+.signalReveal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.bootFlash {
+  position: absolute;
+  inset: 0;
+  background: #e8eee8;
+  animation: boot-flash 1.5s steps(1, end) both;
+}
+
+.bootScan {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  top: -18%;
+  height: 16%;
+  opacity: 0;
+  background: linear-gradient(transparent, rgba(224, 240, 227, 0.85), transparent);
+  filter: blur(0.18rem);
+  animation: boot-scan 1.15s 350ms linear both;
 }
 
 .static {
@@ -19,17 +74,92 @@
 .staticCanvas {
   width: 100%;
   height: 100%;
-  opacity: 0.66;
+  opacity: var(--static-opacity);
   image-rendering: pixelated;
   filter: contrast(1.7) brightness(0.58) grayscale(1);
   transform: scale(1.035);
+}
+
+.signalReveal {
+  background: #050705;
+}
+
+.revealGhost {
+  position: absolute;
+  inset: clamp(1rem, 3vw, 2.5rem);
+  opacity: 0;
+  color: #b7d8bf;
+  filter: blur(0.12rem);
+  clip-path: inset(0 0 100% 0);
+  animation: signal-materialize 2s ease-out both;
+}
+
+.revealGhost::before,
+.revealGhost::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  border: 1px solid rgba(150, 192, 159, 0.2);
+  transform: translateX(-0.22rem);
+}
+
+.revealGhost::after {
+  border-color: rgba(109, 143, 184, 0.14);
+  transform: translateX(0.22rem);
+}
+
+.revealChrome {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(159, 194, 166, 0.28);
+  font-size: clamp(0.5rem, 0.8vw, 0.7rem);
+  letter-spacing: 0.18em;
+}
+
+.revealLines {
+  display: flex;
+  height: calc(100% - 2rem);
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 4rem);
+  font-size: clamp(0.55rem, 1.1vw, 0.95rem);
+  letter-spacing: 0.05em;
+}
+
+.revealLines span,
+.revealLines strong {
+  margin-block: 0.3rem;
+}
+
+.revealLines strong {
+  margin-top: 1.2rem;
+  color: #e2ebe3;
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  font-weight: 400;
+}
+
+.revealSweep {
+  position: absolute;
+  z-index: 3;
+  inset-inline: -10%;
+  top: -16%;
+  height: 18%;
+  opacity: 0.6;
+  background: linear-gradient(transparent, rgba(199, 230, 205, 0.34), transparent);
+  filter: blur(0.4rem);
+  animation: reveal-sweep 2s ease-in-out both;
 }
 
 .static::after {
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.38) 2px 4px),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 var(--noise-grain-size),
+      rgba(0, 0, 0, 0.38) var(--noise-grain-size) calc(var(--noise-grain-size) * 2)
+    ),
     radial-gradient(circle at center, transparent 32%, rgba(0, 0, 0, 0.62) 100%);
   content: '';
   pointer-events: none;
@@ -53,13 +183,13 @@
   inset: 0;
   opacity: 0.08;
   background: #fff;
-  animation: static-flicker 420ms steps(4, end) infinite;
+  animation: static-flicker var(--static-animation-speed) steps(2, end) infinite;
 }
 
 .terminal {
   display: grid;
   width: 100%;
-  min-height: 100svh;
+  min-height: 100%;
   grid-template-rows: auto 1fr;
   padding: clamp(1rem, 3vw, 2rem);
   animation: terminal-arrival 900ms ease-out both;
@@ -171,6 +301,8 @@
   margin: 0 0 1.8rem;
   color: #dfe9e1;
   font-size: clamp(1rem, 2.5vw, 1.6rem);
+  line-height: 1.45;
+  white-space: pre-line;
 }
 
 .pills {
@@ -244,7 +376,7 @@
   position: relative;
   z-index: 5;
   display: grid;
-  min-height: 100svh;
+  min-height: 100%;
   place-content: center;
   padding: 2rem;
   color: #dfeae1;
@@ -277,10 +409,94 @@
   pointer-events: none;
 }
 
+.glass {
+  position: absolute;
+  z-index: 111;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.075), transparent 24%),
+    radial-gradient(ellipse at 28% 18%, rgba(255, 255, 255, 0.06), transparent 36%);
+  pointer-events: none;
+}
+
+.formatBadge {
+  position: absolute;
+  z-index: 112;
+  top: 4%;
+  right: 5%;
+  color: rgba(222, 232, 224, 0.28);
+  font-size: clamp(0.42rem, 0.66vw, 0.66rem);
+  letter-spacing: 0.12em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+.entry[data-state='cold-boot'] .formatBadge,
+.entry[data-state='static-noise'] .formatBadge,
+.entry[data-state='signal-reveal'] .formatBadge {
+  opacity: 1;
+}
+
+@keyframes boot-flash {
+  0% {
+    opacity: 0;
+  }
+  2%,
+  13% {
+    opacity: 1;
+  }
+  18%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes boot-scan {
+  0% {
+    top: -18%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 102%;
+    opacity: 0.12;
+  }
+}
+
+@keyframes signal-materialize {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+  32% {
+    opacity: 0.28;
+  }
+  70% {
+    clip-path: inset(0);
+    opacity: 0.54;
+    filter: blur(0.08rem);
+  }
+  100% {
+    clip-path: inset(0);
+    opacity: 0.86;
+    filter: blur(0);
+  }
+}
+
+@keyframes reveal-sweep {
+  to {
+    top: 104%;
+    opacity: 0.12;
+  }
+}
+
 .scanlines {
   opacity: 0.18;
   background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.48) 3px 5px);
-  mix-blend-mode: multiply;
 }
 
 .vignette {
@@ -318,7 +534,6 @@
 
 @keyframes terminal-arrival {
   from {
-    filter: brightness(1.24);
     opacity: 0;
   }
 }
@@ -345,13 +560,24 @@
 }
 
 @media (max-width: 48rem), (pointer: coarse) {
+  .television {
+    width: 100%;
+    height: calc(100svh - 0.7rem);
+    aspect-ratio: auto;
+  }
+
+  .screen {
+    border-radius: 10% / 3%;
+  }
+
   .terminal {
     padding: 1rem;
   }
 
   .terminalOutput {
     justify-content: flex-start;
-    padding-top: clamp(6rem, 22svh, 10rem);
+    overflow-y: auto;
+    padding-top: clamp(3.5rem, 12svh, 7rem);
   }
 
   .touchContinue {
@@ -377,6 +603,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .bootFlash,
+  .bootScan,
+  .revealGhost,
+  .revealSweep,
   .staticBand,
   .staticFlicker,
   .cursor,

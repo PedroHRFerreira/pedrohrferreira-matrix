@@ -14,7 +14,9 @@ export interface EntryExperienceProps {
 }
 
 export const ENTRY_TIMING = {
-  staticNoise: 5,
+  coldBoot: 1.5,
+  staticNoise: 3.5,
+  signalReveal: 2,
   terminalPause: 1.2,
   initialCharacter: 42,
   questionCharacter: 68,
@@ -80,6 +82,35 @@ function AnalogStatic({ reducedMotion }: { reducedMotion: boolean }) {
   return <canvas ref={canvasRef} className={styles.staticCanvas} aria-hidden="true" />
 }
 
+function ColdBoot() {
+  return (
+    <div className={styles.coldBoot} role="status" aria-label="Inicializando televisão">
+      <div className={styles.bootFlash} aria-hidden="true" />
+      <div className={styles.bootScan} aria-hidden="true" />
+    </div>
+  )
+}
+
+function SignalReveal({ content }: { content: PortfolioContent }) {
+  return (
+    <div className={styles.signalReveal} role="status" aria-label="Materializando sinal">
+      <div className={styles.revealGhost} aria-hidden="true">
+        <div className={styles.revealChrome}>
+          <span>SYS://UNKNOWN</span>
+          <span>CH. 84</span>
+        </div>
+        <div className={styles.revealLines}>
+          <span>{content.entry.terminalConnection}</span>
+          <span>{content.entry.terminalIdentify}</span>
+          <span>{content.entry.terminalUser}</span>
+          <strong>{content.entry.terminalWakeUp}</strong>
+        </div>
+      </div>
+      <div className={styles.revealSweep} aria-hidden="true" />
+    </div>
+  )
+}
+
 function useTypedLines(
   lines: readonly string[],
   active: boolean,
@@ -120,21 +151,23 @@ function useTypedLines(
         return
       }
 
-      characterIndex += 1
+      const currentLineIndex = lineIndex
+      const nextCharacterIndex = characterIndex + 1
+      characterIndex = nextCharacterIndex
       setVisibleLines((current) => {
         const next = [...current]
-        next[lineIndex] = line.slice(0, characterIndex)
+        next[currentLineIndex] = line.slice(0, nextCharacterIndex)
         return next
       })
 
-      if (characterIndex >= line.length) {
+      if (nextCharacterIndex >= line.length) {
         lineIndex += 1
         characterIndex = 0
         timer = window.setTimeout(typeNextCharacter, 260)
         return
       }
 
-      const character = line[characterIndex - 1] ?? ''
+      const character = line[nextCharacterIndex - 1] ?? ''
       const punctuationPause = /[.,:]/.test(character) ? 120 : 0
       const variation = (character.charCodeAt(0) % 5) * 7
       timer = window.setTimeout(typeNextCharacter, characterDelay + variation + punctuationPause)
@@ -196,9 +229,21 @@ export function EntryExperience({
   }, [])
 
   useEffect(() => {
-    if (state !== 'static-noise' && state !== 'terminal-connecting') return
+    if (
+      state !== 'cold-boot' &&
+      state !== 'static-noise' &&
+      state !== 'signal-reveal' &&
+      state !== 'terminal-connecting'
+    )
+      return
     const duration =
-      state === 'static-noise' ? ENTRY_TIMING.staticNoise : ENTRY_TIMING.terminalPause
+      state === 'cold-boot'
+        ? ENTRY_TIMING.coldBoot
+        : state === 'static-noise'
+          ? ENTRY_TIMING.staticNoise
+          : state === 'signal-reveal'
+            ? ENTRY_TIMING.signalReveal
+            : ENTRY_TIMING.terminalPause
     const timer = window.setTimeout(onAdvanceSequence, duration * 1000)
     return () => window.clearTimeout(timer)
   }, [onAdvanceSequence, state])
@@ -257,106 +302,129 @@ export function EntryExperience({
       data-state={state}
       data-transition={isTransitioning ? transitionReality : undefined}
     >
-      {state === 'static-noise' ? (
-        <div className={styles.static} role="status" aria-label="Procurando sinal analógico">
-          <AnalogStatic reducedMotion={reducedMotion} />
-          <div className={styles.staticBand} aria-hidden="true" />
-          <div className={styles.staticFlicker} aria-hidden="true" />
-        </div>
-      ) : null}
+      <div className={styles.television} aria-label="Tela CRT com terminal da Matrix">
+        <div className={styles.screen}>
+          {state === 'cold-boot' ? <ColdBoot /> : null}
 
-      {!isTransitioning && state !== 'static-noise' ? (
-        <section className={styles.terminal} aria-live="polite" aria-label="Terminal da Matrix">
-          <div className={styles.terminalChrome} aria-hidden="true">
-            <span>SYS://UNKNOWN</span>
-            <span>CH. 84</span>
-          </div>
-          <div className={styles.terminalOutput}>
-            {state === 'terminal-connecting' ? (
-              <p className={styles.emptyLine}>
-                <span className={styles.cursor} aria-hidden="true" />
-              </p>
-            ) : null}
+          {state === 'static-noise' ? (
+            <div className={styles.static} role="status" aria-label="Procurando sinal analógico">
+              <AnalogStatic reducedMotion={reducedMotion} />
+              <div className={styles.staticBand} aria-hidden="true" />
+              <div className={styles.staticFlicker} aria-hidden="true" />
+            </div>
+          ) : null}
 
-            {displayedLines.map((line, index) => {
-              const isQuestion =
-                state === 'reality-question' ||
-                state === 'waiting-second-enter' ||
-                state === 'pill-selection'
-              const LineElement = isQuestion ? 'h1' : 'p'
+          {state === 'signal-reveal' ? <SignalReveal content={content} /> : null}
 
-              return (
-                <LineElement
-                  className={
-                    isQuestion
-                      ? styles.questionLine
-                      : index >= 3
-                        ? styles.messageLine
-                        : styles.systemLine
-                  }
-                  key={`${index}-${line}`}
-                >
-                  {line}
-                  {index === displayedLines.length - 1 && !isWaiting ? (
+          {!isTransitioning &&
+          state !== 'cold-boot' &&
+          state !== 'static-noise' &&
+          state !== 'signal-reveal' ? (
+            <section className={styles.terminal} aria-live="polite" aria-label="Terminal da Matrix">
+              <div className={styles.terminalChrome} aria-hidden="true">
+                <span>SYS://UNKNOWN</span>
+                <span>CH. 84</span>
+              </div>
+              <div className={styles.terminalOutput}>
+                {state === 'terminal-connecting' ? (
+                  <p className={styles.emptyLine}>
                     <span className={styles.cursor} aria-hidden="true" />
-                  ) : null}
-                </LineElement>
-              )
-            })}
+                  </p>
+                ) : null}
 
-            {isWaiting ? (
-              <div className={styles.continueBlock}>
-                <p className={styles.continuePrompt}>
-                  {content.entry.continuePrompt}
-                  <span className={styles.cursor} aria-hidden="true" />
-                </p>
-                <button className={styles.touchContinue} type="button" onClick={onAdvanceSequence}>
-                  {content.entry.touchContinue}
-                </button>
-              </div>
-            ) : null}
+                {displayedLines.map((line, index) => {
+                  const isQuestion =
+                    state === 'reality-question' ||
+                    state === 'waiting-second-enter' ||
+                    state === 'pill-selection'
+                  const LineElement = isQuestion ? 'h1' : 'p'
 
-            {state === 'pill-selection' ? (
-              <div className={styles.selection}>
-                <p className={styles.choicePrompt}>{content.entry.choicePrompt}</p>
-                <div className={styles.pills} role="group" aria-label={content.entry.choicePrompt}>
-                  {(['red', 'blue'] as const).map((reality) => (
-                    <button
-                      aria-pressed={selectedReality === reality}
-                      className={reality === 'red' ? styles.redPill : styles.bluePill}
-                      data-selected={selectedReality === reality || undefined}
-                      key={reality}
-                      type="button"
-                      onClick={() => onChooseReality(reality)}
-                      onFocus={() => setSelectedReality(reality)}
-                      onPointerEnter={() => setSelectedReality(reality)}
+                  return (
+                    <LineElement
+                      className={
+                        isQuestion
+                          ? styles.questionLine
+                          : index >= 3
+                            ? styles.messageLine
+                            : styles.systemLine
+                      }
+                      key={`terminal-line-${index}`}
                     >
-                      <span className={styles.pillShape} aria-hidden="true" />
-                      <span>
-                        {reality === 'red'
-                          ? content.entry.redPillLabel
-                          : content.entry.bluePillLabel}
-                      </span>
+                      {line}
+                      {index === displayedLines.length - 1 && !isWaiting ? (
+                        <span className={styles.cursor} aria-hidden="true" />
+                      ) : null}
+                    </LineElement>
+                  )
+                })}
+
+                {isWaiting ? (
+                  <div className={styles.continueBlock}>
+                    <p className={styles.continuePrompt}>
+                      {content.entry.continuePrompt}
+                      <span className={styles.cursor} aria-hidden="true" />
+                    </p>
+                    <button
+                      className={styles.touchContinue}
+                      type="button"
+                      onClick={onAdvanceSequence}
+                    >
+                      {content.entry.touchContinue}
                     </button>
-                  ))}
-                </div>
-                <p className={styles.keyboardHint}>← / → · ENTER</p>
+                  </div>
+                ) : null}
+
+                {state === 'pill-selection' ? (
+                  <div className={styles.selection}>
+                    <p className={styles.choicePrompt}>{content.entry.choicePrompt}</p>
+                    <div
+                      className={styles.pills}
+                      role="group"
+                      aria-label={content.entry.choicePrompt}
+                    >
+                      {(['red', 'blue'] as const).map((reality) => (
+                        <button
+                          aria-pressed={selectedReality === reality}
+                          className={reality === 'red' ? styles.redPill : styles.bluePill}
+                          data-selected={selectedReality === reality || undefined}
+                          key={reality}
+                          type="button"
+                          onClick={() => onChooseReality(reality)}
+                          onFocus={() => setSelectedReality(reality)}
+                          onPointerEnter={() => setSelectedReality(reality)}
+                        >
+                          <span className={styles.pillShape} aria-hidden="true" />
+                          <span>
+                            {reality === 'red'
+                              ? content.entry.redPillLabel
+                              : content.entry.bluePillLabel}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className={styles.keyboardHint}>← / → · ENTER</p>
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
+            </section>
+          ) : null}
 
-      {isTransitioning ? (
-        <div className={styles.transition} role="status">
-          {transitionLines.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
+          {isTransitioning ? (
+            <div className={styles.transition} role="status">
+              {transitionLines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+          ) : null}
+
+          <div className={styles.scanlines} aria-hidden="true" />
+          <div className={styles.vignette} aria-hidden="true" />
+          <div className={styles.glass} aria-hidden="true" />
+          <span className={styles.formatBadge} aria-hidden="true">
+            1920 × 1080 | 30 FPS
+          </span>
         </div>
-      ) : null}
-
-      <div className={styles.scanlines} aria-hidden="true" />
-      <div className={styles.vignette} aria-hidden="true" />
+      </div>
     </main>
   )
 }

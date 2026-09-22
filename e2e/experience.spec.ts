@@ -1,33 +1,24 @@
 import { expect, test, type Page } from '@playwright/test'
 
-const EXPERIENCE_STORAGE_KEY = 'portfolio:last-reality'
 const REALITY_TIMEOUT = 10_000
 
 async function openFreshExperience(page: Page) {
   await page.goto('/')
-  await page.evaluate((key) => window.localStorage.removeItem(key), EXPERIENCE_STORAGE_KEY)
-  await page.reload()
 }
 
-async function chooseReality(page: Page, reality: 'red' | 'blue') {
+async function openReality(
+  page: Page,
+  reality: 'red' | 'blue',
+  motionAfterChoice: 'reduce' | 'no-preference' = 'no-preference'
+) {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.reload()
+  await page.goto('/')
   await expect(page.locator('main[data-state="pill-selection"]')).toBeVisible({
     timeout: REALITY_TIMEOUT
   })
+  await page.emulateMedia({ reducedMotion: motionAfterChoice })
   const label = reality === 'red' ? 'Pílula vermelha' : 'Pílula azul'
   await page.getByRole('button', { name: label }).click()
-  await expect(page.locator(`[data-reality="${reality}"]`).first()).toBeVisible({
-    timeout: REALITY_TIMEOUT
-  })
-}
-
-async function openPersistedReality(page: Page, reality: 'red' | 'blue') {
-  await page.addInitScript(
-    ([key, value]) => window.localStorage.setItem(key, value),
-    [EXPERIENCE_STORAGE_KEY, reality]
-  )
-  await page.goto('/')
   await expect(page.locator(`[data-reality="${reality}"]`).first()).toBeVisible({
     timeout: REALITY_TIMEOUT
   })
@@ -42,9 +33,9 @@ test('mantém a introdução obrigatória e publica o conteúdo profissional em 
 }) => {
   await openFreshExperience(page)
   await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
-  await expect(page.locator('main[data-state="static-noise"]')).toBeVisible()
+  await expect(page.locator('main[data-state="cold-boot"]')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Pular introdução' })).toHaveCount(0)
-  await chooseReality(page, 'red')
+  await openReality(page, 'red')
 
   await expect(
     page.getByRole('heading', { level: 1, name: 'Pedro Henrique Rodrigues', exact: true })
@@ -69,24 +60,11 @@ test('mantém a introdução obrigatória e publica o conteúdo profissional em 
   expect(response.headers()['content-type']).toContain('application/pdf')
 })
 
-test('restaura a última realidade e permite rever a escolha', async ({ page }) => {
-  await openFreshExperience(page)
-  await chooseReality(page, 'blue')
-  await expect
-    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), EXPERIENCE_STORAGE_KEY))
-    .toBe('blue')
-
+test('reinicia toda a experiência após atualizar a página', async ({ page }) => {
+  await openReality(page, 'blue')
   await page.reload()
-  await expect(page.locator('[data-reality="blue"]').first()).toBeVisible({
-    timeout: REALITY_TIMEOUT
-  })
-  await expect(page.locator('main[data-state="static-noise"]')).toHaveCount(0)
-
-  await page.getByRole('button', { name: 'Rever escolha' }).click()
-  await expect(page.locator('main[data-state="pill-selection"]')).toBeVisible()
-  await expect
-    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), EXPERIENCE_STORAGE_KEY))
-    .toBeNull()
+  await expect(page.locator('main[data-state="cold-boot"]')).toBeVisible()
+  await expect(page.locator('[data-reality="blue"]')).toHaveCount(0)
 })
 
 test('a escolha e o salto para conteúdo funcionam por teclado', async ({ page }) => {
@@ -111,7 +89,7 @@ test('a escolha e o salto para conteúdo funcionam por teclado', async ({ page }
 })
 
 test('a trajetória e os comandos Matrix respondem à navegação', async ({ page }) => {
-  await openPersistedReality(page, 'red')
+  await openReality(page, 'red')
 
   await page.locator('#experience').scrollIntoViewIfNeeded()
   await expect(page.getByRole('heading', { name: 'Desenvolvedor Full Stack' })).toBeVisible()
@@ -123,7 +101,7 @@ test('a trajetória e os comandos Matrix respondem à navegação', async ({ pag
 })
 
 test('a timeline mostra os três marcos em ordem antes dos projetos', async ({ page }) => {
-  await openPersistedReality(page, 'red')
+  await openReality(page, 'red')
   const milestones = page.locator('#experience ol > li')
   await expect(milestones).toHaveCount(3)
 
@@ -141,7 +119,7 @@ test('a timeline mostra os três marcos em ordem antes dos projetos', async ({ p
 })
 
 test('projetos e stack atravessam na horizontal com o scroll vertical', async ({ page }) => {
-  await openPersistedReality(page, 'red')
+  await openReality(page, 'red')
   for (const [id, direction] of [
     ['projects', 'left'],
     ['stack', 'right']
@@ -168,8 +146,7 @@ test('projetos e stack atravessam na horizontal com o scroll vertical', async ({
 })
 
 test('movimento reduzido mantém as duas galerias em fluxo vertical legível', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await openPersistedReality(page, 'red')
+  await openReality(page, 'red', 'reduce')
   for (const id of ['projects', 'stack']) {
     const gallery = page.locator(`#${id}`)
     await expect(gallery).not.toHaveAttribute('data-enhanced', 'true')
@@ -185,7 +162,7 @@ test('carrega as duas realidades sem erros de console', async ({ page }) => {
   })
   page.on('pageerror', (error) => errors.push(error.message))
 
-  await openPersistedReality(page, 'red')
+  await openReality(page, 'red')
   await expect(page.getByRole('heading', { name: 'Rods SDK' })).toBeVisible()
   await page.getByRole('button', { name: 'Rever escolha' }).click()
   await page.getByRole('button', { name: 'Pílula azul' }).click()

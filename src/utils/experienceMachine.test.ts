@@ -12,6 +12,8 @@ describe('experience state machine', () => {
   it('follows the complete initialization protocol before choosing red', () => {
     let state = INITIAL_EXPERIENCE_STATE
     const expectedStates = [
+      'static-noise',
+      'signal-reveal',
       'terminal-connecting',
       'initial-message',
       'waiting-first-enter',
@@ -67,10 +69,10 @@ describe('experience state machine', () => {
     expect(secondChoice).toEqual({ accepted: false, state: 'transitioning-red' })
   })
 
-  it('resets any active experience to static noise', () => {
+  it('resets any active experience to the cold boot', () => {
     expect(applyExperienceEvent('ready-blue', { type: 'RESET' })).toEqual({
       accepted: true,
-      state: 'static-noise'
+      state: 'cold-boot'
     })
   })
 
@@ -82,7 +84,7 @@ describe('experience state machine', () => {
   })
 
   it('skips the introduction while preserving an explicit reality choice', () => {
-    expect(applyExperienceEvent('static-noise', { type: 'INTRODUCTION_SKIPPED' })).toEqual({
+    expect(applyExperienceEvent('cold-boot', { type: 'INTRODUCTION_SKIPPED' })).toEqual({
       accepted: true,
       state: 'pill-selection'
     })
@@ -90,11 +92,5 @@ describe('experience state machine', () => {
       accepted: false,
       state: 'pill-selection'
     })
-  })
-
-  it('restores a previously completed reality directly', () => {
-    expect(
-      applyExperienceEvent('static-noise', { type: 'REALITY_RESTORED', reality: 'blue' })
-    ).toEqual({ accepted: true, state: 'ready-blue' })
   })
 })

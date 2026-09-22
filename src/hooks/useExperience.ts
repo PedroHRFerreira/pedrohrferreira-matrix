@@ -11,8 +11,6 @@ import {
   type ExperienceEvent
 } from '@/utils/experienceMachine'
 
-export const EXPERIENCE_STORAGE_KEY = 'portfolio:last-reality'
-
 export interface ExperienceController {
   state: ExperienceState
   reality: Reality | null
@@ -27,25 +25,10 @@ function experienceReducer(state: ExperienceState, event: ExperienceEvent): Expe
   return transitionExperience(state, event)
 }
 
-function persistedReality(): Reality | null {
-  try {
-    const reality = window.localStorage.getItem(EXPERIENCE_STORAGE_KEY)
-    return reality === 'red' || reality === 'blue' ? reality : null
-  } catch {
-    return null
-  }
-}
-
 export function useExperience(): ExperienceController {
   const [state, dispatch] = useReducer(experienceReducer, INITIAL_EXPERIENCE_STATE)
 
   useEffect(() => {
-    const reality = persistedReality()
-    if (reality) {
-      dispatch({ type: 'REALITY_RESTORED', reality })
-      return
-    }
-
     if (
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -54,27 +37,8 @@ export function useExperience(): ExperienceController {
     }
   }, [])
 
-  useEffect(() => {
-    const reality = realityForState(state)
-    if (!reality || (state !== 'ready-red' && state !== 'ready-blue')) return
-
-    try {
-      window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, reality)
-    } catch {
-      // Storage can be unavailable in private browsing or restricted embeds.
-    }
-  }, [state])
-
   const advanceSequence = useCallback(() => dispatch({ type: 'SEQUENCE_ADVANCED' }), [])
-  const reviewChoice = useCallback(() => {
-    try {
-      window.localStorage.removeItem(EXPERIENCE_STORAGE_KEY)
-    } catch {
-      // The state transition remains available when storage is restricted.
-    }
-
-    dispatch({ type: 'CHOICE_REVIEWED' })
-  }, [])
+  const reviewChoice = useCallback(() => dispatch({ type: 'CHOICE_REVIEWED' }), [])
   const chooseReality = useCallback(
     (reality: Reality) => dispatch({ type: 'REALITY_CHOSEN', reality }),
     []

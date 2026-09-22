@@ -5,7 +5,6 @@ export type ExperienceEvent =
   | { type: 'INTRODUCTION_SKIPPED' }
   | { type: 'CHOICE_REVIEWED' }
   | { type: 'REALITY_CHOSEN'; reality: Reality }
-  | { type: 'REALITY_RESTORED'; reality: Reality }
   | { type: 'TRANSITION_COMPLETED' }
   | { type: 'RESET' }
 
@@ -14,10 +13,12 @@ export interface TransitionResult {
   state: ExperienceState
 }
 
-export const INITIAL_EXPERIENCE_STATE: ExperienceState = 'static-noise'
+export const INITIAL_EXPERIENCE_STATE: ExperienceState = 'cold-boot'
 
 const sequenceState: Partial<Record<ExperienceState, ExperienceState>> = {
-  'static-noise': 'terminal-connecting',
+  'cold-boot': 'static-noise',
+  'static-noise': 'signal-reveal',
+  'signal-reveal': 'terminal-connecting',
   'terminal-connecting': 'initial-message',
   'initial-message': 'waiting-first-enter',
   'waiting-first-enter': 'reality-question',
@@ -50,16 +51,11 @@ export function applyExperienceEvent(
     return applyExperienceEvent(resetState, { type: 'INTRODUCTION_SKIPPED' })
   }
 
-  if (event.type === 'REALITY_RESTORED') {
-    return {
-      accepted: true,
-      state: event.reality === 'red' ? 'ready-red' : 'ready-blue'
-    }
-  }
-
   if (event.type === 'INTRODUCTION_SKIPPED') {
     const introductionState =
+      state === 'cold-boot' ||
       state === 'static-noise' ||
+      state === 'signal-reveal' ||
       state === 'terminal-connecting' ||
       state === 'initial-message' ||
       state === 'waiting-first-enter' ||

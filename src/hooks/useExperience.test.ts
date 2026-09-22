@@ -1,7 +1,7 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { EXPERIENCE_STORAGE_KEY, useExperience } from './useExperience'
+import { useExperience } from './useExperience'
 
 function installMatchMedia(matches: boolean) {
   vi.stubGlobal(
@@ -27,12 +27,12 @@ describe('useExperience', () => {
 
   afterEach(() => vi.unstubAllGlobals())
 
-  it('orchestrates and persists a completed reality', async () => {
+  it('orchestrates a completed reality without persisting the choice', () => {
     const { result } = renderHook(() => useExperience())
 
-    expect(result.current.state).toBe('static-noise')
+    expect(result.current.state).toBe('cold-boot')
 
-    for (let step = 0; step < 6; step += 1) {
+    for (let step = 0; step < 8; step += 1) {
       act(() => result.current.advanceSequence())
     }
     expect(result.current.state).toBe('pill-selection')
@@ -41,35 +41,36 @@ describe('useExperience', () => {
     act(() => result.current.completeTransition())
 
     expect(result.current.state).toBe('ready-red')
-    await waitFor(() => expect(window.localStorage.getItem(EXPERIENCE_STORAGE_KEY)).toBe('red'))
+    expect(window.localStorage).toHaveLength(0)
   })
 
-  it('restores a valid persisted reality without replaying the introduction', async () => {
-    window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, 'blue')
+  it('returns directly to the explicit choice while the current session is open', () => {
     const { result } = renderHook(() => useExperience())
 
-    await waitFor(() => expect(result.current.state).toBe('ready-blue'))
-    expect(result.current.reality).toBe('blue')
-  })
-
-  it('clears a restored reality and returns directly to the explicit choice', async () => {
-    window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, 'blue')
-    const { result } = renderHook(() => useExperience())
-
-    await waitFor(() => expect(result.current.state).toBe('ready-blue'))
+    for (let step = 0; step < 8; step += 1) {
+      act(() => result.current.advanceSequence())
+    }
+    act(() => result.current.chooseReality('blue'))
+    act(() => result.current.completeTransition())
     act(() => result.current.reviewChoice())
 
     expect(result.current.state).toBe('pill-selection')
     expect(result.current.reality).toBeNull()
     expect(result.current.canChoose).toBe(true)
-    expect(window.localStorage.getItem(EXPERIENCE_STORAGE_KEY)).toBeNull()
   })
 
-  it('ignores invalid persisted values', () => {
-    window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, 'invalid')
-    const { result } = renderHook(() => useExperience())
+  it('starts from the cold boot on every new mount', () => {
+    const first = renderHook(() => useExperience())
+    for (let step = 0; step < 8; step += 1) {
+      act(() => first.result.current.advanceSequence())
+    }
+    act(() => first.result.current.chooseReality('red'))
+    act(() => first.result.current.completeTransition())
+    expect(first.result.current.state).toBe('ready-red')
+    first.unmount()
 
-    expect(result.current.state).toBe('static-noise')
+    const refreshed = renderHook(() => useExperience())
+    expect(refreshed.result.current.state).toBe('cold-boot')
   })
 
   it('skips long introductory motion but still requires a first-time choice', () => {

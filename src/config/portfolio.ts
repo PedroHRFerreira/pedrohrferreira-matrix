@@ -25,8 +25,8 @@ export const portfolioContent = {
   },
   entry: {
     identityLabel: 'IDENTIDADE ENCONTRADA',
-    identityValue: 'usuário: New',
-    welcome: 'Bem-vindo, New.',
+    identityValue: 'usuário: Neo',
+    welcome: 'Bem-vindo, Neo.',
     question: 'E se eu te dissesse que tudo o que você conhece é uma mentira?',
     redPillLabel: 'Pílula vermelha',
     bluePillLabel: 'Pílula azul',
@@ -40,12 +40,12 @@ export const portfolioContent = {
     ],
     terminalConnection: 'C:\\> CONEXÃO ESTABELECIDA',
     terminalIdentify: 'C:\\> IDENTIFICAR USUÁRIO',
-    terminalUser: 'USUÁRIO: NEW',
-    terminalWakeUp: 'Acorde, New...',
+    terminalUser: 'USUÁRIO: NEO',
+    terminalWakeUp: 'Acorde, Neo...',
     terminalMatrixHasYou: 'A Matrix possui você...',
     continuePrompt: '[ PRESSIONE ENTER PARA CONTINUAR ]',
     touchContinue: '[ CONTINUAR ↵ ]',
-    choicePrompt: 'Agora, New, a escolha é sua.'
+    choicePrompt: 'Eu só posso lhe mostrar a porta.\nVocê tem que atravessá-la.'
   },
   sections: {
     about: { eyebrow: 'Perfil', title: 'Por trás da interface' },

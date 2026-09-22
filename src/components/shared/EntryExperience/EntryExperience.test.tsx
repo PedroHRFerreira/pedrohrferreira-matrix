@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getPortfolioContent } from '@/config'
 
@@ -9,6 +9,10 @@ const noop = vi.fn()
 
 beforeEach(() => {
   noop.mockClear()
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 beforeAll(() => {
@@ -40,7 +44,9 @@ beforeAll(() => {
 
 describe('EntryExperience', () => {
   it('uses the requested cinematic timing', () => {
-    expect(ENTRY_TIMING.staticNoise).toBe(5)
+    expect(ENTRY_TIMING.coldBoot).toBe(1.5)
+    expect(ENTRY_TIMING.staticNoise).toBe(3.5)
+    expect(ENTRY_TIMING.signalReveal).toBe(2)
     expect(ENTRY_TIMING.terminalPause).toBe(1.2)
     expect(ENTRY_TIMING.questionCharacter).toBeGreaterThan(ENTRY_TIMING.initialCharacter)
   })
@@ -63,13 +69,44 @@ describe('EntryExperience', () => {
     ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Pílula vermelha' })).toBeEnabled()
     expect(screen.getByRole('button', { name: 'Pílula azul' })).toBeEnabled()
+    expect(
+      screen.getByText('Eu só posso lhe mostrar a porta. Você tem que atravessá-la.')
+    ).toBeVisible()
+  })
+
+  it('types every character without losing content between renders', () => {
+    vi.useFakeTimers()
+    const content = getPortfolioContent()
+
+    render(
+      <EntryExperience
+        content={content}
+        state="initial-message"
+        onAdvanceSequence={noop}
+        onChooseReality={noop}
+        onTransitionComplete={noop}
+      />
+    )
+
+    act(() => vi.runAllTimers())
+
+    for (const line of [
+      content.entry.terminalConnection,
+      content.entry.terminalIdentify,
+      content.entry.terminalUser,
+      content.entry.terminalWakeUp,
+      content.entry.terminalMatrixHasYou
+    ]) {
+      expect(screen.getByText(line)).toBeVisible()
+    }
+    expect(noop).toHaveBeenCalledTimes(1)
   })
 
   it('does not offer a control to skip the introduction', () => {
     render(
       <EntryExperience
         content={getPortfolioContent()}
-        state="static-noise"
+        state="cold-boot"
         onAdvanceSequence={noop}
         onChooseReality={noop}
         onTransitionComplete={noop}
