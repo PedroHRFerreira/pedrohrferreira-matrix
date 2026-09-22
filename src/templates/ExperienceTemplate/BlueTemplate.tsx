@@ -1,5 +1,6 @@
 import { BlueFooter } from '@/components/blue/effects/BlueFooter'
 import { SkyBackground } from '@/components/blue/effects/SkyBackground'
+import { MatrixRain } from '@/components/blue/effects/MatrixRain/MatrixRain'
 import {
   BlueAbout,
   BlueContact,
@@ -20,17 +21,25 @@ interface BlueTemplateProps {
 }
 
 export function BlueTemplate({ content }: BlueTemplateProps) {
+  const blueNavigationOrder = ['about', 'projects', 'experience', 'stack', 'contact']
+  const blueNavigation = [...content.navigation].sort(
+    (a, b) => blueNavigationOrder.indexOf(a.id) - blueNavigationOrder.indexOf(b.id)
+  )
   return (
     <div className={`${styles.shell} ${styles.blue}`} data-reality="blue">
       <SkyBackground className={styles.backdrop} />
-      <RealityNavigation items={content.navigation} reality="blue" />
+      <MatrixRain />
+      <p className={styles.blueIntro} aria-hidden="true">
+        Você escolheu permanecer na realidade...
+      </p>
+      <RealityNavigation items={blueNavigation} reality="blue" />
       <CustomCursor reality="blue" />
       <HorizontalProjectsMotion />
       <main id="main-content" className={`${styles.main} ${styles.portfolio}`}>
         <BlueHero content={content} />
         <BlueAbout content={content} />
-        <BlueExperience content={content} />
         <BlueProjects content={content} />
+        <BlueExperience content={content} />
         <BlueStack content={content} />
         <BlueContact content={content} />
       </main>

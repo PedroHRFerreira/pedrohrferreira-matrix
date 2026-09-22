@@ -1,142 +1,80 @@
 .sky {
   overflow: hidden;
-  background: #4e8db9;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(255, 192, 217, 0.4), transparent 34%),
+    linear-gradient(180deg, #a9cde0, #bfdeec 58%, #d2e8f2);
 }
-
-.skyImage,
-.atmosphere,
-.light,
-.cloudField,
-.horizonHaze {
+.cloudField {
   position: absolute;
   inset: 0;
-}
-
-.skyImage {
-  inset: -3%;
-  background-image: url('/images/blue/cinematic-sky.png');
-  background-position: 50% 50%;
-  background-size: cover;
-  filter: saturate(0.82) contrast(0.92) brightness(0.94);
-  transform: scale(1.06);
-}
-
-.atmosphere {
-  background:
-    linear-gradient(180deg, rgba(7, 28, 51, 0.2), transparent 38%),
-    linear-gradient(90deg, rgba(232, 182, 201, 0.12), transparent 42%, rgba(7, 28, 51, 0.12));
-}
-
-.light {
-  top: -24rem;
-  right: -18rem;
-  width: 62rem;
-  height: 62rem;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 251, 234, 0.62),
-    rgba(245, 213, 160, 0.13) 36%,
-    transparent 68%
-  );
-  filter: blur(18px);
-}
-
-.cloudField {
   overflow: hidden;
   pointer-events: none;
+  mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
 }
-
-.cloud {
+.cloudPosition {
   position: absolute;
   top: var(--cloud-top);
-  left: -70rem;
-  width: var(--cloud-size);
-  aspect-ratio: 2.65;
+  left: var(--cloud-static-left);
+  width: min(var(--cloud-size), 70vw);
+  aspect-ratio: 2.7;
   opacity: var(--cloud-opacity);
   will-change: transform;
-  animation: cloud-drift var(--cloud-duration) linear var(--cloud-delay) infinite;
+  animation: drift var(--cloud-duration) linear var(--cloud-delay) infinite alternate;
+  animation-play-state: paused;
 }
-
-.cloud[data-depth='far'] {
-  filter: blur(2px);
+.cloudField[data-playing='true'] .cloudPosition {
+  animation-play-state: running;
 }
-
-.cloud[data-depth='near'] {
-  filter: drop-shadow(0 2rem 2rem rgba(23, 63, 96, 0.2));
+.cloudPosition[data-near='true'] .cloudShape {
+  filter: blur(3px) brightness(1.1) drop-shadow(0 0.7rem 1.3rem rgba(61, 113, 148, 0.32));
 }
-
-.cloudTexture,
-.cloudFault {
-  position: absolute;
-  inset: 0;
-  background: url('/images/blue/cloud-bank.png') center / contain no-repeat;
+.cloudBob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(
+    calc(var(--parallax-x, 0px) * var(--cloud-depth)),
+    calc(var(--parallax-y, 0px) * var(--cloud-depth)),
+    0
+  );
+  transition: transform 650ms ease-out;
 }
-
-.cloudFault {
-  width: 30%;
-  height: 42%;
-  inset: 31% auto auto 48%;
-  overflow: hidden;
+.cloudShape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   background:
-    repeating-linear-gradient(90deg, transparent 0 5px, rgba(0, 255, 65, 0.16) 6px 7px),
-    repeating-linear-gradient(0deg, transparent 0 8px, rgba(7, 28, 51, 0.14) 9px 10px),
-    url('/images/blue/cloud-bank.png') 58% 48% / 330% auto no-repeat;
-  background-blend-mode: soft-light, multiply, normal;
-  clip-path: polygon(7% 16%, 82% 2%, 100% 54%, 76% 100%, 4% 81%);
-  opacity: 0;
-  mix-blend-mode: multiply;
+    radial-gradient(ellipse 24% 36% at 25% 64%, #fff 0 98%, transparent 100%),
+    radial-gradient(ellipse 29% 50% at 50% 48%, #fff 0 98%, transparent 100%),
+    radial-gradient(ellipse 26% 36% at 75% 65%, #e7f5fc 0 98%, transparent 100%);
+  filter: blur(3px) drop-shadow(0 0.7rem 1.3rem rgba(61, 113, 148, 0.32));
+  animation: bob 4.5s ease-in-out infinite alternate;
 }
-
-.cloud[data-faulting='true'] .cloudFault {
-  animation: cloud-corruption 520ms ease-in-out both;
-}
-
-.horizonHaze {
-  top: auto;
-  height: 32%;
-  background: linear-gradient(0deg, rgba(242, 247, 255, 0.38), transparent);
-  filter: blur(8px);
-}
-
-@keyframes cloud-drift {
+@keyframes drift {
+  from {
+    transform: translate3d(-12vw, 0, 0);
+  }
   to {
-    transform: translate3d(calc(100vw + 150rem), 0, 0);
+    transform: translate3d(12vw, 0, 0);
   }
 }
-
-@keyframes cloud-corruption {
-  0%,
-  100% {
-    filter: blur(5px) saturate(0.7);
-    opacity: 0;
-    transform: translate3d(-0.4rem, 0.15rem, 0) scale(0.96);
-  }
-  40%,
-  64% {
-    filter: blur(0) saturate(0.86);
-    opacity: 0.7;
-    transform: translate3d(0, 0, 0) scale(1);
+@keyframes bob {
+  to {
+    transform: translate3d(0, -7px, 0);
   }
 }
-
 @media (max-width: 48rem) {
-  .skyImage {
-    background-position: 58% 50%;
-  }
-
-  .cloud {
-    width: min(var(--cloud-size), 38rem);
+  .cloudPosition {
+    width: min(calc(var(--cloud-size) * 0.3), 50vw);
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .cloud {
-    left: calc(var(--cloud-top) - 20rem);
+  .cloudPosition {
+    left: var(--cloud-static-left);
     animation: none;
   }
-
-  .cloudFault {
-    display: none;
+  .cloudShape {
+    animation: none;
   }
 }

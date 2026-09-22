@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
-
 import styles from './styles.module.scss'
 
 export interface SkyBackgroundProps {
@@ -10,65 +9,73 @@ export interface SkyBackgroundProps {
 }
 
 const clouds = [
-  { depth: 'far', top: 8, size: 34, duration: 128, delay: -81, opacity: 0.42 },
-  { depth: 'far', top: 48, size: 28, duration: 142, delay: -24, opacity: 0.34 },
-  { depth: 'middle', top: 18, size: 44, duration: 102, delay: -66, opacity: 0.58 },
-  { depth: 'middle', top: 62, size: 39, duration: 116, delay: -14, opacity: 0.5 },
-  { depth: 'middle', top: 36, size: 36, duration: 110, delay: -94, opacity: 0.46 },
-  { depth: 'near', top: 70, size: 58, duration: 88, delay: -47, opacity: 0.72 },
-  { depth: 'near', top: 4, size: 52, duration: 94, delay: -9, opacity: 0.66 }
+  { top: 8, left: 5, size: 36, duration: 18, delay: -8, opacity: 0.78, depth: 0.4 },
+  { top: 29, left: 68, size: 29, duration: 22, delay: -17, opacity: 0.7, depth: 0.6 },
+  { top: 48, left: 30, size: 43, duration: 25, delay: -11, opacity: 0.82, depth: 1 },
+  { top: 68, left: 75, size: 33, duration: 20, delay: -4, opacity: 0.72, depth: 0.8 },
+  { top: 82, left: 3, size: 47, duration: 23, delay: -19, opacity: 0.76, depth: 1.2 }
 ] as const
 
 export function SkyBackground({ className }: SkyBackgroundProps) {
-  const [faultedCloud, setFaultedCloud] = useState<number | null>(null)
-  const faultSequence = useMemo(() => [2, 5], [])
-
+  const fieldRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (media.matches) return
-
-    const timers: number[] = []
-    faultSequence.forEach((cloudIndex, sequenceIndex) => {
-      const start = 7000 + sequenceIndex * 11500 + Math.round(Math.random() * 3500)
-      timers.push(
-        window.setTimeout(() => {
-          setFaultedCloud(cloudIndex)
-          timers.push(window.setTimeout(() => setFaultedCloud(null), 520))
-        }, start)
-      )
-    })
-
-    return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [faultSequence])
+    const field = fieldRef.current
+    if (!field || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const start = window.setTimeout(() => {
+      field.dataset.playing = 'true'
+    }, 2200)
+    let frame = 0
+    const move = (event: PointerEvent) => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        field.style.setProperty('--parallax-x', `${(event.clientX / innerWidth - 0.5) * 12}px`)
+        field.style.setProperty('--parallax-y', `${(event.clientY / innerHeight - 0.5) * 8}px`)
+        if (event.pointerType === 'mouse') {
+          field.querySelectorAll<HTMLElement>(`.${styles.cloudPosition}`).forEach((cloud) => {
+            const bounds = cloud.getBoundingClientRect()
+            const near =
+              event.clientX > bounds.left - 80 &&
+              event.clientX < bounds.right + 80 &&
+              event.clientY > bounds.top - 80 &&
+              event.clientY < bounds.bottom + 80
+            cloud.dataset.near = String(near)
+          })
+        }
+      })
+    }
+    window.addEventListener('pointermove', move, { passive: true })
+    return () => {
+      window.clearTimeout(start)
+      window.removeEventListener('pointermove', move)
+      cancelAnimationFrame(frame)
+    }
+  }, [])
 
   return (
     <div className={[styles.sky, className].filter(Boolean).join(' ')} aria-hidden="true">
-      <div className={styles.skyImage} />
-      <div className={styles.atmosphere} />
-      <div className={styles.light} />
-      <div className={styles.cloudField}>
+      <div className={styles.cloudField} ref={fieldRef}>
         {clouds.map((cloud, index) => (
           <span
-            className={styles.cloud}
-            data-depth={cloud.depth}
-            data-faulting={faultedCloud === index || undefined}
-            key={`${cloud.depth}-${index}`}
+            className={styles.cloudPosition}
+            key={index}
             style={
               {
                 '--cloud-top': `${cloud.top}%`,
+                '--cloud-static-left': `${cloud.left}%`,
                 '--cloud-size': `${cloud.size}rem`,
                 '--cloud-duration': `${cloud.duration}s`,
                 '--cloud-delay': `${cloud.delay}s`,
-                '--cloud-opacity': cloud.opacity
+                '--cloud-opacity': cloud.opacity,
+                '--cloud-depth': cloud.depth
               } as CSSProperties
             }
           >
-            <span className={styles.cloudTexture} />
-            <span className={styles.cloudFault} />
+            <span className={styles.cloudBob}>
+              <span className={styles.cloudShape} />
+            </span>
           </span>
         ))}
       </div>
-      <div className={styles.horizonHaze} />
     </div>
   )
 }

@@ -1,43 +1,48 @@
 .hero {
   position: relative;
   display: flex;
-  width: min(calc(100% - 2rem), 76rem);
+  width: min(calc(100% - 2rem), 68rem);
   min-height: 100svh;
   flex-direction: column;
   justify-content: center;
   margin-inline: auto;
   padding: 8rem clamp(0rem, 5vw, 3rem) 7rem;
-  text-shadow: 0 1px 1rem rgba(242, 247, 255, 0.3);
+  text-shadow: 0 1px 1rem rgba(255, 255, 255, 0.7);
 }
 .heroKicker {
-  margin: 0 0 1.25rem;
-  color: var(--accent);
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 1.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(111, 179, 217, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 192, 217, 0.32);
+  color: #365e78;
   font-size: 0.875rem;
-  font-weight: 750;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 .heroTitle {
   max-width: 11ch;
   margin: 0;
-  color: #071c33;
-  font-size: clamp(4rem, 12vw, 10.5rem);
-  font-weight: 520;
-  line-height: 0.82;
-  letter-spacing: -0.08em;
-  text-shadow: 0 0.2rem 2rem rgba(242, 247, 255, 0.72);
+  color: #4a5568;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 560;
+  line-height: 1.03;
+  letter-spacing: -0.055em;
+  text-shadow: 0 0.2rem 2rem rgba(255, 255, 255, 0.9);
 }
 .heroRole {
   margin: 1.5rem 0 0;
-  color: #28629d;
-  font-family: Georgia, serif;
-  font-size: clamp(1.4rem, 3vw, 2.4rem);
-  font-style: italic;
+  color: #4b687b;
+  font-family: inherit;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-weight: 550;
 }
 .heroIntroduction {
   max-width: 44rem;
   margin: 1.6rem 0 0;
-  color: #365b78;
+  color: #4a5568;
   font-size: clamp(1.05rem, 2vw, 1.35rem);
 }
 .heroActions {
@@ -52,38 +57,39 @@
   min-height: 3.75rem;
   align-items: center;
   padding: 0.95rem 1.65rem;
-  border: 1px solid rgba(242, 247, 255, 0.7);
+  border: 2px solid #6fb3d9;
   border-radius: 999px;
   font-size: 0.95rem;
-  font-weight: 750;
+  font-weight: 650;
   text-decoration: none;
-  box-shadow: 0 0.8rem 2rem rgba(7, 28, 51, 0.16);
+  box-shadow: 0 0.8rem 2rem rgba(107, 179, 217, 0.15);
   backdrop-filter: blur(20px) saturate(1.2);
   transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background-color 180ms ease;
+    transform 300ms ease-out,
+    box-shadow 300ms ease-out,
+    background-color 300ms ease-out;
 }
 .primaryAction {
-  color: #fff;
-  background: rgba(17, 78, 134, 0.78);
+  color: #304d60;
+  background: rgba(111, 179, 217, 0.3);
 }
 .secondaryAction {
-  color: #194a7a;
-  background: rgba(242, 247, 255, 0.56);
+  color: #304d60;
+  background: rgba(255, 255, 255, 0.72);
 }
 .primaryAction:hover,
 .primaryAction:focus-visible,
 .secondaryAction:hover,
 .secondaryAction:focus-visible {
-  box-shadow: 0 1.2rem 3rem rgba(7, 28, 51, 0.22);
-  transform: translateY(-2px);
+  background: rgba(111, 179, 217, 0.2);
+  box-shadow: 0 0 15px rgba(127, 216, 127, 0.3);
+  transform: translateY(-3px) scale(1.05);
 }
 .scrollCue {
   position: absolute;
   bottom: 2rem;
   left: clamp(0rem, 5vw, 3rem);
-  color: #315d84;
+  color: #4a5568;
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -95,7 +101,7 @@
     padding-inline: 0.5rem;
   }
   .heroTitle {
-    font-size: clamp(3.7rem, 19vw, 6.5rem);
+    font-size: clamp(2.8rem, 12vw, 4.25rem);
   }
   .scrollCue {
     left: 0.5rem;

@@ -19,6 +19,7 @@ export function RealityNavigation({
   skipLabel
 }: RealityNavigationProps) {
   const [activeId, setActiveId] = useState('main-content')
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     const sections = items
@@ -43,6 +44,7 @@ export function RealityNavigation({
           .at(-1)
         const nextId = visible?.id ?? previous?.id ?? 'main-content'
         setActiveId(nextId)
+        setScrolled(window.scrollY > 24)
         const nextHash = nextId === 'main-content' ? '' : `#${nextId}`
         window.history.replaceState(null, '', `${window.location.pathname}${nextHash}`)
       })
@@ -65,7 +67,12 @@ export function RealityNavigation({
           {skipLabel}
         </a>
       ) : null}
-      <nav className={styles.navigation} data-reality={reality} aria-label={label}>
+      <nav
+        className={styles.navigation}
+        data-reality={reality}
+        data-scrolled={scrolled}
+        aria-label={label}
+      >
         <a
           aria-current={activeId === 'main-content' ? 'page' : undefined}
           className={styles.brand}

@@ -1,7 +1,17 @@
 .section {
   width: min(calc(100% - 2rem), 70rem);
   margin-inline: auto;
-  padding: clamp(6rem, 12vw, 10rem) 0;
+  padding: 0;
+}
+.stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: auto;
+}
+.viewport {
+  width: 100%;
+  overflow-x: auto;
 }
 .sectionHeader {
   max-width: 50rem;
@@ -19,6 +29,9 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+.scrollProgress {
+  display: none;
 }
 .stackCloud {
   min-width: 0;
@@ -59,5 +72,53 @@
   }
   .stackCloud:nth-child(even) {
     transform: none;
+  }
+}
+
+@media (min-width: 64rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .section {
+    width: 100%;
+  }
+  .stage {
+    min-height: 100svh;
+  }
+  .sectionHeader {
+    width: min(calc(100% - 2rem), 70rem);
+    margin-inline: auto;
+  }
+  .section[data-enhanced='true'] .viewport {
+    overflow: hidden;
+  }
+  .stackConstellation {
+    --gallery-inset: max(1rem, calc((100vw - 30rem) / 2));
+    display: flex;
+    width: max-content;
+    gap: 1.5rem;
+    padding-inline: var(--gallery-inset);
+  }
+  .section[data-enhanced='true'] .stackConstellation {
+    flex-direction: row-reverse;
+  }
+  .stackCloud {
+    width: 30rem;
+    min-height: 22rem;
+  }
+  .stackCloud:nth-child(even) {
+    transform: none;
+  }
+  .scrollProgress {
+    display: block;
+    width: min(calc(100% - 2rem), 70rem);
+    height: 3px;
+    margin: 2rem auto 0;
+    border-radius: 99px;
+    background: rgba(74, 85, 104, 0.16);
+  }
+  .scrollProgress span {
+    display: block;
+    width: var(--gallery-progress, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: #4f86a8;
   }
 }

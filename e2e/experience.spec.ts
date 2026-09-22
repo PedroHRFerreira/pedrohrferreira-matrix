@@ -127,6 +127,7 @@ test('projetos e stack atravessam na horizontal com o scroll vertical', async ({
     const gallery = page.locator(`#${id}`)
     await expect(gallery).toHaveAttribute('data-enhanced', 'true')
     await gallery.scrollIntoViewIfNeeded()
+    await expect(gallery.locator('[data-horizontal-stage]')).toBeInViewport()
     const cards = gallery.locator('article')
     await expect(cards).toHaveCount(4)
     const firstLeft = await cards
@@ -152,6 +153,61 @@ test('movimento reduzido mantém as duas galerias em fluxo vertical legível', a
     await expect(gallery).not.toHaveAttribute('data-enhanced', 'true')
     await expect(gallery.locator('article')).toHaveCount(4)
     await expect(gallery.locator('article').last()).toBeVisible()
+  }
+})
+
+test('pílula azul mantém nuvens e projetos visíveis em mobile com movimento reduzido', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openReality(page, 'blue', 'reduce')
+
+  const visibleClouds = await page
+    .locator('[data-reality="blue"] [class*="cloudPosition"]')
+    .evaluateAll(
+      (clouds) =>
+        clouds.filter((cloud) => {
+          const rect = cloud.getBoundingClientRect()
+          return (
+            rect.right > 0 && rect.left < innerWidth && rect.bottom > 0 && rect.top < innerHeight
+          )
+        }).length
+    )
+  expect(visibleClouds).toBeGreaterThanOrEqual(3)
+  await expect(page.locator('#projects article')).toHaveCount(4)
+  await expect(page.locator('#projects')).not.toHaveAttribute('data-enhanced', 'true')
+  await expect(page.locator('#stack')).not.toHaveAttribute('data-enhanced', 'true')
+  expect(
+    await page.locator('main#main-content').evaluate((main) => getComputedStyle(main).rowGap)
+  ).toBe('48px')
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
+})
+
+test('pílula azul alterna leitura vertical e duas travessias horizontais no desktop', async ({
+  page
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile')
+  await openReality(page, 'blue')
+  for (const [id, direction] of [
+    ['projects', 'left'],
+    ['stack', 'right']
+  ] as const) {
+    const gallery = page.locator(`#${id}`)
+    await expect(gallery).toHaveAttribute('data-enhanced', 'true')
+    await gallery.scrollIntoViewIfNeeded()
+    await expect(gallery.locator('[data-horizontal-stage]')).toBeInViewport()
+    const first = gallery.locator('article').first()
+    const before = await first.evaluate((element) => element.getBoundingClientRect().left)
+    await page.mouse.wheel(0, 650)
+    if (direction === 'left') {
+      await expect
+        .poll(() => first.evaluate((element) => element.getBoundingClientRect().left))
+        .toBeLessThan(before)
+    } else {
+      await expect
+        .poll(() => first.evaluate((element) => element.getBoundingClientRect().left))
+        .toBeGreaterThan(before)
+    }
   }
 })
 
