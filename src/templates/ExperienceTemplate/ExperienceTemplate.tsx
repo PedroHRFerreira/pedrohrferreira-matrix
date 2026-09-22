@@ -12,11 +12,11 @@ export function ExperienceTemplate() {
   const content = getPortfolioContent()
 
   if (experience.state === 'ready-red') {
-    return <RedTemplate content={content} onReviewChoice={experience.reviewChoice} />
+    return <RedTemplate content={content} />
   }
 
   if (experience.state === 'ready-blue') {
-    return <BlueTemplate content={content} onReviewChoice={experience.reviewChoice} />
+    return <BlueTemplate content={content} />
   }
 
   return (

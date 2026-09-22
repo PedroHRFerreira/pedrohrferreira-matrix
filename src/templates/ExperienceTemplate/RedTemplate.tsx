@@ -17,7 +17,6 @@ import styles from './styles.module.scss'
 
 interface RedTemplateProps {
   content: PortfolioContent
-  onReviewChoice: () => void
 }
 
 const redNavigation: readonly NavigationItem[] = [
@@ -27,14 +26,11 @@ const redNavigation: readonly NavigationItem[] = [
   { id: 'about', label: '//DOSSIER' }
 ]
 
-export function RedTemplate({ content, onReviewChoice }: RedTemplateProps) {
+export function RedTemplate({ content }: RedTemplateProps) {
   return (
     <div className={`${styles.shell} ${styles.red}`} data-reality="red">
       <MatrixRain className={styles.backdrop} />
       <RealityNavigation items={redNavigation} reality="red" />
-      <button className={styles.reviewChoice} type="button" onClick={onReviewChoice}>
-        {content.actions.reviewChoice}
-      </button>
       <CustomCursor reality="red" />
       <HorizontalProjectsMotion />
       <main id="main-content" className={`${styles.main} ${styles.portfolio}`}>

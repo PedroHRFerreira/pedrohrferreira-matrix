@@ -16,7 +16,6 @@ export interface ExperienceController {
   reality: Reality | null
   canChoose: boolean
   advanceSequence: () => void
-  reviewChoice: () => void
   chooseReality: (reality: Reality) => void
   completeTransition: () => void
 }
@@ -38,7 +37,6 @@ export function useExperience(): ExperienceController {
   }, [])
 
   const advanceSequence = useCallback(() => dispatch({ type: 'SEQUENCE_ADVANCED' }), [])
-  const reviewChoice = useCallback(() => dispatch({ type: 'CHOICE_REVIEWED' }), [])
   const chooseReality = useCallback(
     (reality: Reality) => dispatch({ type: 'REALITY_CHOSEN', reality }),
     []
@@ -51,7 +49,6 @@ export function useExperience(): ExperienceController {
     reality,
     canChoose: canChooseReality(state),
     advanceSequence,
-    reviewChoice,
     chooseReality,
     completeTransition
   }

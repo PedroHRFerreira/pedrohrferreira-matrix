@@ -89,6 +89,7 @@ export interface EntryNarrative {
   identityValue: string
   welcome: string
   question: string
+  choicePrompt: string
   redPillLabel: string
   bluePillLabel: string
   redTransition: readonly string[]
@@ -100,7 +101,6 @@ export interface EntryNarrative {
   terminalMatrixHasYou: string
   continuePrompt: string
   touchContinue: string
-  choicePrompt: string
 }
 
 export interface SectionCopy {
@@ -122,7 +122,6 @@ export interface PortfolioActions {
   contactMe: string
   visitProject: string
   skipToContent: string
-  reviewChoice: string
   resume: ProjectLink
 }
 

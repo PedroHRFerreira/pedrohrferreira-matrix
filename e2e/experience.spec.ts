@@ -164,7 +164,6 @@ test('carrega as duas realidades sem erros de console', async ({ page }) => {
 
   await openReality(page, 'red')
   await expect(page.getByRole('heading', { name: 'Rods SDK' })).toBeVisible()
-  await page.getByRole('button', { name: 'Rever escolha' }).click()
   await page.getByRole('button', { name: 'Pílula azul' }).click()
   await expect(page.locator('[data-reality="blue"]').first()).toBeVisible({
     timeout: REALITY_TIMEOUT

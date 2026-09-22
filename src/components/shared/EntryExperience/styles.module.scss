@@ -297,14 +297,6 @@
   animation: selection-arrival 800ms ease-out both;
 }
 
-.choicePrompt {
-  margin: 0 0 1.8rem;
-  color: #dfe9e1;
-  font-size: clamp(1rem, 2.5vw, 1.6rem);
-  line-height: 1.45;
-  white-space: pre-line;
-}
-
 .pills {
   display: flex;
   flex-wrap: wrap;

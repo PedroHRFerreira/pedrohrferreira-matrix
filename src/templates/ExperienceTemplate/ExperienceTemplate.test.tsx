@@ -37,8 +37,7 @@ const noop = () => undefined
 
 function controller(
   state: ExperienceController['state'],
-  reality: ExperienceController['reality'],
-  reviewChoice: () => void = noop
+  reality: ExperienceController['reality']
 ): ExperienceController {
   return {
     state,
@@ -46,8 +45,7 @@ function controller(
     canChoose: state === 'pill-selection',
     advanceSequence: noop,
     chooseReality: noop,
-    completeTransition: noop,
-    reviewChoice
+    completeTransition: noop
   }
 }
 
@@ -83,15 +81,5 @@ describe('ExperienceTemplate', () => {
     expect(screen.getByTestId(present)).toBeInTheDocument()
     expect(screen.queryByTestId(absent)).not.toBeInTheDocument()
     expect(screen.queryByTestId('entry')).not.toBeInTheDocument()
-  })
-
-  it('forwards the controller review action to the selected reality', () => {
-    const reviewChoice = vi.fn()
-    mocks.useExperience.mockReturnValue(controller('ready-red', 'red', reviewChoice))
-    render(<ExperienceTemplate />)
-
-    expect(mocks.red).toHaveBeenCalledWith(
-      expect.objectContaining({ content: getPortfolioContent(), onReviewChoice: reviewChoice })
-    )
   })
 })

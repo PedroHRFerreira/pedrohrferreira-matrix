@@ -204,6 +204,7 @@ export function EntryExperience({
     [content]
   )
   const questionLines = useMemo(() => [content.entry.question], [content.entry.question])
+  const choiceLines = useMemo(() => [content.entry.choicePrompt], [content.entry.choicePrompt])
 
   const typedInitialLines = useTypedLines(
     initialLines,
@@ -292,9 +293,11 @@ export function EntryExperience({
         ? initialLines
         : state === 'reality-question'
           ? typedQuestionLines
-          : state === 'waiting-second-enter' || state === 'pill-selection'
+          : state === 'waiting-second-enter'
             ? questionLines
-            : []
+            : state === 'pill-selection'
+              ? choiceLines
+              : []
   const isWaiting = state === 'waiting-first-enter' || state === 'waiting-second-enter'
   return (
     <main
@@ -376,12 +379,7 @@ export function EntryExperience({
 
                 {state === 'pill-selection' ? (
                   <div className={styles.selection}>
-                    <p className={styles.choicePrompt}>{content.entry.choicePrompt}</p>
-                    <div
-                      className={styles.pills}
-                      role="group"
-                      aria-label={content.entry.choicePrompt}
-                    >
+                    <div className={styles.pills} role="group">
                       {(['red', 'blue'] as const).map((reality) => (
                         <button
                           aria-pressed={selectedReality === reality}

@@ -3,7 +3,6 @@ import type { ExperienceState, Reality } from '@/types/portfolio'
 export type ExperienceEvent =
   | { type: 'SEQUENCE_ADVANCED' }
   | { type: 'INTRODUCTION_SKIPPED' }
-  | { type: 'CHOICE_REVIEWED' }
   | { type: 'REALITY_CHOSEN'; reality: Reality }
   | { type: 'TRANSITION_COMPLETED' }
   | { type: 'RESET' }
@@ -44,11 +43,6 @@ export function applyExperienceEvent(
       accepted: state !== INITIAL_EXPERIENCE_STATE,
       state: INITIAL_EXPERIENCE_STATE
     }
-  }
-
-  if (event.type === 'CHOICE_REVIEWED') {
-    const resetState = applyExperienceEvent(state, { type: 'RESET' }).state
-    return applyExperienceEvent(resetState, { type: 'INTRODUCTION_SKIPPED' })
   }
 
   if (event.type === 'INTRODUCTION_SKIPPED') {

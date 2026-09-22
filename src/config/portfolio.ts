@@ -28,6 +28,7 @@ export const portfolioContent = {
     identityValue: 'usuário: Neo',
     welcome: 'Bem-vindo, Neo.',
     question: 'E se eu te dissesse que tudo o que você conhece é uma mentira?',
+    choicePrompt: 'Eu só posso lhe mostrar a porta. Você tem que atravessá-la.',
     redPillLabel: 'Pílula vermelha',
     bluePillLabel: 'Pílula azul',
     redTransition: [
@@ -44,8 +45,7 @@ export const portfolioContent = {
     terminalWakeUp: 'Acorde, Neo...',
     terminalMatrixHasYou: 'A Matrix possui você...',
     continuePrompt: '[ PRESSIONE ENTER PARA CONTINUAR ]',
-    touchContinue: '[ CONTINUAR ↵ ]',
-    choicePrompt: 'Eu só posso lhe mostrar a porta.\nVocê tem que atravessá-la.'
+    touchContinue: '[ CONTINUAR ↵ ]'
   },
   sections: {
     about: { eyebrow: 'Perfil', title: 'Por trás da interface' },
@@ -74,7 +74,6 @@ export const portfolioContent = {
     contactMe: 'Entrar em contato',
     visitProject: 'Ver projeto',
     skipToContent: 'Ir para o conteúdo',
-    reviewChoice: 'Rever escolha',
     resume: { label: 'Baixar meu currículo', href: '/curriculo-pedro.pdf' }
   },
   experience: [

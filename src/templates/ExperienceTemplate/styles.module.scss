@@ -43,42 +43,6 @@
   z-index: 1;
 }
 
-.reviewChoice {
-  position: fixed;
-  z-index: 45;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.65rem 0.9rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--text);
-  background: var(--surface-raised);
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  backdrop-filter: blur(18px);
-
-  &:hover,
-  &:focus-visible {
-    color: var(--accent);
-  }
-}
-
-.red .reviewChoice {
-  top: 0.45rem;
-  right: max(1rem, calc((100vw - 76rem) / 2));
-  min-height: 2.15rem;
-  padding: 0.35rem 0.75rem;
-  border-color: #315a39;
-  border-radius: 0;
-  color: var(--accent);
-  background: rgba(6, 9, 7, 0.94);
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
 .redEnding {
   position: relative;
   z-index: 1;
@@ -143,16 +107,5 @@
 @media (max-width: 48rem) {
   .shell {
     --content-width: 100%;
-  }
-
-  .reviewChoice {
-    top: 0.75rem;
-    right: 0.75rem;
-    min-height: 2.75rem;
-  }
-
-  .red .reviewChoice {
-    top: 0.55rem;
-    right: 0.6rem;
   }
 }

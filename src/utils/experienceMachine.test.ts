@@ -76,13 +76,6 @@ describe('experience state machine', () => {
     })
   })
 
-  it('reviews a completed choice by resetting before skipping the introduction', () => {
-    const review = applyExperienceEvent('ready-red', { type: 'CHOICE_REVIEWED' })
-
-    expect(review).toEqual({ accepted: true, state: 'pill-selection' })
-    expect(canChooseReality(review.state)).toBe(true)
-  })
-
   it('skips the introduction while preserving an explicit reality choice', () => {
     expect(applyExperienceEvent('cold-boot', { type: 'INTRODUCTION_SKIPPED' })).toEqual({
       accepted: true,

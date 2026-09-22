@@ -63,15 +63,15 @@ describe('EntryExperience', () => {
     )
 
     expect(
+      screen.getAllByText('Eu só posso lhe mostrar a porta. Você tem que atravessá-la.')
+    ).toHaveLength(1)
+    expect(
       screen.getByRole('heading', {
-        name: 'E se eu te dissesse que tudo o que você conhece é uma mentira?'
+        name: 'Eu só posso lhe mostrar a porta. Você tem que atravessá-la.'
       })
     ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Pílula vermelha' })).toBeEnabled()
     expect(screen.getByRole('button', { name: 'Pílula azul' })).toBeEnabled()
-    expect(
-      screen.getByText('Eu só posso lhe mostrar a porta. Você tem que atravessá-la.')
-    ).toBeVisible()
   })
 
   it('types every character without losing content between renders', () => {

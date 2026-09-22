@@ -44,21 +44,6 @@ describe('useExperience', () => {
     expect(window.localStorage).toHaveLength(0)
   })
 
-  it('returns directly to the explicit choice while the current session is open', () => {
-    const { result } = renderHook(() => useExperience())
-
-    for (let step = 0; step < 8; step += 1) {
-      act(() => result.current.advanceSequence())
-    }
-    act(() => result.current.chooseReality('blue'))
-    act(() => result.current.completeTransition())
-    act(() => result.current.reviewChoice())
-
-    expect(result.current.state).toBe('pill-selection')
-    expect(result.current.reality).toBeNull()
-    expect(result.current.canChoose).toBe(true)
-  })
-
   it('starts from the cold boot on every new mount', () => {
     const first = renderHook(() => useExperience())
     for (let step = 0; step < 8; step += 1) {
