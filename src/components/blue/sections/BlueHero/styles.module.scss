@@ -7,34 +7,36 @@
   justify-content: center;
   margin-inline: auto;
   padding: 8rem clamp(0rem, 5vw, 3rem) 7rem;
-  text-shadow: 0 1px 1rem rgba(255, 255, 255, 0.7);
+  isolation: isolate;
+  container-type: inline-size;
 }
 .heroKicker {
   width: max-content;
   max-width: 100%;
   margin: 0 0 1.5rem;
   padding: 0.6rem 1rem;
-  border: 1px solid rgba(111, 179, 217, 0.45);
+  border: 1px solid rgba(255, 192, 224, 0.2);
   border-radius: 999px;
-  background: rgba(255, 192, 217, 0.32);
-  color: #365e78;
+  background: rgba(255, 192, 224, 0.06);
+  color: var(--blue-blush);
   font-size: 0.875rem;
   font-weight: 650;
   letter-spacing: 0.02em;
 }
 .heroTitle {
-  max-width: 11ch;
+  max-width: 100%;
   margin: 0;
-  color: #4a5568;
-  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--text);
+  font-size: clamp(1rem, 8cqi, 5rem);
+  white-space: nowrap;
   font-weight: 560;
   line-height: 1.03;
   letter-spacing: -0.055em;
-  text-shadow: 0 0.2rem 2rem rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 3rem rgba(160, 231, 229, 0.12);
 }
 .heroRole {
   margin: 1.5rem 0 0;
-  color: #4b687b;
+  color: var(--accent);
   font-family: inherit;
   font-size: clamp(1.25rem, 2vw, 1.7rem);
   font-weight: 550;
@@ -42,7 +44,7 @@
 .heroIntroduction {
   max-width: 44rem;
   margin: 1.6rem 0 0;
-  color: #4a5568;
+  color: var(--text);
   font-size: clamp(1.05rem, 2vw, 1.35rem);
 }
 .heroActions {
@@ -57,7 +59,7 @@
   min-height: 3.75rem;
   align-items: center;
   padding: 0.95rem 1.65rem;
-  border: 2px solid #6fb3d9;
+  border: 1px solid var(--line);
   border-radius: 999px;
   font-size: 0.95rem;
   font-weight: 650;
@@ -70,26 +72,27 @@
     background-color 300ms ease-out;
 }
 .primaryAction {
-  color: #304d60;
-  background: rgba(111, 179, 217, 0.3);
+  color: var(--text);
+  background: var(--accent);
+  color: var(--surface);
 }
 .secondaryAction {
-  color: #304d60;
-  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+  background: var(--surface-raised);
 }
 .primaryAction:hover,
 .primaryAction:focus-visible,
 .secondaryAction:hover,
 .secondaryAction:focus-visible {
-  background: rgba(111, 179, 217, 0.2);
+  border-color: var(--accent);
   box-shadow: 0 0 15px rgba(127, 216, 127, 0.3);
-  transform: translateY(-3px) scale(1.05);
+  transform: translateY(-2px);
 }
 .scrollCue {
   position: absolute;
   bottom: 2rem;
   left: clamp(0rem, 5vw, 3rem);
-  color: #4a5568;
+  color: var(--text);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -100,10 +103,55 @@
   .hero {
     padding-inline: 0.5rem;
   }
-  .heroTitle {
-    font-size: clamp(2.8rem, 12vw, 4.25rem);
-  }
   .scrollCue {
     left: 0.5rem;
+  }
+}
+
+.heroKicker,
+.heroTitle,
+.heroRole,
+.heroIntroduction,
+.heroActions {
+  animation: enter 900ms var(--ease-out) 3.5s both;
+}
+.heroTitle {
+  animation-delay: 3.6s;
+}
+.heroRole {
+  animation-delay: 3.7s;
+}
+.heroIntroduction {
+  animation-delay: 3.8s;
+}
+.heroActions {
+  animation-delay: 3.9s;
+}
+.primaryAction:active,
+.secondaryAction:active {
+  transform: scale(0.98);
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroKicker,
+  .heroTitle,
+  .heroRole,
+  .heroIntroduction,
+  .heroActions {
+    animation: none;
+  }
+  .primaryAction,
+  .secondaryAction {
+    transform: none;
   }
 }

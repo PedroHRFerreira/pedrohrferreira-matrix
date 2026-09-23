@@ -140,7 +140,7 @@ export const portfolioContent = {
       title: 'ARCA Tracker',
       summary: 'Aplicativo local-first para acompanhamento de carteira.',
       technologies: ['React Native', 'Expo', 'SQLite', 'Cloudflare Workers'],
-      links: [{ label: 'Ver repositório', href: `${githubUrl}/arca-pessoal` }]
+      links: [{ label: 'Ver repositório', href: `${githubUrl}/arca-tracker` }]
     },
     {
       slug: 'rods-themes',

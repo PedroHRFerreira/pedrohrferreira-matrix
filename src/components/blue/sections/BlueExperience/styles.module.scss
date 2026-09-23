@@ -52,9 +52,9 @@
 .timelineItem article {
   margin-bottom: 3rem;
   padding: clamp(1.25rem, 4vw, 2rem);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--line);
   border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.46);
+  background: var(--glass);
   backdrop-filter: blur(16px);
 }
 .timelineItem h3 {
@@ -83,7 +83,7 @@
 .highlights li {
   padding: 0.38rem 0.7rem;
   border-radius: 999px;
-  color: #264e73;
-  background: rgba(255, 255, 255, 0.72);
+  color: var(--accent);
+  background: var(--glass);
   font-size: 0.875rem;
 }

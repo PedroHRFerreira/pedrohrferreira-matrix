@@ -8,8 +8,8 @@
   display: flex;
   min-height: 100svh;
   flex-direction: column;
-  justify-content: flex-start;
-  padding-block: 3.5rem 1.5rem;
+  justify-content: center;
+  padding-block: 4rem;
   background: linear-gradient(
     90deg,
     rgba(2, 10, 5, 0.82),
@@ -121,7 +121,7 @@
 @media (prefers-reduced-motion: reduce) {
   .stage {
     min-height: auto;
-    padding-block: 2rem;
+    padding-block: 0;
   }
   .viewport {
     overflow: visible;
@@ -134,5 +134,21 @@
   }
   .guide {
     display: none;
+  }
+}
+
+@media (max-height: 800px) {
+  .gallery .header h2 {
+    max-width: none;
+    font-size: 2.25rem;
+  }
+  .header {
+    margin-bottom: 1rem;
+  }
+  .description {
+    font-size: 0.95rem;
+  }
+  .guide {
+    margin-top: 1rem;
   }
 }

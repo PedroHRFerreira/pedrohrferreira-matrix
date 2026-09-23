@@ -19,7 +19,7 @@
   width: min(45rem, 90vw);
   aspect-ratio: 1.6;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(160, 231, 229, 0.06);
   filter: blur(55px);
   transform: translate(-50%, -50%);
 }
@@ -46,10 +46,10 @@
   gap: 1rem;
   min-height: 4.5rem;
   padding: 1rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
   border-radius: 1.25rem;
   color: inherit;
-  background: rgba(255, 255, 255, 0.58);
+  background: var(--glass);
   box-shadow: 0 1rem 3rem rgba(49, 106, 151, 0.11);
   text-decoration: none;
 }

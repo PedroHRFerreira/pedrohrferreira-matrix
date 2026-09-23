@@ -8,7 +8,6 @@ interface BlueHeroProps {
 
 export function BlueHero({ content }: BlueHeroProps) {
   const { actions, profile } = content
-
   return (
     <header className={styles.hero} data-section="hero">
       <p className={styles.heroKicker}>Uma prática digital centrada em pessoas</p>

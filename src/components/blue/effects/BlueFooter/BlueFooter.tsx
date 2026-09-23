@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import type { Contact } from '@/types'
 
 import styles from './styles.module.scss'
@@ -13,11 +14,12 @@ export interface BlueFooterProps {
 }
 
 export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProps) {
+  const reduced = useReducedMotion()
   const footerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const footer = footerRef.current
-    if (!footer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!footer || reduced) return
 
     let observer: IntersectionObserver | undefined
     const context = gsap.context(() => {
@@ -57,7 +59,7 @@ export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProp
       observer?.disconnect()
       context.revert()
     }
-  }, [])
+  }, [reduced])
 
   return (
     <footer ref={footerRef} className={styles.footer}>
@@ -72,7 +74,7 @@ export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProp
         </span>
         <p className={styles.message}>{message}</p>
         {contacts.length ? (
-          <ul className={styles.contacts} aria-label="Professional profiles">
+          <ul className={styles.contacts} aria-label="Perfis profissionais">
             {contacts.map((contact) => (
               <li key={contact.kind}>
                 <a href={contact.href} rel={contact.kind === 'email' ? undefined : 'noreferrer'}>
@@ -82,6 +84,9 @@ export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProp
             ))}
           </ul>
         ) : null}
+        <a className={styles.backToTop} href="#main-content">
+          Voltar ao início ↑
+        </a>
         <small>{copyright}</small>
       </div>
     </footer>

@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+import { ProjectDetails } from './ProjectDetails'
 import Image from 'next/image'
 
 import type { PortfolioContent } from '@/types'
@@ -10,6 +14,7 @@ interface BlueProjectsProps {
 
 export function BlueProjects({ content }: BlueProjectsProps) {
   const { actions, projects, sections } = content
+  const [selected, setSelected] = useState<string | null>(null)
 
   return (
     <section
@@ -28,18 +33,16 @@ export function BlueProjects({ content }: BlueProjectsProps) {
         </div>
         <div className={styles.projectsViewport} data-projects-viewport data-horizontal-viewport>
           <div className={styles.projectsTrack} data-projects-track data-horizontal-track>
-            {projects.map((project, index) => (
+            {projects.map((project) => (
               <article
                 className={styles.blueProjectCard}
-                data-scene={index % 2 === 0 ? 'daybreak' : 'horizon'}
+                data-scene={projects.indexOf(project) % 2 === 0 ? 'daybreak' : 'horizon'}
                 key={project.slug}
+                data-has-image={Boolean(project.image)}
                 data-project-card
               >
-                <span className={styles.sceneNumber} aria-hidden="true">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <div className={styles.projectVisual}>
-                  {project.image ? (
+                {project.image && (
+                  <div className={styles.projectVisual}>
                     <Image
                       className={styles.projectImage}
                       src={project.image.src}
@@ -48,12 +51,8 @@ export function BlueProjects({ content }: BlueProjectsProps) {
                       height={project.image.height}
                       loading="lazy"
                     />
-                  ) : (
-                    <span className={styles.projectPlaceholder} aria-hidden="true">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                  )}
-                </div>
+                  </div>
+                )}
                 <div className={styles.projectBody}>
                   <div className={styles.projectHeading}>
                     <h3>{project.title}</h3>
@@ -68,6 +67,12 @@ export function BlueProjects({ content }: BlueProjectsProps) {
                     ))}
                   </ul>
                   <div className={styles.projectLinks}>
+                    <button
+                      onClick={() => setSelected(project.slug)}
+                      aria-label={`Ver detalhes de ${project.title}`}
+                    >
+                      Ver detalhes +
+                    </button>
                     {project.links.map((link) => (
                       <a href={link.href} key={link.href} rel="noreferrer" target="_blank">
                         {link.label || actions.visitProject}
@@ -84,6 +89,14 @@ export function BlueProjects({ content }: BlueProjectsProps) {
           <span />
         </div>
       </div>
+      {selected && (
+        <ProjectDetails
+          projects={projects}
+          selected={selected}
+          onSelect={setSelected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </section>
   )
 }

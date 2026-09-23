@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import styles from './styles.module.scss'
 
 export interface SkyBackgroundProps {
@@ -13,19 +14,28 @@ const clouds = [
   { top: 29, left: 68, size: 29, duration: 22, delay: -17, opacity: 0.7, depth: 0.6 },
   { top: 48, left: 30, size: 43, duration: 25, delay: -11, opacity: 0.82, depth: 1 },
   { top: 68, left: 75, size: 33, duration: 20, delay: -4, opacity: 0.72, depth: 0.8 },
-  { top: 82, left: 3, size: 47, duration: 23, delay: -19, opacity: 0.76, depth: 1.2 }
+  { top: 82, left: 3, size: 47, duration: 23, delay: -19, opacity: 0.76, depth: 1.2 },
+  { top: 14, left: 44, size: 32, duration: 29, delay: -12, opacity: 0.6, depth: 0.5 },
+  { top: 58, left: 9, size: 24, duration: 31, delay: -6, opacity: 0.5, depth: 0.7 },
+  { top: 88, left: 62, size: 35, duration: 26, delay: -14, opacity: 0.6, depth: 0.9 }
 ] as const
 
 export function SkyBackground({ className }: SkyBackgroundProps) {
+  const reducedMotion = useReducedMotion()
   const fieldRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const field = fieldRef.current
-    if (!field || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!field || reducedMotion) return
     const start = window.setTimeout(() => {
       field.dataset.playing = 'true'
-    }, 2200)
+    }, 300)
     let frame = 0
     const move = (event: PointerEvent) => {
+      if (
+        event.pointerType !== 'mouse' ||
+        !window.matchMedia('(min-width: 64rem) and (pointer: fine)').matches
+      )
+        return
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
         field.style.setProperty('--parallax-x', `${(event.clientX / innerWidth - 0.5) * 12}px`)
@@ -48,8 +58,10 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
       window.clearTimeout(start)
       window.removeEventListener('pointermove', move)
       cancelAnimationFrame(frame)
+      field.style.removeProperty('--parallax-x')
+      field.style.removeProperty('--parallax-y')
     }
-  }, [])
+  }, [reducedMotion])
 
   return (
     <div className={[styles.sky, className].filter(Boolean).join(' ')} aria-hidden="true">
@@ -63,7 +75,7 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
                 '--cloud-top': `${cloud.top}%`,
                 '--cloud-static-left': `${cloud.left}%`,
                 '--cloud-size': `${cloud.size}rem`,
-                '--cloud-duration': `${cloud.duration}s`,
+                '--cloud-duration': `${cloud.duration * 0.4}s`,
                 '--cloud-delay': `${cloud.delay}s`,
                 '--cloud-opacity': cloud.opacity,
                 '--cloud-depth': cloud.depth

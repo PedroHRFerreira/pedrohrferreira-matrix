@@ -6,8 +6,8 @@
   place-items: center;
   overflow: hidden;
   padding: 6rem 1rem 3rem;
-  color: #173654;
-  background: linear-gradient(180deg, rgba(246, 252, 255, 0.2), #d6efff);
+  color: var(--text);
+  background: linear-gradient(180deg, transparent, var(--surface-raised));
   text-align: center;
 }
 .mist {
@@ -21,7 +21,7 @@
   width: 40rem;
   height: 18rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(160, 231, 229, 0.06);
   filter: blur(28px);
 }
 .mist span:nth-child(1) {
@@ -41,7 +41,7 @@
 .fault {
   display: block;
   margin-bottom: 1rem;
-  color: #168754;
+  color: var(--blue-matrix);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.3em;
@@ -62,7 +62,7 @@
   list-style: none;
 }
 .contacts a {
-  color: #1d5d96;
+  color: var(--accent);
   font-size: 0.95rem;
   font-weight: 750;
   text-underline-offset: 0.3rem;
@@ -70,4 +70,45 @@
 .content small {
   color: var(--muted);
   font-size: 0.875rem;
+}
+
+.contacts a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  text-decoration: none;
+  transition:
+    transform 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+.contacts a::after {
+  content: '↗';
+}
+.contacts a:hover,
+.contacts a:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 0 1.5rem rgba(160, 231, 229, 0.1);
+}
+.backToTop {
+  display: block;
+  width: fit-content;
+  min-height: 2.75rem;
+  margin: 0 auto 2rem;
+  padding: 0.5rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  text-underline-offset: 0.3rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .contacts a:hover,
+  .contacts a:focus-visible {
+    transform: none;
+  }
 }

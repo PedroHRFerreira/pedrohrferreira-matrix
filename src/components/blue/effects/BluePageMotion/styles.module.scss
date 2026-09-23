@@ -1,0 +1,15 @@
+.progress {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto;
+  height: 3px;
+  background: rgba(232, 244, 248, 0.5);
+  pointer-events: none;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--blue-blush));
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+}

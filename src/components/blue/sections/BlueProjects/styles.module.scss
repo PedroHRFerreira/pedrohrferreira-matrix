@@ -76,17 +76,6 @@
     rgba(240, 250, 252, 0.65);
 }
 
-.sceneNumber {
-  position: absolute;
-  top: clamp(1rem, 3vw, 3rem);
-  right: clamp(2rem, 5vw, 5rem);
-  color: rgba(74, 85, 104, 0.22);
-  font-family: inherit;
-  font-size: clamp(4rem, 8vw, 7rem);
-  font-style: italic;
-  line-height: 1;
-}
-
 .projectVisual {
   position: relative;
   display: grid;
@@ -117,16 +106,6 @@
   object-fit: cover;
 }
 
-.projectPlaceholder {
-  position: relative;
-  z-index: 1;
-  color: rgba(74, 85, 104, 0.42);
-  font-family: inherit;
-  font-size: clamp(7rem, 16vw, 14rem);
-  font-style: italic;
-  text-shadow: 0 1rem 3rem rgba(7, 28, 51, 0.28);
-}
-
 .projectBody {
   position: relative;
   z-index: 1;
@@ -155,8 +134,7 @@
   .projectsStage {
     box-sizing: border-box;
     min-height: 100svh;
-    padding-top: 6.25rem;
-    padding-bottom: 1rem;
+    padding-block: 6rem;
   }
   .projectsViewport {
     overflow-x: auto;
@@ -233,7 +211,8 @@
   gap: 1rem;
 }
 
-.projectLinks a {
+.projectLinks a,
+.projectLinks button {
   display: inline-flex;
   min-height: 3.25rem;
   align-items: center;
@@ -251,6 +230,8 @@
     box-shadow 300ms ease-out;
 }
 
+.projectLinks button:hover,
+.projectLinks button:focus-visible,
 .projectLinks a:hover,
 .projectLinks a:focus-visible {
   background: rgba(255, 255, 255, 0.86);
@@ -269,13 +250,6 @@
 
   .projectVisual {
     min-height: 0;
-  }
-
-  .sceneNumber {
-    z-index: 2;
-    top: 2rem;
-    right: 1rem;
-    font-size: 5rem;
   }
 }
 
@@ -302,4 +276,172 @@
     border: 0;
     background: transparent;
   }
+}
+
+.projectLinks button {
+  cursor: pointer;
+}
+.blueProjectCard {
+  animation: arrive 350ms ease-out both;
+}
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+}
+.dialog {
+  width: min(calc(100% - 2rem), 52rem);
+  max-height: 88svh;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  color: var(--text);
+  background: var(--surface-raised);
+  box-shadow: 0 2rem 8rem #0008;
+  overscroll-behavior: contain;
+  animation: arrive 250ms ease-out;
+}
+.dialog::backdrop {
+  background: rgba(5, 8, 7, 0.82);
+  backdrop-filter: blur(12px);
+}
+.dialog h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  line-height: 1.2;
+}
+.dialog h3 {
+  margin-top: 2rem;
+  font-size: 1rem;
+}
+.detailSummary {
+  color: var(--muted);
+}
+.dialogTop,
+.dialogNavigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dialogTop {
+  margin-bottom: 2rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.dialogTop button,
+.dialogNavigation button {
+  min-height: 2.75rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  color: var(--accent);
+  background: var(--glass);
+  cursor: pointer;
+}
+.dialogTop button:hover,
+.dialogNavigation button:hover {
+  border-color: var(--accent);
+}
+.dialogNavigation {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.imageButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  color: var(--accent);
+  background: transparent;
+  cursor: zoom-in;
+}
+.imageButton img {
+  display: block;
+  width: 100%;
+  height: 16rem;
+  object-fit: contain;
+  border-radius: 1rem;
+}
+.imageButton span {
+  display: block;
+  padding: 0.75rem;
+}
+.imageButton[data-expanded='true'] {
+  cursor: zoom-out;
+}
+.imageButton[data-expanded='true'] img {
+  height: auto;
+}
+@media (min-width: 64rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .blueProjectCard {
+    min-height: 0;
+    padding: 1.25rem;
+  }
+  .projectVisual {
+    min-height: 12rem;
+  }
+  .projectBody {
+    padding: 1.25rem;
+  }
+  .projectsStage {
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blueProjectCard,
+  .dialog {
+    animation: none;
+  }
+}
+
+@media (min-width: 64rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .projectsSection .projectsStage .sectionHeader h2 {
+    font-size: 2rem;
+  }
+  .sectionHeader > p {
+    margin-block: 0.4rem;
+  }
+  .projectBody > p {
+    font-size: 0.9rem;
+    margin-block: 0.75rem;
+  }
+  .tags {
+    margin-block: 0.75rem;
+  }
+  .tags li {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .projectLinks {
+    gap: 0.5rem;
+  }
+  .projectLinks a,
+  .projectLinks button {
+    font-size: 0.8rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+.dialog .tags li,
+.dialog .projectLinks a {
+  color: var(--accent);
+  border-color: var(--line);
+  background: var(--glass);
+}
+.dialog .projectLinks a:hover {
+  background: rgba(160, 231, 229, 0.16);
+}
+
+.blueProjectCard[data-has-image='false'] {
+  grid-template-columns: 1fr;
+}
+.blueProjectCard[data-has-image='false'] .projectBody {
+  width: 100%;
+  max-width: 48rem;
+  justify-self: center;
 }

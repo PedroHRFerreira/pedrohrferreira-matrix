@@ -16,7 +16,6 @@ export function BlueAbout({ content }: BlueAboutProps) {
         <h2 id="blue-about-title">{sections.about.title}</h2>
       </div>
       <div className={styles.aboutLayout}>
-        <span className={styles.aboutOrb} aria-hidden="true" />
         <div className={styles.aboutCopy}>
           {profile.about.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>

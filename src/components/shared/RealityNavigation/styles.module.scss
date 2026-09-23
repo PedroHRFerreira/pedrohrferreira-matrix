@@ -44,34 +44,25 @@
   }
 
   &[data-reality='blue'] {
-    top: 0.5rem;
+    top: 1rem;
     min-height: 4.25rem;
     padding: 0.55rem 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    border-radius: 1.5rem;
-    background: linear-gradient(
-      130deg,
-      rgba(255, 255, 255, 0.76),
-      rgba(223, 241, 250, 0.48) 60%,
-      rgba(255, 255, 255, 0.68)
-    );
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    background: rgba(248, 251, 255, 0.82);
     box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.95),
-      0 0.9rem 2.5rem rgba(39, 85, 115, 0.16);
-    text-shadow: 0 1px 12px rgba(255, 255, 255, 0.8);
-    transform: translateX(-50%) translateY(0);
+      inset 0 1px rgba(232, 244, 248, 0.08),
+      0 1rem 3rem rgba(93, 127, 157, 0.08);
     transition:
-      transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 400ms ease;
-    backdrop-filter: blur(28px) saturate(1.5);
-    -webkit-backdrop-filter: blur(28px) saturate(1.5);
+      background-color 300ms ease,
+      box-shadow 300ms ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   &[data-reality='blue'][data-scrolled='true'] {
-    transform: translateX(-50%) translateY(0.65rem);
-    box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.95),
-      0 1.2rem 3rem rgba(39, 85, 115, 0.22);
+    background: rgba(248, 251, 255, 0.94);
+    box-shadow: 0 0.5rem 2rem rgba(93, 127, 157, 0.12);
   }
 }
 
@@ -192,7 +183,7 @@
     bottom: auto;
     width: 100%;
     min-height: 3.25rem;
-    padding: 0 7.5rem 0 0.75rem;
+    padding: 0 0.75rem;
     border: 0;
     border-bottom: 1px solid #1e2e23;
     border-radius: 0;
@@ -207,11 +198,7 @@
     min-height: 3.5rem;
     padding: 0.35rem 0.6rem;
     border-radius: 1.1rem;
-    background: linear-gradient(
-      130deg,
-      rgba(255, 255, 255, 0.8),
-      rgba(223, 241, 250, 0.5)
-    ) !important;
+    background: rgba(248, 251, 255, 0.94) !important;
   }
 
   .navigation[data-reality='red'] .brand {
@@ -250,5 +237,12 @@
     padding: 0.55rem 0.45rem;
     font-size: 0.75rem;
     white-space: nowrap;
+  }
+}
+
+@media (max-width: 22rem) {
+  .navigation[data-reality='blue'] .link {
+    padding-inline: 0.2rem;
+    font-size: 0.7rem;
   }
 }

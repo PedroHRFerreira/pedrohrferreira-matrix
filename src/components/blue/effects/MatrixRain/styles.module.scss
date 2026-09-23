@@ -5,40 +5,48 @@
   overflow: hidden;
   pointer-events: none;
 }
-.beam {
+.codeColumn {
   position: absolute;
-  width: 2px;
-  height: 5rem;
-  background: linear-gradient(transparent, #7fd87f 40%, transparent);
-  box-shadow: 0 0 12px #7fd87f;
-  filter: blur(2px);
-  animation: fall 800ms ease-out both;
+  top: 0;
+  left: 50%;
+  width: 1ch;
+  margin: 0;
+  color: #29865f;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: code-fall 14s linear infinite;
 }
-.beam[data-near='true'] {
-  box-shadow: 0 0 24px #7fd87f;
-}
-@media (max-width: 48rem) {
-  .beam {
-    height: 3rem;
-    width: 1px;
-  }
-}
-@keyframes fall {
+@keyframes code-fall {
   0% {
     opacity: 0;
-    transform: translate3d(0, -1.5rem, 0);
+    transform: translateY(-100%);
   }
-  35% {
-    opacity: 0.15;
+  10% {
+    opacity: 0.22;
+  }
+  48% {
+    opacity: 0.16;
+  }
+  65% {
+    opacity: 0;
+    transform: translateY(calc(100svh + 100%));
   }
   100% {
     opacity: 0;
-    transform: translate3d(0, 2rem, 0);
-    filter: blur(8px);
+    transform: translateY(calc(100svh + 100%));
   }
+}
+.rain[data-paused='true'] .codeColumn {
+  animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
   .rain {
     display: none;
+  }
+  .codeColumn {
+    animation: none;
   }
 }

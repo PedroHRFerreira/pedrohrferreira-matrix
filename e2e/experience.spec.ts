@@ -220,9 +220,103 @@ test('carrega as duas realidades sem erros de console', async ({ page }) => {
 
   await openReality(page, 'red')
   await expect(page.getByRole('heading', { name: 'Rods SDK' })).toBeVisible()
-  await page.getByRole('button', { name: 'Pílula azul' }).click()
-  await expect(page.locator('[data-reality="blue"]').first()).toBeVisible({
-    timeout: REALITY_TIMEOUT
-  })
+  await openReality(page, 'blue')
+  await expect(
+    page.getByRole('heading', { name: 'Pedro Henrique Rodrigues', exact: true })
+  ).toBeVisible()
   expect(errors).toEqual([])
+})
+
+test('código descendente acompanha a tela e a preferência de movimento em tempo real', async ({
+  page
+}) => {
+  await openReality(page, 'blue')
+  const beams = page.locator('[data-reality="blue"] [class*="codeColumn"]:visible')
+  for (const [width, count] of [
+    [1440, 1],
+    [1024, 1],
+    [390, 1]
+  ] as const) {
+    await page.setViewportSize({ width, height: 900 })
+    await expect(beams).toHaveCount(count)
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(beams).toHaveCount(0)
+  await expect(page.locator('h1')).toBeVisible()
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await expect(beams).toHaveCount(1)
+})
+
+test('modal navega entre projetos, contém foco e restaura o acionador', async ({ page }) => {
+  await openReality(page, 'blue', 'reduce')
+  const trigger = page.getByRole('button', { name: 'Ver detalhes de Rods SDK' })
+  await trigger.click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Rods SDK', exact: true })).toBeVisible()
+  await dialog.getByRole('button', { name: 'Próximo' }).click()
+  await expect(dialog.getByRole('heading', { name: 'ERP EMPI Autocenter' })).toBeVisible()
+  await page.keyboard.press('Tab')
+  await expect
+    .poll(() => page.evaluate(() => Boolean(document.activeElement?.closest('dialog'))))
+    .toBe(true)
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(trigger).toBeFocused()
+  await trigger.click()
+  await dialog.getByRole('button', { name: 'Fechar detalhes' }).click()
+  await expect(dialog).toHaveCount(0)
+})
+
+test('teclado alcança cards fora da tela na galeria horizontal', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile')
+  await openReality(page, 'blue')
+  await page.keyboard.press('Tab')
+  const details = page.getByRole('button', { name: 'Ver detalhes de Rods Themes' })
+  await details.focus()
+  await expect(details).toBeInViewport()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog')).toContainText('Rods Themes')
+  await page.keyboard.press('Escape')
+  await expect(details).toBeFocused()
+})
+
+test('visual onírico não mostra filtros, números decorativos ou esferas', async ({ page }) => {
+  await openReality(page, 'blue', 'reduce')
+  await expect(
+    page.locator('#projects input, #projects select, #stack input, #stack select')
+  ).toHaveCount(0)
+  await expect(page.locator('#projects article')).toHaveCount(4)
+  await expect(page.locator('#stack article')).toHaveCount(4)
+  await expect(
+    page.locator(
+      '[class*="sceneNumber"], [class*="projectPlaceholder"], [class*="aboutOrb"], [class*="halo"]'
+    )
+  ).toHaveCount(0)
+  await expect(page.locator('[class*="codeColumn"]').first()).toHaveText(/^[01\s]+$/)
+})
+
+test('menu red mostra todos os links em 320 px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 })
+  await openReality(page, 'red', 'reduce')
+  const links = page.getByRole('navigation', { name: 'Navegação principal' }).locator('li a')
+  await expect(links).toHaveCount(4)
+  expect(
+    await links.evaluateAll((items) =>
+      items.every((item) => {
+        const rect = item.getBoundingClientRect()
+        return rect.left >= 0 && rect.right <= innerWidth
+      })
+    )
+  ).toBe(true)
+  await page.getByRole('link', { name: '//DOSSIER' }).click()
+  await expect(page).toHaveURL(/#about$/)
+})
+
+test('página inexistente permite reiniciar a experiência', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const response = await page.goto('/rota-inexistente')
+  expect(response?.status()).toBe(404)
+  await page.getByRole('link', { name: 'Reiniciar experiência' }).click()
+  await expect(page.getByRole('button', { name: 'Pílula azul', exact: true })).toBeVisible()
 })

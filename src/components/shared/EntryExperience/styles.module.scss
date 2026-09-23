@@ -48,8 +48,8 @@
 .bootFlash {
   position: absolute;
   inset: 0;
-  background: #e8eee8;
-  animation: boot-flash 1.5s steps(1, end) both;
+  background: radial-gradient(ellipse, #e8eee8, #80958a);
+  animation: boot-flash 1.5s ease-out both;
 }
 
 .bootScan {
@@ -340,20 +340,26 @@
 }
 
 .redPill {
-  color: #c6787d;
+  color: #f3a5ad;
 }
 
 .bluePill {
-  color: #7c9fc4;
+  color: #a0d6ff;
 }
 
 .pillShape {
-  width: 1.65rem;
-  height: 0.68rem;
+  width: 2.5rem;
+  height: 1rem;
   flex: 0 0 auto;
   border: 1px solid currentColor;
   border-radius: 999px;
-  background: color-mix(in srgb, currentColor 58%, #070807);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.65), transparent 48%),
+    linear-gradient(90deg, currentColor 49%, #111827 50%, currentColor 52%);
+  transform: rotate(-25deg);
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease;
   box-shadow: inset 0 0 0.35rem rgba(255, 255, 255, 0.3);
 }
 
@@ -434,14 +440,23 @@
 @keyframes boot-flash {
   0% {
     opacity: 0;
+    transform: scale(0.01, 0.002);
   }
-  2%,
-  13% {
-    opacity: 1;
+  18% {
+    opacity: 0.7;
+    transform: scale(0.9, 0.003);
   }
-  18%,
+  48% {
+    opacity: 0.35;
+    transform: scale(1, 0.006);
+  }
+  75% {
+    opacity: 0.12;
+    transform: scale(1);
+  }
   100% {
     opacity: 0;
+    transform: scale(1);
   }
 }
 
@@ -612,5 +627,29 @@
   .staticBand,
   .staticFlicker {
     animation: none;
+  }
+}
+
+.redPill:hover .pillShape,
+.bluePill:hover .pillShape,
+.redPill:focus-visible .pillShape,
+.bluePill:focus-visible .pillShape,
+.redPill[data-selected='true'] .pillShape,
+.bluePill[data-selected='true'] .pillShape {
+  transform: rotate(-12deg) translateY(-2px);
+  box-shadow: 0 0 1.25rem color-mix(in srgb, currentColor 35%, transparent);
+}
+.redPill:active,
+.bluePill:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bootFlash,
+  .bootScan,
+  .revealSweep {
+    display: none;
+  }
+  .pillShape {
+    transition: none;
   }
 }

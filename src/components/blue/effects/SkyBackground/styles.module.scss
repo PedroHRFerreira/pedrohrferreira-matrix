@@ -1,8 +1,9 @@
 .sky {
   overflow: hidden;
   background:
-    radial-gradient(circle at 78% 16%, rgba(255, 192, 217, 0.4), transparent 34%),
-    linear-gradient(180deg, #a9cde0, #bfdeec 58%, #d2e8f2);
+    radial-gradient(circle at 78% 16%, rgba(255, 221, 237, 0.65), transparent 34%),
+    radial-gradient(ellipse at 15% 65%, rgba(216, 235, 255, 0.5), transparent 50%),
+    linear-gradient(180deg, #eaf4fb, #edf0fb 58%, #f9f1f6);
 }
 .cloudField {
   position: absolute;
@@ -18,7 +19,6 @@
   width: min(var(--cloud-size), 70vw);
   aspect-ratio: 2.7;
   opacity: var(--cloud-opacity);
-  will-change: transform;
   animation: drift var(--cloud-duration) linear var(--cloud-delay) infinite alternate;
   animation-play-state: paused;
 }
@@ -26,7 +26,7 @@
   animation-play-state: running;
 }
 .cloudPosition[data-near='true'] .cloudShape {
-  filter: blur(3px) brightness(1.1) drop-shadow(0 0.7rem 1.3rem rgba(61, 113, 148, 0.32));
+  filter: blur(4px) brightness(1.1) drop-shadow(0 0.7rem 1.3rem rgba(91, 135, 170, 0.22));
 }
 .cloudBob {
   display: block;
@@ -48,7 +48,7 @@
     radial-gradient(ellipse 24% 36% at 25% 64%, #fff 0 98%, transparent 100%),
     radial-gradient(ellipse 29% 50% at 50% 48%, #fff 0 98%, transparent 100%),
     radial-gradient(ellipse 26% 36% at 75% 65%, #e7f5fc 0 98%, transparent 100%);
-  filter: blur(3px) drop-shadow(0 0.7rem 1.3rem rgba(61, 113, 148, 0.32));
+  filter: blur(4px) drop-shadow(0 0.7rem 1.3rem rgba(91, 135, 170, 0.22));
   animation: bob 4.5s ease-in-out infinite alternate;
 }
 @keyframes drift {
@@ -64,15 +64,26 @@
     transform: translate3d(0, -7px, 0);
   }
 }
+@media (max-width: 64rem) {
+  .cloudPosition:nth-child(n + 7) {
+    display: none;
+  }
+}
 @media (max-width: 48rem) {
+  .cloudPosition:nth-child(n + 5) {
+    display: none;
+  }
   .cloudPosition {
-    width: min(calc(var(--cloud-size) * 0.3), 50vw);
+    width: min(calc(var(--cloud-size) * 0.45), 65vw);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .cloudPosition {
     left: var(--cloud-static-left);
     animation: none;
+  }
+  .cloudBob {
+    transform: none;
   }
   .cloudShape {
     animation: none;
