@@ -24,12 +24,16 @@ export function MatrixRain({ className }: MatrixRainProps) {
     let visible = true
     let previousTime = 0
     let columns = 0
+    let width = 0
+    let height = 0
     let drops: number[] = []
     const fontSize = window.innerWidth < 720 ? 15 : 18
 
     const resize = () => {
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
       const rect = canvas.getBoundingClientRect()
+      width = rect.width
+      height = rect.height
       canvas.width = Math.max(1, Math.floor(rect.width * ratio))
       canvas.height = Math.max(1, Math.floor(rect.height * ratio))
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
@@ -43,8 +47,6 @@ export function MatrixRain({ className }: MatrixRainProps) {
       if (time - previousTime < 52) return
       previousTime = time
 
-      const width = canvas.clientWidth
-      const height = canvas.clientHeight
       context.fillStyle = 'rgba(0, 0, 0, 0.075)'
       context.fillRect(0, 0, width, height)
       context.font = `${fontSize}px monospace`
@@ -59,7 +61,7 @@ export function MatrixRain({ className }: MatrixRainProps) {
     }
 
     const renderStill = () => {
-      context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
+      context.clearRect(0, 0, width, height)
       context.fillStyle = 'rgba(34, 230, 107, 0.2)'
       context.font = `${fontSize}px monospace`
       for (let index = 0; index < Math.min(columns, 24); index += 2) {

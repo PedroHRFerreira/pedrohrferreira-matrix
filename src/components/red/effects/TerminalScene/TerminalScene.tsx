@@ -224,7 +224,8 @@ export function TerminalScene({
           content.length,
           Math.max(0, Math.floor((elapsed - lineIndex * lineDelay) / characterDuration))
         )
-        node.textContent = content.slice(0, visible)
+        const next = content.slice(0, visible)
+        if (node.textContent !== next) node.textContent = next
       })
 
       if (elapsed < totalDuration) {

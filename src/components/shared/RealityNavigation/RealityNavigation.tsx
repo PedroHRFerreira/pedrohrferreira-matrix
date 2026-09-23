@@ -32,21 +32,28 @@ export function RealityNavigation({
     let frame = 0
 
     const updateActiveSection = () => {
-      cancelAnimationFrame(frame)
+      if (frame) return
       frame = requestAnimationFrame(() => {
+        frame = 0
         const readingLine = window.innerHeight * 0.34
-        const visible = sections.find((section) => {
+        // Read each section once before performing any DOM/state writes.
+        let nextId = 'main-content'
+        for (const section of sections) {
           const bounds = section.getBoundingClientRect()
-          return bounds.top <= readingLine && bounds.bottom > readingLine
-        })
-        const previous = sections
-          .filter((section) => section.getBoundingClientRect().top <= readingLine)
-          .at(-1)
-        const nextId = visible?.id ?? previous?.id ?? 'main-content'
+          if (bounds.top > readingLine) break
+          nextId = section.id
+          if (bounds.bottom > readingLine) break
+        }
         setActiveId(nextId)
         setScrolled(window.scrollY > 24)
         const nextHash = nextId === 'main-content' ? '' : `#${nextId}`
-        window.history.replaceState(null, '', `${window.location.pathname}${nextHash}`)
+        if (window.location.hash !== nextHash) {
+          window.history.replaceState(
+            window.history.state,
+            '',
+            `${window.location.pathname}${window.location.search}${nextHash}`
+          )
+        }
       })
     }
 

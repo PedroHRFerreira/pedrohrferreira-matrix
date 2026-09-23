@@ -1,0 +1,39 @@
+// Original cloud recipe, retained for deterministic asset generation.
+.cloudShape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(
+      ellipse 22% 38% at 36% 44%,
+      #fff 30%,
+      rgba(255, 255, 255, 0.88) 62%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 18% 30% at 59% 38%,
+      #fff 24%,
+      rgba(255, 255, 255, 0.8) 60%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 27% 28% at 72% 63%,
+      #fff 20%,
+      rgba(248, 252, 255, 0.78) 60%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 28% 26% at 23% 67%,
+      #fff 20%,
+      rgba(255, 255, 255, 0.78) 58%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 46% 27% at 49% 73%,
+      rgba(238, 247, 255, 0.9) 25%,
+      rgba(255, 255, 255, 0.68) 60%,
+      transparent 100%
+    );
+  filter: blur(2px) drop-shadow(0 0.4rem 0.9rem rgba(124, 152, 181, 0.1));
+  animation: bob 4.5s ease-in-out infinite alternate;
+}

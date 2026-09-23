@@ -79,7 +79,7 @@ function AnalogStatic({ reducedMotion }: { reducedMotion: boolean }) {
     }
 
     const draw = (time: number) => {
-      if (document.visibilityState === 'visible' && time - previousFrame > 66) {
+      if (time - previousFrame > 66) {
         paint()
         previousFrame = time
       }
@@ -87,8 +87,16 @@ function AnalogStatic({ reducedMotion }: { reducedMotion: boolean }) {
     }
 
     paint()
-    if (!reducedMotion) animationFrame = window.requestAnimationFrame(draw)
-    return () => window.cancelAnimationFrame(animationFrame)
+    const sync = () => {
+      window.cancelAnimationFrame(animationFrame)
+      if (!reducedMotion && !document.hidden) animationFrame = window.requestAnimationFrame(draw)
+    }
+    sync()
+    document.addEventListener('visibilitychange', sync)
+    return () => {
+      window.cancelAnimationFrame(animationFrame)
+      document.removeEventListener('visibilitychange', sync)
+    }
   }, [reducedMotion])
 
   return <canvas ref={canvasRef} className={styles.staticCanvas} aria-hidden="true" />

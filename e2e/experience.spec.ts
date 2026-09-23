@@ -188,13 +188,15 @@ test('pílula azul alterna leitura vertical e duas travessias horizontais no des
 }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile')
   await openReality(page, 'blue')
+  await expect(page.locator('[data-black-cat]')).toHaveAttribute('data-cat-pass', 'arrival')
+  await expect(page.locator('[data-black-cat]')).toBeHidden({ timeout: 7000 })
   for (const [id, direction] of [
     ['projects', 'left'],
     ['stack', 'right']
   ] as const) {
     const gallery = page.locator(`#${id}`)
     await expect(gallery).toHaveAttribute('data-enhanced', 'true')
-    await gallery.scrollIntoViewIfNeeded()
+    await gallery.evaluate((node) => node.scrollIntoView({ block: 'start', behavior: 'instant' }))
     await expect(gallery.locator('[data-horizontal-stage]')).toBeInViewport()
     const first = gallery.locator('article').first()
     const before = await first.evaluate((element) => element.getBoundingClientRect().left)
@@ -399,4 +401,59 @@ test('red retorna à TV com as frases do mundo dos sonhos', async ({ page }) => 
   ).toBeVisible()
   await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
   await expect(page.locator('[data-reality="blue"]').first()).toBeVisible()
+})
+
+test('gato repete a passagem uma vez ao chegar ao footer', async ({ page }) => {
+  await openReality(page, 'blue')
+  const cat = page.locator('[data-black-cat]')
+  await expect(cat).toHaveAttribute('data-cat-pass', 'arrival')
+  await expect(cat).toBeHidden({ timeout: 7000 })
+  await page.locator('footer').scrollIntoViewIfNeeded()
+  await expect(cat).toHaveAttribute('data-cat-pass', 'footer')
+  await expect(cat).toBeVisible()
+  await expect(cat).toBeHidden({ timeout: 7000 })
+  await page.getByRole('link', { name: 'Voltar ao início ↑' }).click()
+  await expect(page.getByText('Você já esteve aqui', { exact: true })).toBeVisible()
+  await page.locator('footer').scrollIntoViewIfNeeded()
+  await expect(cat).toBeHidden()
+})
+
+test('animações do footer pausam fora da tela e retomam ao entrar', async ({ page }) => {
+  await openReality(page, 'blue')
+  const footer = page.locator('footer')
+  await expect(footer).toHaveAttribute('data-motion-paused', 'true')
+  const button = footer.getByRole('button', { name: /E se você tivesse escolhido diferente/ })
+  expect(
+    await button.evaluate((node) => getComputedStyle(node, '::after').animationPlayState)
+  ).toBe('paused')
+  await expect(page.locator('[data-black-cat]')).toBeHidden({ timeout: 7000 })
+  await footer.scrollIntoViewIfNeeded()
+  await expect(footer).not.toHaveAttribute('data-motion-paused', 'true')
+  expect(
+    await button.evaluate((node) => getComputedStyle(node, '::after').animationPlayState)
+  ).toBe('running')
+})
+
+test('rolagem na mesma seção não reescreve o histórico a cada quadro', async ({ page }) => {
+  await openReality(page, 'blue', 'reduce')
+  const writes = await page.evaluate(async () => {
+    const original = history.replaceState
+    let count = 0
+    history.replaceState = function (...args) {
+      count++
+      return original.apply(this, args)
+    }
+    try {
+      for (let index = 0; index < 10; index++) {
+        window.scrollTo({ top: 30 + index * 4, behavior: 'instant' })
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+        )
+      }
+      return count
+    } finally {
+      history.replaceState = original
+    }
+  })
+  expect(writes).toBeLessThanOrEqual(1)
 })

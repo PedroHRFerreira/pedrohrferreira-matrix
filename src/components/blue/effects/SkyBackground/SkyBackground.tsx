@@ -31,17 +31,19 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
     }
     const start = window.setTimeout(updateVisibility, 300)
     document.addEventListener('visibilitychange', updateVisibility)
+    const precise = window.matchMedia('(min-width: 64rem) and (pointer: fine)')
     let frame = 0
+    let x = 0
+    let y = 0
     const move = (event: PointerEvent) => {
-      if (
-        event.pointerType !== 'mouse' ||
-        !window.matchMedia('(min-width: 64rem) and (pointer: fine)').matches
-      )
-        return
-      cancelAnimationFrame(frame)
+      if (event.pointerType !== 'mouse' || !precise.matches) return
+      x = event.clientX
+      y = event.clientY
+      if (frame) return
       frame = requestAnimationFrame(() => {
-        field.style.setProperty('--parallax-x', `${(event.clientX / innerWidth - 0.5) * 12}px`)
-        field.style.setProperty('--parallax-y', `${(event.clientY / innerHeight - 0.5) * 8}px`)
+        frame = 0
+        field.style.setProperty('--parallax-x', `${(x / innerWidth - 0.5) * 12}px`)
+        field.style.setProperty('--parallax-y', `${(y / innerHeight - 0.5) * 8}px`)
       })
     }
     window.addEventListener('pointermove', move, { passive: true })

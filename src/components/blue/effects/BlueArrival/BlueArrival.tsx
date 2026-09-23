@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './styles.module.scss'
 
 export function BlueArrival() {
   const cat = useRef<HTMLDivElement>(null)
+  const [footerPass, setFooterPass] = useState(false)
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const root = document.documentElement
@@ -25,15 +26,40 @@ export function BlueArrival() {
       window.removeEventListener('keydown', preventKeys)
       if (cat.current) cat.current.hidden = true
     }
-    const timer = window.setTimeout(release, 4300)
+    let observer: IntersectionObserver | undefined
+    const timer = window.setTimeout(() => {
+      release()
+      const footer = document.querySelector('[data-reality="blue"] footer')
+      if (!footer) return
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setFooterPass(true)
+          observer?.disconnect()
+        },
+        { threshold: 0.25 }
+      )
+      observer.observe(footer)
+    }, 4300)
     return () => {
+      observer?.disconnect()
       window.clearTimeout(timer)
       release()
     }
   }, [])
 
   return (
-    <div ref={cat} className={styles.passage} aria-hidden="true" data-black-cat>
+    <div
+      key={footerPass ? 'footer' : 'arrival'}
+      ref={cat}
+      className={styles.passage}
+      aria-hidden="true"
+      data-black-cat
+      data-cat-pass={footerPass ? 'footer' : 'arrival'}
+      onAnimationEnd={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.hidden = true
+      }}
+    >
       <svg viewBox="0 0 384 220" className={styles.cat}>
         <image href="/black-cat-walk.png" width="1536" height="1024" className={styles.frames} />
       </svg>

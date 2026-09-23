@@ -3,12 +3,14 @@
 import { EntryExperience } from '@/components/shared/EntryExperience'
 import { getPortfolioContent } from '@/config'
 import { useExperience } from '@/hooks/useExperience'
+import { useMotionVisibility } from '@/hooks/useMotionVisibility'
 
 import { BlueTemplate } from './BlueTemplate'
 import { RedTemplate } from './RedTemplate'
 
 export function ExperienceTemplate() {
   const experience = useExperience()
+  useMotionVisibility(experience.state)
   const content = getPortfolioContent()
 
   if (experience.state === 'ready-red') {

@@ -35,12 +35,23 @@ export function CustomCursor({ reality }: CustomCursorProps) {
     if (!cursor) return
     document.documentElement.dataset.customCursor = 'true'
 
+    let frame = 0
+    let x = 0
+    let y = 0
     const move = (event: PointerEvent) => {
-      cursor.style.setProperty('--cursor-x', `${event.clientX}px`)
-      cursor.style.setProperty('--cursor-y', `${event.clientY}px`)
-      cursor.dataset.visible = 'true'
+      x = event.clientX
+      y = event.clientY
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        cursor.style.setProperty('--cursor-x', `${x}px`)
+        cursor.style.setProperty('--cursor-y', `${y}px`)
+        cursor.dataset.visible = 'true'
+      })
     }
     const hide = () => {
+      cancelAnimationFrame(frame)
+      frame = 0
       cursor.dataset.visible = 'false'
     }
     const updateTarget = (event: PointerEvent) => {
@@ -56,6 +67,7 @@ export function CustomCursor({ reality }: CustomCursorProps) {
     window.addEventListener('blur', hide)
 
     return () => {
+      cancelAnimationFrame(frame)
       delete document.documentElement.dataset.customCursor
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerover', updateTarget)

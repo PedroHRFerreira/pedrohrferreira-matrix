@@ -103,3 +103,13 @@ html[data-custom-cursor='true'] * {
     transition-duration: 0.01ms !important;
   }
 }
+
+// Pause only playback: retain each effect's styles, duration, and current frame.
+[data-motion-paused='true'],
+[data-motion-paused='true']::before,
+[data-motion-paused='true']::after,
+[data-motion-paused='true'] *,
+[data-motion-paused='true'] *::before,
+[data-motion-paused='true'] *::after {
+  animation-play-state: paused !important;
+}
