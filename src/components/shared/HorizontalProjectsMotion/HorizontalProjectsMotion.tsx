@@ -43,33 +43,34 @@ export function HorizontalProjectsMotion() {
             gallery.dataset.enhanced = 'true'
             const movesRight = gallery.dataset.direction === 'right'
 
-            const context = gsap.context(() => {
-              gsap.fromTo(
-                track,
-                {
-                  x: () => (movesRight ? -measure() : 0)
-                },
-                {
-                  x: () => (movesRight ? 0 : -measure()),
-                  ease: 'none',
-                  scrollTrigger: {
-                    trigger: stage,
-                    start: () =>
-                      `top ${Math.max(0, (window.innerHeight - stage.offsetHeight) / 2)}px`,
-                    end: () => `+=${measure()}`,
-                    pin: true,
-                    scrub: 0.7,
-                    anticipatePin: 1,
-                    invalidateOnRefresh: true,
-                    onUpdate: (self) =>
-                      gallery.style.setProperty('--gallery-progress', `${self.progress * 100}%`)
-                  }
+            // matchMedia owns these animations and restores their styles on exit.
+            gsap.fromTo(
+              track,
+              {
+                x: () => (movesRight ? -measure() : 0)
+              },
+              {
+                x: () => (movesRight ? 0 : -measure()),
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: stage,
+                  start: () =>
+                    `top ${Math.max(0, (window.innerHeight - stage.offsetHeight) / 2)}px`,
+                  end: () => `+=${measure()}`,
+                  pin: true,
+                  scrub: 0.7,
+                  anticipatePin: 1,
+                  invalidateOnRefresh: true,
+                  onUpdate: (self) =>
+                    gallery.style.setProperty('--gallery-progress', `${self.progress * 100}%`)
                 }
-              )
-            }, gallery)
+              }
+            )
 
             return () => {
-              context.revert()
+              // A fromTo start value can survive a media-query revert; the vertical
+              // layout must not retain the horizontal translation or its GSAP cache.
+              gsap.set(track, { clearProps: 'transform' })
               delete gallery.dataset.enhanced
               gallery.style.removeProperty('--gallery-progress')
               track.style.removeProperty('--gallery-inset')

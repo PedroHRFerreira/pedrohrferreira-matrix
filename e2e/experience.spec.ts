@@ -28,6 +28,21 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
 })
 
+test('introdução completa chega à Blue sem pular as etapas', async ({ page }) => {
+  test.setTimeout(90_000)
+  await page.goto('/')
+  for (const state of ['static-noise', 'signal-reveal', 'waiting-first-enter']) {
+    await expect(page.locator(`main[data-state="${state}"]`)).toBeVisible({ timeout: 40_000 })
+  }
+  await page.keyboard.press('Enter')
+  await expect(page.locator('main[data-state="waiting-second-enter"]')).toBeVisible({
+    timeout: 30_000
+  })
+  await page.keyboard.press('Enter')
+  await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
+  await expect(page.locator('[data-reality="blue"]').first()).toBeVisible({ timeout: 10_000 })
+})
+
 test('mantém a introdução obrigatória e publica o conteúdo profissional em português', async ({
   page
 }) => {
@@ -98,6 +113,25 @@ test('a trajetória e os comandos Matrix respondem à navegação', async ({ pag
   await expect(page.locator('[aria-labelledby="dialogue-title"]')).toContainText(
     'sistemas modulares'
   )
+})
+
+test('diálogo red interrompe a digitação quando movimento reduzido é ativado', async ({ page }) => {
+  await openReality(page, 'red')
+  await page.locator('#dialogue').scrollIntoViewIfNeeded()
+  await page.getByRole('button', { name: 'Como ele constrói?' }).click()
+  const answer = page.locator('#dialogue [class*="answer"]')
+  await expect(answer).toContainText('Com')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(answer).toHaveText(
+    'Com sistemas modulares, código testável e escolhas técnicas guiadas pelo problema. Cada camada precisa conversar com a próxima.'
+  )
+  await answer.evaluate((node) => {
+    node.setAttribute('data-text-writes', '0')
+    const observer = new MutationObserver(() => node.setAttribute('data-text-writes', '1'))
+    observer.observe(node, { characterData: true, childList: true, subtree: true })
+  })
+  await page.waitForTimeout(250)
+  await expect(answer).toHaveAttribute('data-text-writes', '0')
 })
 
 test('a timeline mostra os três marcos em ordem antes dos projetos', async ({ page }) => {
@@ -211,6 +245,39 @@ test('pílula azul alterna leitura vertical e duas travessias horizontais no des
         .toBeGreaterThan(before)
     }
   }
+})
+
+test('blue restaura cards ao alternar movimento reduzido e largura da tela', async ({
+  page
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile')
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await openReality(page, 'blue')
+
+  const assertVerticalCards = async () => {
+    for (const id of ['projects', 'stack']) {
+      const gallery = page.locator(`#${id}`)
+      await expect(gallery).not.toHaveAttribute('data-enhanced', 'true')
+      for (const card of await gallery.locator('article').all()) {
+        await card.scrollIntoViewIfNeeded()
+        await expect(card).toBeInViewport()
+        const rect = await card.boundingBox()
+        expect(rect).not.toBeNull()
+        expect(rect!.x).toBeGreaterThanOrEqual(0)
+        expect(rect!.x + rect!.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1)
+      }
+    }
+  }
+
+  await expect(page.locator('#stack')).toHaveAttribute('data-enhanced', 'true')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await assertVerticalCards()
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await expect(page.locator('#stack')).toHaveAttribute('data-enhanced', 'true')
+  await page.setViewportSize({ width: 390, height: 844 })
+  await assertVerticalCards()
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await expect(page.locator('#stack')).toHaveAttribute('data-enhanced', 'true')
 })
 
 test('carrega as duas realidades sem erros de console', async ({ page }) => {

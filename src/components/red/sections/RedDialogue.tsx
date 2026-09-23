@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 import styles from './RedDialogue.module.scss'
 
@@ -22,6 +23,7 @@ const exchange = [
 ]
 
 export function RedDialogue() {
+  const reducedMotion = useReducedMotion()
   const sectionRef = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
   const [visible, setVisible] = useState(false)
@@ -41,9 +43,8 @@ export function RedDialogue() {
   }, [])
 
   useEffect(() => {
-    if (!visible) return
+    if (!visible || reducedMotion) return
     const answer = exchange[active].answer
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     let character = 0
     const timer = window.setInterval(() => {
       character = Math.min(answer.length, character + 2)
@@ -51,7 +52,7 @@ export function RedDialogue() {
       if (character === answer.length) window.clearInterval(timer)
     }, 24)
     return () => window.clearInterval(timer)
-  }, [active, visible])
+  }, [active, visible, reducedMotion])
 
   const choose = (index: number) => {
     setTyped(null)
@@ -92,7 +93,7 @@ export function RedDialogue() {
             visitor@matrix:~$ {exchange[active].command.toLowerCase()}
           </p>
           <p className={styles.answer}>
-            {typed ?? exchange[active].answer}
+            {reducedMotion ? exchange[active].answer : (typed ?? exchange[active].answer)}
             <span className={styles.cursor} aria-hidden="true" />
           </p>
         </div>

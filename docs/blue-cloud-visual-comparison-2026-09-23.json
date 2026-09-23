@@ -1,0 +1,32 @@
+[
+  {
+    "width": 1440,
+    "meanAbsoluteChannelError": 0.16291975308641976,
+    "pixelsOver10Percent": 0,
+    "max": 5
+  },
+  {
+    "width": 1024,
+    "meanAbsoluteChannelError": 0.16710105613425927,
+    "pixelsOver10Percent": 0,
+    "max": 4
+  },
+  {
+    "width": 768,
+    "meanAbsoluteChannelError": 0.09690779320987654,
+    "pixelsOver10Percent": 0,
+    "max": 7
+  },
+  {
+    "width": 390,
+    "meanAbsoluteChannelError": 0.09938746438746439,
+    "pixelsOver10Percent": 0,
+    "max": 6
+  },
+  {
+    "width": 320,
+    "meanAbsoluteChannelError": 0.11082407407407407,
+    "pixelsOver10Percent": 0,
+    "max": 8
+  }
+]

@@ -63,17 +63,26 @@ function AnalogStatic({ reducedMotion }: { reducedMotion: boolean }) {
     canvas.width = width
     canvas.height = height
     const frame = context.createImageData(width, height)
+    // Bake the CRT contrast/brightness into the small noise buffer instead of
+    // filtering the enlarged screen every frame. Noise is already grayscale.
+    const palette = new Uint8ClampedArray(256 * 4)
+    for (let value = 0; value < 256; value++) {
+      const shade = Math.max(0, Math.min(255, (value - 127.5) * 1.7 + 127.5)) * 0.58
+      palette[value * 4] = shade
+      palette[value * 4 + 1] = shade
+      palette[value * 4 + 2] = shade
+      palette[value * 4 + 3] = 255
+    }
+    const colors = new Uint32Array(palette.buffer)
+    const pixels = new Uint32Array(frame.data.buffer, frame.data.byteOffset, width * height)
     let animationFrame = 0
     let previousFrame = 0
 
     const paint = () => {
-      for (let pixel = 0; pixel < frame.data.length; pixel += 4) {
+      for (let pixel = 0; pixel < pixels.length; pixel++) {
         const grain = Math.random()
         const value = grain > 0.56 ? grain * 150 + 55 : grain * 58 + 8
-        frame.data[pixel] = value
-        frame.data[pixel + 1] = value
-        frame.data[pixel + 2] = value
-        frame.data[pixel + 3] = 255
+        pixels[pixel] = colors[Math.round(value)]
       }
       context.putImageData(frame, 0, 0)
     }
