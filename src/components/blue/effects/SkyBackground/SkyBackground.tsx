@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import styles from './styles.module.scss'
-import { useCloudPull } from './useCloudPull'
 
 export interface SkyBackgroundProps {
   className?: string
@@ -24,34 +23,6 @@ const clouds = [
 export function SkyBackground({ className }: SkyBackgroundProps) {
   const reducedMotion = useReducedMotion()
   const fieldRef = useRef<HTMLDivElement>(null)
-  const skyRef = useRef<HTMLDivElement>(null)
-  const faultPlayed = useRef(false)
-  useCloudPull(fieldRef, reducedMotion)
-
-  useEffect(() => {
-    const sky = skyRef.current
-    const about = document.getElementById('about')
-    if (!sky || !about || reducedMotion || faultPlayed.current) return
-    let timer = 0
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return
-        faultPlayed.current = true
-        sky.dataset.fault = 'active'
-        timer = window.setTimeout(() => {
-          sky.dataset.fault = 'complete'
-        }, 3600)
-        observer.disconnect()
-      },
-      { threshold: 0.25 }
-    )
-    observer.observe(about)
-    return () => {
-      observer.disconnect()
-      window.clearTimeout(timer)
-      delete sky.dataset.fault
-    }
-  }, [reducedMotion])
   useEffect(() => {
     const field = fieldRef.current
     if (!field || reducedMotion) return
@@ -60,48 +31,59 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
     }
     const start = window.setTimeout(updateVisibility, 300)
     document.addEventListener('visibilitychange', updateVisibility)
+    let frame = 0
+    const move = (event: PointerEvent) => {
+      if (
+        event.pointerType !== 'mouse' ||
+        !window.matchMedia('(min-width: 64rem) and (pointer: fine)').matches
+      )
+        return
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        field.style.setProperty('--parallax-x', `${(event.clientX / innerWidth - 0.5) * 12}px`)
+        field.style.setProperty('--parallax-y', `${(event.clientY / innerHeight - 0.5) * 8}px`)
+      })
+    }
+    window.addEventListener('pointermove', move, { passive: true })
     return () => {
       window.clearTimeout(start)
       document.removeEventListener('visibilitychange', updateVisibility)
-      field.dataset.playing = 'false'
+      window.removeEventListener('pointermove', move)
+      cancelAnimationFrame(frame)
+      field.style.removeProperty('--parallax-x')
+      field.style.removeProperty('--parallax-y')
     }
   }, [reducedMotion])
 
   return (
-    <div
-      ref={skyRef}
-      className={[styles.sky, className].filter(Boolean).join(' ')}
-      aria-hidden="true"
-      data-sky
-    >
+    <div className={[styles.sky, className].filter(Boolean).join(' ')} aria-hidden="true">
       <div className={styles.cloudField} ref={fieldRef}>
         {clouds.map((cloud, index) => (
           <span
             className={styles.cloudPosition}
             key={index}
-            data-cloud={index}
             style={
               {
                 '--cloud-top': `${cloud.top}%`,
                 '--cloud-static-left': `${cloud.left}%`,
                 '--cloud-size': `${cloud.size}rem`,
-                '--cloud-duration': `${cloud.duration * 2.4}s`,
-                '--cloud-delay': `${cloud.delay * 2.4}s`,
+                '--cloud-duration': `${cloud.duration}s`,
+                '--cloud-delay': `${cloud.delay}s`,
                 '--cloud-opacity': Math.min(1, cloud.opacity + 0.15),
                 '--cloud-depth': cloud.depth
               } as CSSProperties
             }
           >
+            {index === 0 && (
+              <span className={styles.cloudEcho}>
+                <span className={styles.cloudShape} />
+              </span>
+            )}
             <span className={styles.cloudBob}>
               <span className={styles.cloudShape} />
             </span>
           </span>
         ))}
-      </div>
-      <div className={styles.faultVeil} />
-      <div className={styles.faultRift}>
-        <span>01001101 ネ 001 ケ 10110 ロ 01001 ワ 110 サ 001 ト 101</span>
-        <span>011 ネ 10010 ロ 101 ワ 01101 ケ 001 サ 110 ト 01001</span>
       </div>
     </div>
   )
