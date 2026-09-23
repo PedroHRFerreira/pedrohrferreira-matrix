@@ -1,4 +1,5 @@
 import { MatrixRain } from '@/components/red/effects/MatrixRain'
+import { RedPassage } from '@/components/red/effects/RedPassage/RedPassage'
 import {
   RedAbout,
   RedContact,
@@ -43,13 +44,7 @@ export function RedTemplate({ content, onReconsider }: RedTemplateProps) {
         <RedStack content={content} />
         <RedContact content={content} />
       </main>
-      <div className={styles.dreamInvitation}>
-        <button type="button" onClick={onReconsider} className={styles.dreamButton}>
-          <span aria-hidden="true" className={styles.dreamCloud} />
-          <span>E se você pudesse voltar a sonhar?</span>
-          <small>Um outro caminho espera por você ↗</small>
-        </button>
-      </div>
+      <RedPassage onReconsider={onReconsider} />
       <footer className={styles.redEnding}>
         <span>SYS://CONEXÃO_PERMANECE_ABERTA</span>
         <span>{content.footer.copyright}</span>

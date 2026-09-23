@@ -524,3 +524,76 @@ test('rolagem na mesma seção não reescreve o histórico a cada quadro', async
   })
   expect(writes).toBeLessThanOrEqual(1)
 })
+
+test('corredor red explora pelo teclado e libera o controle com Esc', async ({
+  page
+}, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'No toque, as portas são acionadas diretamente.')
+  await openReality(page, 'red', 'reduce')
+  const scene = page.getByRole('group', { name: 'Corredor interativo' })
+  const start = page.getByRole('button', { name: 'Explorar o corredor · Enter' })
+  await start.click()
+  await expect(scene).toBeFocused()
+  await expect(scene).toHaveAttribute('data-active', 'true')
+  await page.keyboard.press('Escape')
+  await expect(scene).toHaveAttribute('data-active', 'false')
+  await expect(start).toBeFocused()
+  await start.click()
+  await page.keyboard.down('ArrowRight')
+  await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
+  await page.keyboard.up('ArrowRight')
+  await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
+})
+
+test('blue atravessa a passagem entre nuvens sem Enter', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'No toque, a passagem é acessada diretamente.')
+  await openReality(page, 'blue', 'reduce')
+  const scene = page.getByRole('group', { name: 'Caminho entre nuvens' })
+  await page.getByRole('button', { name: 'Explorar as nuvens · Enter' }).click()
+  await expect(scene).toHaveAttribute('data-active', 'true')
+  await expect(scene.getByRole('button', { name: /E se você tivesse/ })).toBeDisabled()
+  await page.keyboard.down('ArrowRight')
+  await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
+  await page.keyboard.up('ArrowRight')
+  await expect(
+    page.getByRole('heading', { name: 'O que é real? Como você define o real?', exact: true })
+  ).toBeVisible()
+})
+
+test('Volte a sonhar encerra o jogo blue e retorna ao topo', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'A travessia usa teclado.')
+  await openReality(page, 'blue', 'reduce')
+  await page.getByRole('button', { name: 'Explorar as nuvens · Enter' }).click()
+  await page.keyboard.down('ArrowLeft')
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+  await page.keyboard.up('ArrowLeft')
+  await expect(page.locator('main#main-content')).toBeFocused()
+  await expect(page.getByRole('group', { name: 'Caminho entre nuvens' })).toHaveAttribute(
+    'data-active',
+    'false'
+  )
+  await expect(page.locator('[data-reality="blue"]').first()).toBeVisible()
+})
+
+test('agentes alcançam o jogador parado e voltam ao topo', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile')
+  await openReality(page, 'blue', 'reduce')
+  await page.getByRole('button', { name: 'Explorar as nuvens · Enter' }).click()
+  await expect(page.getByRole('group', { name: 'Caminho entre nuvens' })).toHaveAttribute(
+    'data-active',
+    'false',
+    { timeout: 8000 }
+  )
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+})
+
+test('mobile mostra somente o botão de retorno', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile')
+  for (const reality of ['red', 'blue'] as const) {
+    await openReality(page, reality, 'reduce')
+    await expect(
+      page.getByRole('group', { name: /Corredor interativo|Caminho entre nuvens/ })
+    ).toHaveCount(0)
+    await expect(page.getByRole('button', { name: /E se você/ })).toBeVisible()
+  }
+})

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { RealityPassage } from '@/components/shared/RealityPassage/RealityPassage'
 import type { Contact } from '@/types'
 
 import styles from './styles.module.scss'
@@ -88,13 +89,7 @@ export function BlueFooter({ message, copyright, contacts = [], onReconsider }: 
         <a className={styles.backToTop} href="#main-content">
           Voltar ao início ↑
         </a>
-        <button className={styles.reconsider} onClick={onReconsider} type="button">
-          <span className={styles.signalFault} aria-hidden="true">
-            [ SINAL INTERROMPIDO ]
-          </span>
-          E se você tivesse escolhido diferente?
-          <span>Voltar à escolha das pílulas ↗</span>
-        </button>
+        <RealityPassage reality="blue" onReconsider={onReconsider} />
         <small>{copyright}</small>
       </div>
     </footer>
