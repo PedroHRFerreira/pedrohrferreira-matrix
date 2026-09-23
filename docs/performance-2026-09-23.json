@@ -1,0 +1,262 @@
+{
+  "baseline": {
+    "measuredAt": "2026-09-23T13:27:57.119Z",
+    "results": [
+      {
+        "reality": "blue",
+        "cpuSlowdown": 6,
+        "fps": 10.9,
+        "p95FrameMs": 116.6,
+        "longTasks": 0,
+        "longestTaskMs": 0
+      },
+      {
+        "reality": "red",
+        "cpuSlowdown": 6,
+        "fps": 52.2,
+        "p95FrameMs": 33.4,
+        "longTasks": 0,
+        "longestTaskMs": 0
+      }
+    ]
+  },
+  "currentScroll": {
+    "measuredAt": "2026-09-23T19:24:19.375Z",
+    "results": [
+      {
+        "reality": "blue",
+        "cpuSlowdown": 6,
+        "fps": 10.9,
+        "p95FrameMs": 116.7,
+        "longTasks": 0,
+        "longestTaskMs": 0
+      },
+      {
+        "reality": "red",
+        "cpuSlowdown": 6,
+        "fps": 51.4,
+        "p95FrameMs": 33.4,
+        "longTasks": 0,
+        "longestTaskMs": 0
+      }
+    ]
+  },
+  "currentFooter": [
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "idle",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 59.2,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "idle",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 60,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "idle",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 60,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "active",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 60,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "active",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 60,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": false,
+      "mode": "active",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 60,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "idle",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 13.4,
+      "p95FrameMs": 83.4,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "idle",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 13.6,
+      "p95FrameMs": 83.4,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "idle",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": "false",
+      "fps": 14.4,
+      "p95FrameMs": 83.4,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "active",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 15.2,
+      "p95FrameMs": 83.4,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "active",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 15,
+      "p95FrameMs": 66.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": false,
+      "mode": "active",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": "true",
+      "fps": 15,
+      "p95FrameMs": 66.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": true,
+      "mode": "button",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 60,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": true,
+      "mode": "button",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 60,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "red",
+      "mobile": true,
+      "mode": "button",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 59.2,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": true,
+      "mode": "button",
+      "run": 1,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 60,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": true,
+      "mode": "button",
+      "run": 2,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 60,
+      "p95FrameMs": 16.7,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    },
+    {
+      "reality": "blue",
+      "mobile": true,
+      "mode": "button",
+      "run": 3,
+      "cpuSlowdown": 6,
+      "active": null,
+      "fps": 60,
+      "p95FrameMs": 16.8,
+      "longTasks": 0,
+      "longestTaskMs": 0
+    }
+  ]
+}
