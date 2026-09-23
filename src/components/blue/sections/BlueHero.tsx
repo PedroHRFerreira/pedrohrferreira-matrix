@@ -13,6 +13,7 @@ export function BlueHero({ content }: BlueHeroProps) {
   const { actions, profile } = content
   const heroRef = useRef<HTMLElement>(null)
   const [returned, setReturned] = useState(false)
+  const [secretClicks, setSecretClicks] = useState(0)
   useEffect(() => {
     let explored = false
     const update = () => {
@@ -32,7 +33,22 @@ export function BlueHero({ content }: BlueHeroProps) {
       <p className={styles.heroKicker}>
         {returned ? 'Você já esteve aqui' : 'Uma prática digital centrada em pessoas'}
       </p>
-      <h1 className={styles.heroTitle}>{profile.name}</h1>
+      <h1 className={styles.heroTitle}>
+        <button
+          type="button"
+          className={styles.secretName}
+          onClick={() => setSecretClicks((count) => Math.min(3, count + 1))}
+          aria-expanded={secretClicks === 3}
+          aria-controls="blue-secret-message"
+        >
+          {profile.name}
+        </button>
+      </h1>
+      <div className={styles.secretSlot}>
+        <p id="blue-secret-message" className={styles.secretMessage} role="status">
+          {secretClicks === 3 && <span>Acorda, Pedro…</span>}
+        </p>
+      </div>
       <p className={styles.heroRole}>{profile.role}</p>
       <p className={styles.heroIntroduction}>{profile.introduction}</p>
       <div className={styles.heroActions}>

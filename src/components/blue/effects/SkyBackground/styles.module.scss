@@ -29,12 +29,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  transform: translate3d(
-    calc(var(--parallax-x, 0px) * var(--cloud-depth)),
-    calc(var(--parallax-y, 0px) * var(--cloud-depth)),
-    0
-  );
-  transition: transform 650ms ease-out;
+  transform: translate3d(var(--pull-x, 0px), var(--pull-y, 0px), 0);
 }
 .cloudShape {
   display: block;
@@ -122,32 +117,139 @@
   }
 }
 
-.cloudEcho {
+// Freeze the drift during a grab; the inner layer remains free to stretch.
+.cloudField[data-playing='true'] .cloudPosition[data-held='true'] {
+  animation-play-state: paused;
+  .cloudShape {
+    animation-play-state: paused;
+  }
+}
+.faultVeil,
+.faultRift {
   position: absolute;
   inset: 0;
-  translate: -105% 0;
+  pointer-events: none;
   opacity: 0;
-  animation: dejaVu 72s linear infinite;
-  animation-play-state: paused;
 }
-.cloudField[data-playing='true'] .cloudEcho {
-  animation-play-state: running;
+.faultVeil {
+  background:
+    radial-gradient(ellipse at 48% 42%, transparent 5%, #03110feb 100%),
+    linear-gradient(180deg, #122528d9, #122b24ad 55%, #081917ed);
 }
-@keyframes dejaVu {
+.faultRift {
+  overflow: hidden;
+  background: repeating-linear-gradient(0deg, #9ebdad10 0 1px, transparent 1px 5px);
+  color: #9cd6b7;
+  font:
+    0.75rem/1.5 var(--font-mono),
+    monospace;
+  letter-spacing: 1.5rem;
+  span {
+    position: absolute;
+    top: 37%;
+    width: 200%;
+    height: 1.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    background: #091c19b0;
+  }
+  span + span {
+    top: 64%;
+    left: -12%;
+  }
+}
+.sky[data-fault='active'] {
+  .faultVeil {
+    animation: atmosphereBreak 3.6s ease both;
+  }
+  .faultRift {
+    animation: signalTear 3.6s linear both;
+  }
+  .cloudField {
+    animation: skyDislocation 3.6s linear both;
+  }
+  .cloudPosition,
+  .cloudShape {
+    animation-play-state: paused;
+  }
+}
+@keyframes atmosphereBreak {
   0%,
-  22%,
-  58%,
   100% {
     opacity: 0;
   }
-  26%,
-  54% {
-    opacity: 0.8;
+  28% {
+    opacity: 0.65;
+  }
+  36%,
+  62% {
+    opacity: 0.94;
+  }
+  76% {
+    opacity: 0.6;
+  }
+}
+@keyframes signalTear {
+  0%,
+  29%,
+  76%,
+  100% {
+    opacity: 0;
+    clip-path: inset(37% 0 61%);
+    transform: translateX(0);
+  }
+  30%,
+  34% {
+    opacity: 0.85;
+    clip-path: inset(35% 0 57%);
+    transform: translateX(-24px);
+  }
+  35%,
+  40% {
+    opacity: 0.6;
+    clip-path: inset(60% 0 29%);
+    transform: translateX(18px);
+  }
+  41%,
+  62% {
+    opacity: 0.25;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+}
+@keyframes skyDislocation {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+    transform: translateX(0);
+  }
+  28% {
+    filter: saturate(0.2) brightness(0.65);
+    transform: translateX(0);
+  }
+  30%,
+  34% {
+    transform: translateX(-14px);
+  }
+  35%,
+  39% {
+    transform: translateX(9px);
+  }
+  40%,
+  65% {
+    filter: saturate(0.05) brightness(0.55);
+    transform: translateX(0);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cloudEcho {
-    display: none;
-    animation: none;
+  .sky[data-fault='active'] {
+    .cloudField {
+      animation: none;
+    }
+    .faultVeil,
+    .faultRift {
+      display: none;
+      animation: none;
+    }
   }
 }

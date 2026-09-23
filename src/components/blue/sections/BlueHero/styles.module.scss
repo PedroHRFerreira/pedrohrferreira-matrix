@@ -155,3 +155,42 @@
     transform: none;
   }
 }
+
+.secretName {
+  all: unset;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+}
+.secretSlot {
+  position: relative;
+  height: 0;
+}
+.secretMessage {
+  position: absolute;
+  margin: 0.4rem 0 0;
+  color: var(--accent);
+  font:
+    0.75rem/1.2 var(--font-mono),
+    monospace;
+  letter-spacing: 0.06em;
+  span {
+    display: block;
+    width: 14ch;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: secretTyping 1.2s steps(14, end) both;
+  }
+}
+@keyframes secretTyping {
+  from {
+    width: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .secretMessage span {
+    animation: none;
+  }
+}
