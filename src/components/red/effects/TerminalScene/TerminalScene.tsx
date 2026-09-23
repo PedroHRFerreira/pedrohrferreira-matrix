@@ -26,6 +26,7 @@ interface TerminalSceneProps {
   commands: readonly TerminalCommand[]
   variant?: 'standard' | 'timeline'
   className?: string
+  animateOnce?: boolean
   horizontal?: boolean
   panelClassName?: string
   panelsClassName?: string
@@ -42,6 +43,7 @@ export function TerminalScene({
   variant = 'standard',
   className,
   horizontal = false,
+  animateOnce = false,
   panelClassName,
   panelsClassName,
   viewportClassName,
@@ -51,6 +53,7 @@ export function TerminalScene({
   const [reducedMotion, setReducedMotion] = useState(false)
   const [sceneVisible, setSceneVisible] = useState(false)
   const sceneRef = useRef<HTMLElement>(null)
+  const hasAnimated = useRef(false)
   const activeCommand = commands.find((command) => command.id === activeId) ?? commands[0]
 
   const selectOffset = (offset: number) => {
@@ -176,7 +179,7 @@ export function TerminalScene({
 
   useEffect(() => {
     const scene = sceneRef.current
-    if (!scene || !sceneVisible || reducedMotion) return
+    if (!scene || !sceneVisible || reducedMotion || (animateOnce && hasAnimated.current)) return
 
     const targets = Array.from(scene.querySelectorAll<HTMLElement>('[data-terminal-type="true"]'))
     const textNodes: Array<{ node: Text; content: string; lineIndex: number }> = []
@@ -198,6 +201,7 @@ export function TerminalScene({
     })
 
     if (!textNodes.length) return
+    hasAnimated.current = true
 
     textNodes.forEach(({ node }) => {
       node.textContent = ''
@@ -238,7 +242,7 @@ export function TerminalScene({
       })
       targets.forEach((target) => target.setAttribute('aria-busy', 'false'))
     }
-  }, [activeId, reducedMotion, sceneVisible])
+  }, [activeId, animateOnce, reducedMotion, sceneVisible])
 
   if (!activeCommand) return null
 

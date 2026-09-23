@@ -1,3 +1,4 @@
+import { BlueArrival } from '@/components/blue/effects/BlueArrival/BlueArrival'
 import { BluePageMotion } from '@/components/blue/effects/BluePageMotion/BluePageMotion'
 import { BlueFooter } from '@/components/blue/effects/BlueFooter'
 import { SkyBackground } from '@/components/blue/effects/SkyBackground'
@@ -19,9 +20,10 @@ import styles from './styles.module.scss'
 
 interface BlueTemplateProps {
   content: PortfolioContent
+  onReconsider: () => void
 }
 
-export function BlueTemplate({ content }: BlueTemplateProps) {
+export function BlueTemplate({ content, onReconsider }: BlueTemplateProps) {
   const blueNavigationOrder = ['about', 'projects', 'experience', 'stack', 'contact']
   const blueNavigation = [...content.navigation].sort(
     (a, b) => blueNavigationOrder.indexOf(a.id) - blueNavigationOrder.indexOf(b.id)
@@ -31,8 +33,9 @@ export function BlueTemplate({ content }: BlueTemplateProps) {
       <SkyBackground className={styles.backdrop} />
       <MatrixRain />
       <BluePageMotion />
+      <BlueArrival />
       <p className={styles.blueIntro} aria-hidden="true">
-        Você escolheu permanecer na realidade...
+        Sonhei um sonho, mas agora esse sonho se foi.
       </p>
       <RealityNavigation
         items={blueNavigation}
@@ -50,6 +53,7 @@ export function BlueTemplate({ content }: BlueTemplateProps) {
         <BlueContact content={content} />
       </main>
       <BlueFooter
+        onReconsider={onReconsider}
         message={content.footer.closingMessage}
         copyright={content.footer.copyright}
         contacts={content.contacts}

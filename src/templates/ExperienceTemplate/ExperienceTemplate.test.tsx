@@ -45,6 +45,7 @@ function controller(
     canChoose: state === 'pill-selection',
     advanceSequence: noop,
     chooseReality: noop,
+    reconsiderReality: () => undefined,
     completeTransition: noop
   }
 }

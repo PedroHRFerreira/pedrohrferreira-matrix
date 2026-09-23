@@ -34,7 +34,7 @@
     min-height: 3.0625rem;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0 10.5rem 0 max(2rem, calc((100vw - 76rem) / 2));
+    padding: 0 max(2rem, calc((100vw - 76rem) / 2));
     border-bottom: 1px solid #1e2e23;
     background: rgba(6, 9, 7, 0.9);
     font-family: var(--font-mono);
@@ -202,10 +202,10 @@
   }
 
   .navigation[data-reality='red'] .brand {
-    display: none;
+    display: flex;
   }
   .navigation[data-reality='red'] .systemStatus {
-    display: none;
+    display: block;
   }
   .navigation[data-reality='red'] .list {
     justify-content: flex-start;

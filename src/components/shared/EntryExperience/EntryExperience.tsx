@@ -13,6 +13,18 @@ export interface EntryExperienceProps {
   onTransitionComplete: () => void
 }
 
+const blueReturnQuestion = ['O que é real? Como você define o real?']
+const blueReturnChoice = ['Há uma diferença entre conhecer o caminho e percorrer o caminho.']
+
+const redReturnQuestion = ['Você tem a cara de quem aceita o que vê, porque tá esperando acordar?']
+const redReturnChoice = ['A ignorância é uma bênção!']
+const dreamDisplayStates: Partial<Record<ExperienceState, ExperienceState>> = {
+  'dream-question': 'return-question',
+  'dream-waiting': 'waiting-return-enter',
+  'dream-choice': 'return-choice',
+  'dream-selection': 'return-selection'
+}
+
 export const ENTRY_TIMING = {
   coldBoot: 1.5,
   staticNoise: 3.5,
@@ -186,12 +198,31 @@ function useTypedLines(
 
 export function EntryExperience({
   content,
-  state,
+  state: experienceState,
   onAdvanceSequence,
   onChooseReality,
   onTransitionComplete
 }: EntryExperienceProps) {
+  const state = dreamDisplayStates[experienceState] ?? experienceState
+  const returningFromRed = experienceState.startsWith('dream-')
+  const returnQuestion = returningFromRed ? redReturnQuestion : blueReturnQuestion
+  const returnChoice = returningFromRed ? redReturnChoice : blueReturnChoice
   const reducedMotion = useReducedMotion()
+  const isSelection = state === 'pill-selection' || state === 'return-selection'
+  const typedReturnQuestion = useTypedLines(
+    returnQuestion,
+    state === 'return-question',
+    ENTRY_TIMING.questionCharacter,
+    reducedMotion,
+    onAdvanceSequence
+  )
+  const typedReturnChoice = useTypedLines(
+    returnChoice,
+    state === 'return-choice',
+    ENTRY_TIMING.initialCharacter,
+    reducedMotion,
+    onAdvanceSequence
+  )
   const [selectedReality, setSelectedReality] = useState<Reality | null>(null)
   const initialLines = useMemo(
     () => [
@@ -222,9 +253,12 @@ export function EntryExperience({
   )
 
   useEffect(() => {
+    const previousRootOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
+      document.documentElement.style.overflow = previousRootOverflow
       document.body.style.overflow = previousOverflow
     }
   }, [])
@@ -263,16 +297,20 @@ export function EntryExperience({
       }
 
       if (event.key === 'Enter') {
-        if (state === 'waiting-first-enter' || state === 'waiting-second-enter') {
+        if (
+          state === 'waiting-first-enter' ||
+          state === 'waiting-second-enter' ||
+          state === 'waiting-return-enter'
+        ) {
           event.preventDefault()
           onAdvanceSequence()
-        } else if (state === 'pill-selection' && selectedReality) {
+        } else if (isSelection && selectedReality) {
           event.preventDefault()
           onChooseReality(selectedReality)
         }
       }
 
-      if (state === 'pill-selection' && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+      if (isSelection && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
         event.preventDefault()
         setSelectedReality(event.key === 'ArrowLeft' ? 'red' : 'blue')
       }
@@ -280,25 +318,36 @@ export function EntryExperience({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onAdvanceSequence, onChooseReality, selectedReality, state])
+  }, [onAdvanceSequence, onChooseReality, selectedReality, state, isSelection])
 
   const isTransitioning = state === 'transitioning-red' || state === 'transitioning-blue'
   const transitionReality = state === 'transitioning-red' ? 'red' : 'blue'
   const transitionLines =
     transitionReality === 'red' ? content.entry.redTransition : content.entry.blueTransition
   const displayedLines =
-    state === 'initial-message'
-      ? typedInitialLines
-      : state === 'waiting-first-enter'
-        ? initialLines
-        : state === 'reality-question'
-          ? typedQuestionLines
-          : state === 'waiting-second-enter'
-            ? questionLines
-            : state === 'pill-selection'
-              ? choiceLines
-              : []
-  const isWaiting = state === 'waiting-first-enter' || state === 'waiting-second-enter'
+    state === 'return-question'
+      ? typedReturnQuestion
+      : state === 'waiting-return-enter'
+        ? returnQuestion
+        : state === 'return-choice'
+          ? typedReturnChoice
+          : state === 'return-selection'
+            ? returnChoice
+            : state === 'initial-message'
+              ? typedInitialLines
+              : state === 'waiting-first-enter'
+                ? initialLines
+                : state === 'reality-question'
+                  ? typedQuestionLines
+                  : state === 'waiting-second-enter'
+                    ? questionLines
+                    : state === 'pill-selection'
+                      ? choiceLines
+                      : []
+  const isWaiting =
+    state === 'waiting-first-enter' ||
+    state === 'waiting-second-enter' ||
+    state === 'waiting-return-enter'
   return (
     <main
       className={styles.entry}
@@ -339,7 +388,10 @@ export function EntryExperience({
                   const isQuestion =
                     state === 'reality-question' ||
                     state === 'waiting-second-enter' ||
-                    state === 'pill-selection'
+                    isSelection ||
+                    state === 'return-question' ||
+                    state === 'waiting-return-enter' ||
+                    state === 'return-choice'
                   const LineElement = isQuestion ? 'h1' : 'p'
 
                   return (
@@ -377,7 +429,7 @@ export function EntryExperience({
                   </div>
                 ) : null}
 
-                {state === 'pill-selection' ? (
+                {isSelection ? (
                   <div className={styles.selection}>
                     <div className={styles.pills} role="group">
                       {(['red', 'blue'] as const).map((reality) => (

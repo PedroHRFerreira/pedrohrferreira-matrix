@@ -653,3 +653,23 @@
     transition: none;
   }
 }
+
+@media (max-height: 500px) and (min-width: 35rem) {
+  .terminal {
+    padding: 0.75rem 1.25rem;
+  }
+  .terminalOutput {
+    padding: 1rem;
+  }
+  .questionLine {
+    max-width: 40ch;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+  }
+  .selection,
+  .continueBlock {
+    margin-top: 1.25rem;
+  }
+  .touchContinue {
+    margin-top: 0;
+  }
+}

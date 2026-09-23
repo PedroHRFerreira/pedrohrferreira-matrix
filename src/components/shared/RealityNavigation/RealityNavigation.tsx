@@ -90,19 +90,21 @@ export function RealityNavigation({
             'PH'
           )}
         </a>
-        <ul className={styles.list}>
-          {items.map((item) => (
-            <li key={item.id}>
-              <a
-                aria-current={activeId === item.id ? 'page' : undefined}
-                className={styles.link}
-                href={`#${item.id}`}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {reality === 'blue' && (
+          <ul className={styles.list}>
+            {items.map((item) => (
+              <li key={item.id}>
+                <a
+                  aria-current={activeId === item.id ? 'page' : undefined}
+                  className={styles.link}
+                  href={`#${item.id}`}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
         {reality === 'red' ? (
           <span className={styles.systemStatus}>● &nbsp;SYS: ONLINE</span>
         ) : null}

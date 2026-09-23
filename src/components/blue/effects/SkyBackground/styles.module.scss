@@ -1,9 +1,9 @@
 .sky {
   overflow: hidden;
   background:
-    radial-gradient(circle at 78% 16%, rgba(255, 221, 237, 0.65), transparent 34%),
-    radial-gradient(ellipse at 15% 65%, rgba(216, 235, 255, 0.5), transparent 50%),
-    linear-gradient(180deg, #eaf4fb, #edf0fb 58%, #f9f1f6);
+    radial-gradient(circle at 78% 16%, rgba(233, 191, 220, 0.4), transparent 34%),
+    radial-gradient(ellipse at 15% 65%, rgba(152, 193, 225, 0.35), transparent 50%),
+    linear-gradient(180deg, #a8cce6, #bdcde6 58%, #d9cce2);
 }
 .cloudField {
   position: absolute;
@@ -15,18 +15,15 @@
 .cloudPosition {
   position: absolute;
   top: var(--cloud-top);
-  left: var(--cloud-static-left);
+  left: 0;
   width: min(var(--cloud-size), 70vw);
   aspect-ratio: 2.7;
   opacity: var(--cloud-opacity);
-  animation: drift var(--cloud-duration) linear var(--cloud-delay) infinite alternate;
+  animation: drift var(--cloud-duration) linear var(--cloud-delay) infinite;
   animation-play-state: paused;
 }
 .cloudField[data-playing='true'] .cloudPosition {
   animation-play-state: running;
-}
-.cloudPosition[data-near='true'] .cloudShape {
-  filter: blur(4px) brightness(1.1) drop-shadow(0 0.7rem 1.3rem rgba(91, 135, 170, 0.22));
 }
 .cloudBob {
   display: block;
@@ -43,20 +40,55 @@
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   background:
-    radial-gradient(ellipse 24% 36% at 25% 64%, #fff 0 98%, transparent 100%),
-    radial-gradient(ellipse 29% 50% at 50% 48%, #fff 0 98%, transparent 100%),
-    radial-gradient(ellipse 26% 36% at 75% 65%, #e7f5fc 0 98%, transparent 100%);
-  filter: blur(4px) drop-shadow(0 0.7rem 1.3rem rgba(91, 135, 170, 0.22));
+    radial-gradient(
+      ellipse 22% 38% at 36% 44%,
+      #fff 30%,
+      rgba(255, 255, 255, 0.88) 62%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 18% 30% at 59% 38%,
+      #fff 24%,
+      rgba(255, 255, 255, 0.8) 60%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 27% 28% at 72% 63%,
+      #fff 20%,
+      rgba(248, 252, 255, 0.78) 60%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 28% 26% at 23% 67%,
+      #fff 20%,
+      rgba(255, 255, 255, 0.78) 58%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 46% 27% at 49% 73%,
+      rgba(238, 247, 255, 0.9) 25%,
+      rgba(255, 255, 255, 0.68) 60%,
+      transparent 100%
+    );
+  filter: blur(2px) drop-shadow(0 0.4rem 0.9rem rgba(124, 152, 181, 0.1));
   animation: bob 4.5s ease-in-out infinite alternate;
+}
+.cloudPosition:nth-child(3n + 2) {
+  aspect-ratio: 3.4;
+}
+.cloudPosition:nth-child(3n) .cloudShape {
+  scale: -1 1;
+}
+.cloudField[data-playing='false'] .cloudShape {
+  animation-play-state: paused;
 }
 @keyframes drift {
   from {
-    transform: translate3d(-12vw, 0, 0);
+    transform: translate3d(calc(-100% - 40px), 0, 0);
   }
   to {
-    transform: translate3d(12vw, 0, 0);
+    transform: translate3d(calc(100vw + 40px), 0, 0);
   }
 }
 @keyframes bob {
@@ -86,6 +118,36 @@
     transform: none;
   }
   .cloudShape {
+    animation: none;
+  }
+}
+
+.cloudEcho {
+  position: absolute;
+  inset: 0;
+  translate: -105% 0;
+  opacity: 0;
+  animation: dejaVu 72s linear infinite;
+  animation-play-state: paused;
+}
+.cloudField[data-playing='true'] .cloudEcho {
+  animation-play-state: running;
+}
+@keyframes dejaVu {
+  0%,
+  22%,
+  58%,
+  100% {
+    opacity: 0;
+  }
+  26%,
+  54% {
+    opacity: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cloudEcho {
+    display: none;
     animation: none;
   }
 }

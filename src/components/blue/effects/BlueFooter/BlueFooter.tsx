@@ -8,12 +8,13 @@ import type { Contact } from '@/types'
 import styles from './styles.module.scss'
 
 export interface BlueFooterProps {
+  onReconsider: () => void
   message: string
   copyright: string
   contacts?: readonly Contact[]
 }
 
-export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProps) {
+export function BlueFooter({ message, copyright, contacts = [], onReconsider }: BlueFooterProps) {
   const reduced = useReducedMotion()
   const footerRef = useRef<HTMLElement>(null)
 
@@ -87,6 +88,13 @@ export function BlueFooter({ message, copyright, contacts = [] }: BlueFooterProp
         <a className={styles.backToTop} href="#main-content">
           Voltar ao início ↑
         </a>
+        <button className={styles.reconsider} onClick={onReconsider} type="button">
+          <span className={styles.signalFault} aria-hidden="true">
+            [ SINAL INTERROMPIDO ]
+          </span>
+          E se você tivesse escolhido diferente?
+          <span>Voltar à escolha das pílulas ↗</span>
+        </button>
         <small>{copyright}</small>
       </div>
     </footer>

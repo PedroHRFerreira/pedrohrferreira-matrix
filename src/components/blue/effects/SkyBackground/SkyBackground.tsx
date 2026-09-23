@@ -26,9 +26,11 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
   useEffect(() => {
     const field = fieldRef.current
     if (!field || reducedMotion) return
-    const start = window.setTimeout(() => {
-      field.dataset.playing = 'true'
-    }, 300)
+    const updateVisibility = () => {
+      field.dataset.playing = String(!document.hidden)
+    }
+    const start = window.setTimeout(updateVisibility, 300)
+    document.addEventListener('visibilitychange', updateVisibility)
     let frame = 0
     const move = (event: PointerEvent) => {
       if (
@@ -40,22 +42,12 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
       frame = requestAnimationFrame(() => {
         field.style.setProperty('--parallax-x', `${(event.clientX / innerWidth - 0.5) * 12}px`)
         field.style.setProperty('--parallax-y', `${(event.clientY / innerHeight - 0.5) * 8}px`)
-        if (event.pointerType === 'mouse') {
-          field.querySelectorAll<HTMLElement>(`.${styles.cloudPosition}`).forEach((cloud) => {
-            const bounds = cloud.getBoundingClientRect()
-            const near =
-              event.clientX > bounds.left - 80 &&
-              event.clientX < bounds.right + 80 &&
-              event.clientY > bounds.top - 80 &&
-              event.clientY < bounds.bottom + 80
-            cloud.dataset.near = String(near)
-          })
-        }
       })
     }
     window.addEventListener('pointermove', move, { passive: true })
     return () => {
       window.clearTimeout(start)
+      document.removeEventListener('visibilitychange', updateVisibility)
       window.removeEventListener('pointermove', move)
       cancelAnimationFrame(frame)
       field.style.removeProperty('--parallax-x')
@@ -75,13 +67,18 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
                 '--cloud-top': `${cloud.top}%`,
                 '--cloud-static-left': `${cloud.left}%`,
                 '--cloud-size': `${cloud.size}rem`,
-                '--cloud-duration': `${cloud.duration * 0.4}s`,
+                '--cloud-duration': `${cloud.duration}s`,
                 '--cloud-delay': `${cloud.delay}s`,
-                '--cloud-opacity': cloud.opacity,
+                '--cloud-opacity': Math.min(1, cloud.opacity + 0.15),
                 '--cloud-depth': cloud.depth
               } as CSSProperties
             }
           >
+            {index === 0 && (
+              <span className={styles.cloudEcho}>
+                <span className={styles.cloudShape} />
+              </span>
+            )}
             <span className={styles.cloudBob}>
               <span className={styles.cloudShape} />
             </span>

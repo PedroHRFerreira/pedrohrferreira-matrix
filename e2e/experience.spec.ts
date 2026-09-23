@@ -47,7 +47,7 @@ test('mantém a introdução obrigatória e publica o conteúdo profissional em 
       .first()
   ).toBeVisible()
   await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toContainText(
-    'PROJETOS'
+    'pedro@matrix:~#'
   )
   await expect(page.getByRole('button', { name: /^(EN|PT)$/ })).toHaveCount(0)
 
@@ -296,21 +296,13 @@ test('visual onírico não mostra filtros, números decorativos ou esferas', asy
   await expect(page.locator('[class*="codeColumn"]').first()).toHaveText(/^[01\s]+$/)
 })
 
-test('menu red mostra todos os links em 320 px', async ({ page }) => {
+test('header red não exibe abas em 320 px', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 844 })
   await openReality(page, 'red', 'reduce')
-  const links = page.getByRole('navigation', { name: 'Navegação principal' }).locator('li a')
-  await expect(links).toHaveCount(4)
-  expect(
-    await links.evaluateAll((items) =>
-      items.every((item) => {
-        const rect = item.getBoundingClientRect()
-        return rect.left >= 0 && rect.right <= innerWidth
-      })
-    )
-  ).toBe(true)
-  await page.getByRole('link', { name: '//DOSSIER' }).click()
-  await expect(page).toHaveURL(/#about$/)
+  const header = page.getByRole('navigation', { name: 'Navegação principal' })
+  await expect(header.locator('li a')).toHaveCount(0)
+  await expect(header.getByText('pedro@matrix:~#')).toBeVisible()
+  await expect(header.getByText('SYS: ONLINE', { exact: false })).toBeVisible()
 })
 
 test('página inexistente permite reiniciar a experiência', async ({ page }) => {
@@ -319,4 +311,92 @@ test('página inexistente permite reiniciar a experiência', async ({ page }) =>
   expect(response?.status()).toBe(404)
   await page.getByRole('link', { name: 'Reiniciar experiência' }).click()
   await expect(page.getByRole('button', { name: 'Pílula azul', exact: true })).toBeVisible()
+})
+
+test('texto de apresentação red anima apenas na primeira visita', async ({ page }) => {
+  await openReality(page, 'red')
+  const section = page.locator('#about')
+  const panel = section.locator('[data-terminal-type="true"]')
+  await section.scrollIntoViewIfNeeded()
+  await expect(panel).toHaveAttribute('aria-busy', 'true')
+  await expect(panel).toHaveAttribute('aria-busy', 'false')
+  const completeText = await panel.textContent()
+  await page.evaluate(() =>
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
+  )
+  await expect(section).not.toBeInViewport()
+  await panel.evaluate((element) => {
+    element.setAttribute('data-replays', '0')
+    const observer = new MutationObserver((records) => {
+      if (
+        records.some(
+          (record) =>
+            record.type === 'characterData' ||
+            (record.attributeName === 'aria-busy' && record.oldValue === 'false')
+        )
+      ) {
+        element.setAttribute('data-replays', '1')
+      }
+    })
+    observer.observe(element, {
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['aria-busy'],
+      attributeOldValue: true
+    })
+  })
+  await section.scrollIntoViewIfNeeded()
+  await expect(section).toBeInViewport()
+  await page.waitForTimeout(500)
+  await expect(panel).toHaveAttribute('data-replays', '0')
+  expect(await panel.textContent()).toBe(completeText)
+})
+
+test('blue reconhece o retorno e permite reconsiderar a pílula', async ({ page }) => {
+  await openReality(page, 'blue', 'reduce')
+  await expect(page.getByText('Uma prática digital centrada em pessoas')).toBeVisible()
+  await page.locator('footer').scrollIntoViewIfNeeded()
+  await page.getByRole('link', { name: 'Voltar ao início ↑' }).click()
+  await expect(page.getByText('Você já esteve aqui', { exact: true })).toBeVisible()
+  await page.locator('footer').scrollIntoViewIfNeeded()
+  await page.getByRole('button', { name: /E se você tivesse escolhido diferente/ }).click()
+  await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'O que é real? Como você define o real?', exact: true })
+  ).toBeVisible()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('main[data-state="return-selection"]')).toBeVisible()
+  await expect(
+    page.getByRole('heading', {
+      name: 'Há uma diferença entre conhecer o caminho e percorrer o caminho.',
+      exact: true
+    })
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pílula vermelha', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Pílula vermelha', exact: true }).click()
+  await expect(page.locator('main#main-content')).toBeVisible()
+  await expect(page.locator('[data-reality="red"]').first()).toBeVisible()
+})
+
+test('red retorna à TV com as frases do mundo dos sonhos', async ({ page }) => {
+  await openReality(page, 'red', 'reduce')
+  await page.getByRole('button', { name: /E se você pudesse voltar a sonhar/ }).click()
+  await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
+  await expect(
+    page.getByRole('heading', {
+      name: 'Você tem a cara de quem aceita o que vê, porque tá esperando acordar?',
+      exact: true
+    })
+  ).toBeVisible()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('main[data-state="return-selection"]')).toBeVisible()
+  await expect(
+    page.getByRole('heading', {
+      name: 'A ignorância é uma bênção!',
+      exact: true
+    })
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
+  await expect(page.locator('[data-reality="blue"]').first()).toBeVisible()
 })

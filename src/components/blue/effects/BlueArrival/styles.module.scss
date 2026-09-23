@@ -1,0 +1,61 @@
+.passage {
+  position: fixed;
+  z-index: 45;
+  bottom: 3px;
+  left: 0;
+  width: clamp(104px, 11vw, 154px);
+  pointer-events: none;
+  animation: passage 4.3s linear both;
+}
+.passage[hidden] {
+  display: none;
+}
+.cat {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+.frames {
+  animation: walkCycle 880ms steps(1, end) infinite;
+}
+@keyframes walkCycle {
+  0% {
+    transform: translate(0, -180px);
+  }
+  12.5% {
+    transform: translate(-384px, -180px);
+  }
+  25% {
+    transform: translate(-768px, -180px);
+  }
+  37.5% {
+    transform: translate(-1152px, -180px);
+  }
+  50% {
+    transform: translate(0, -660px);
+  }
+  62.5% {
+    transform: translate(-384px, -660px);
+  }
+  75% {
+    transform: translate(-768px, -660px);
+  }
+  87.5%,
+  100% {
+    transform: translate(-1152px, -660px);
+  }
+}
+@keyframes passage {
+  from {
+    transform: translateX(-140%);
+  }
+  to {
+    transform: translateX(calc(100vw + 40px));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .passage {
+    display: none;
+    animation: none;
+  }
+}

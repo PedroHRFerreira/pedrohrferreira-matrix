@@ -34,6 +34,7 @@ export function RedAbout({ content }: RedAboutProps) {
 
   return (
     <TerminalScene
+      animateOnce
       commands={commands}
       eyebrow={sections.about.eyebrow}
       id="about"

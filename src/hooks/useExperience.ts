@@ -18,6 +18,7 @@ export interface ExperienceController {
   advanceSequence: () => void
   chooseReality: (reality: Reality) => void
   completeTransition: () => void
+  reconsiderReality: () => void
 }
 
 function experienceReducer(state: ExperienceState, event: ExperienceEvent): ExperienceState {
@@ -42,6 +43,11 @@ export function useExperience(): ExperienceController {
     []
   )
   const completeTransition = useCallback(() => dispatch({ type: 'TRANSITION_COMPLETED' }), [])
+  const reconsiderReality = useCallback(() => {
+    dispatch({ type: 'RECONSIDER' })
+    window.history.replaceState(null, '', window.location.pathname)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
   const reality = realityForState(state)
 
   return {
@@ -50,6 +56,7 @@ export function useExperience(): ExperienceController {
     canChoose: canChooseReality(state),
     advanceSequence,
     chooseReality,
-    completeTransition
+    completeTransition,
+    reconsiderReality
   }
 }

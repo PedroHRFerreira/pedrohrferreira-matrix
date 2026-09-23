@@ -17,6 +17,7 @@ import styles from './styles.module.scss'
 
 interface RedTemplateProps {
   content: PortfolioContent
+  onReconsider: () => void
 }
 
 const redNavigation: readonly NavigationItem[] = [
@@ -26,7 +27,7 @@ const redNavigation: readonly NavigationItem[] = [
   { id: 'about', label: '//DOSSIER' }
 ]
 
-export function RedTemplate({ content }: RedTemplateProps) {
+export function RedTemplate({ content, onReconsider }: RedTemplateProps) {
   return (
     <div className={`${styles.shell} ${styles.red}`} data-reality="red">
       <MatrixRain className={styles.backdrop} />
@@ -42,6 +43,13 @@ export function RedTemplate({ content }: RedTemplateProps) {
         <RedStack content={content} />
         <RedContact content={content} />
       </main>
+      <div className={styles.dreamInvitation}>
+        <button type="button" onClick={onReconsider} className={styles.dreamButton}>
+          <span aria-hidden="true" className={styles.dreamCloud} />
+          <span>E se você pudesse voltar a sonhar?</span>
+          <small>Um outro caminho espera por você ↗</small>
+        </button>
+      </div>
       <footer className={styles.redEnding}>
         <span>SYS://CONEXÃO_PERMANECE_ABERTA</span>
         <span>{content.footer.copyright}</span>

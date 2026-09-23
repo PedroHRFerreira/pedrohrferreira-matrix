@@ -6,6 +6,7 @@ export type ExperienceEvent =
   | { type: 'REALITY_CHOSEN'; reality: Reality }
   | { type: 'TRANSITION_COMPLETED' }
   | { type: 'RESET' }
+  | { type: 'RECONSIDER' }
 
 export interface TransitionResult {
   accepted: boolean
@@ -15,6 +16,12 @@ export interface TransitionResult {
 export const INITIAL_EXPERIENCE_STATE: ExperienceState = 'cold-boot'
 
 const sequenceState: Partial<Record<ExperienceState, ExperienceState>> = {
+  'dream-question': 'dream-waiting',
+  'dream-waiting': 'dream-choice',
+  'dream-choice': 'dream-selection',
+  'return-question': 'waiting-return-enter',
+  'waiting-return-enter': 'return-choice',
+  'return-choice': 'return-selection',
   'cold-boot': 'static-noise',
   'static-noise': 'signal-reveal',
   'signal-reveal': 'terminal-connecting',
@@ -38,6 +45,14 @@ export function applyExperienceEvent(
   state: ExperienceState,
   event: ExperienceEvent
 ): TransitionResult {
+  if (event.type === 'RECONSIDER' && state === 'ready-blue') {
+    return { accepted: true, state: 'return-question' }
+  }
+
+  if (event.type === 'RECONSIDER' && state === 'ready-red') {
+    return { accepted: true, state: 'dream-question' }
+  }
+
   if (event.type === 'RESET') {
     return {
       accepted: state !== INITIAL_EXPERIENCE_STATE,
@@ -64,7 +79,10 @@ export function applyExperienceEvent(
     if (nextState) return { accepted: true, state: nextState }
   }
 
-  if (state === 'pill-selection' && event.type === 'REALITY_CHOSEN') {
+  if (
+    (state === 'pill-selection' || state === 'return-selection' || state === 'dream-selection') &&
+    event.type === 'REALITY_CHOSEN'
+  ) {
     return {
       accepted: true,
       state: event.reality === 'red' ? 'transitioning-red' : 'transitioning-blue'
@@ -87,7 +105,7 @@ export function transitionExperience(
 }
 
 export function canChooseReality(state: ExperienceState): boolean {
-  return state === 'pill-selection'
+  return state === 'pill-selection' || state === 'return-selection' || state === 'dream-selection'
 }
 
 export function realityForState(state: ExperienceState): Reality | null {

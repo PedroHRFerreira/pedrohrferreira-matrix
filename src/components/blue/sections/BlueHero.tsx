@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
 import type { PortfolioContent } from '@/types'
 
 import styles from './BlueHero/styles.module.scss'
@@ -8,9 +11,27 @@ interface BlueHeroProps {
 
 export function BlueHero({ content }: BlueHeroProps) {
   const { actions, profile } = content
+  const heroRef = useRef<HTMLElement>(null)
+  const [returned, setReturned] = useState(false)
+  useEffect(() => {
+    let explored = false
+    const update = () => {
+      const hero = heroRef.current
+      if (!hero) return
+      if (hero.getBoundingClientRect().bottom < 0) explored = true
+      if (explored && window.scrollY < 80) {
+        setReturned(true)
+        window.removeEventListener('scroll', update)
+      }
+    }
+    window.addEventListener('scroll', update, { passive: true })
+    return () => window.removeEventListener('scroll', update)
+  }, [])
   return (
-    <header className={styles.hero} data-section="hero">
-      <p className={styles.heroKicker}>Uma prática digital centrada em pessoas</p>
+    <header ref={heroRef} className={styles.hero} data-section="hero">
+      <p className={styles.heroKicker}>
+        {returned ? 'Você já esteve aqui' : 'Uma prática digital centrada em pessoas'}
+      </p>
       <h1 className={styles.heroTitle}>{profile.name}</h1>
       <p className={styles.heroRole}>{profile.role}</p>
       <p className={styles.heroIntroduction}>{profile.introduction}</p>
