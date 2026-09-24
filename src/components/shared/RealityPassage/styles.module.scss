@@ -81,11 +81,12 @@
 .character {
   position: absolute;
   z-index: 3;
-  width: clamp(24px, 3.8vw, 48px);
+  width: 60px;
   aspect-ratio: 5 / 8;
   pointer-events: none;
   transform: translate(-50%, -100%);
   svg {
+    overflow: visible;
     display: block;
     width: 100%;
     height: 100%;
@@ -227,12 +228,13 @@
 .agent {
   position: absolute;
   z-index: 3;
-  width: clamp(24px, 3.8vw, 48px);
+  width: 48px;
   aspect-ratio: 2 / 3;
   pointer-events: none;
   transform: translate(-50%, -100%);
   animation: agent-copy 450ms steps(5, end) both;
   svg {
+    overflow: visible;
     display: block;
     width: 100%;
     height: 100%;
@@ -367,4 +369,113 @@
 .scene[data-active='true'] .character,
 .scene[data-active='true'] .agent:not([hidden]) {
   will-change: transform;
+}
+// Sprites use a 3× integer scale (2× on narrow desktop layouts).
+.character[data-facing='left'] svg {
+  transform: scaleX(-1);
+}
+
+.cape {
+  animation: cape-rest 1600ms steps(1, end) infinite;
+}
+.scene:not([data-active='true']) .cape {
+  animation: none;
+}
+.character[data-moving='true'],
+.agent[data-moving='true'] {
+  .spriteBody {
+    animation: sprite-bob 480ms steps(1, end) infinite;
+  }
+  .leftLeg,
+  .rightArm {
+    animation: sprite-step 480ms steps(1, end) infinite;
+  }
+  .rightLeg,
+  .leftArm {
+    animation: sprite-step 480ms steps(1, end) infinite reverse;
+  }
+  .cape {
+    animation: cape-walk 480ms steps(1, end) infinite;
+  }
+}
+@keyframes sprite-step {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, -2px);
+  }
+  50% {
+    transform: translate(0, 0);
+  }
+  75% {
+    transform: translate(1px, 0);
+  }
+}
+@keyframes sprite-bob {
+  0%,
+  50%,
+  100% {
+    transform: translateY(0);
+  }
+  25%,
+  75% {
+    transform: translateY(-1px);
+  }
+}
+@keyframes cape-rest {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+}
+@keyframes cape-walk {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, -1px);
+  }
+  50% {
+    transform: translate(-2px, 0);
+  }
+  75% {
+    transform: translate(-1px, 1px);
+  }
+}
+@media (max-width: 1100px) {
+  .character {
+    width: 40px;
+  }
+  .agent {
+    width: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .character[data-moving],
+  .agent[data-moving] {
+    .spriteBody,
+    .leftLeg,
+    .rightLeg,
+    .leftArm,
+    .rightArm,
+    .cape {
+      animation: none;
+    }
+  }
+}
+
+.character [data-pose] {
+  display: none;
+}
+.character[data-facing='down'] [data-pose='front'],
+.character[data-facing='up'] [data-pose='back'],
+.character[data-facing='left'] [data-pose='side'],
+.character[data-facing='right'] [data-pose='side'] {
+  display: inline;
 }

@@ -4,8 +4,8 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import styles from './styles.module.scss'
 import { PassageArtwork } from './PassageArtwork'
 import { BluePassageArtwork } from './BluePassageArtwork'
+import { NeonSprite } from './NeonSprite'
 import { SmithAgents } from './SmithAgents'
-import { NeoSprite } from './PixelCharacters'
 import { pursueAgents, type Agent } from './agentEncounter'
 
 function returnToDream() {
@@ -112,6 +112,10 @@ function PassageGame({
     agents.current = []
     character.current?.style.removeProperty('transform')
     setPosition(origin)
+    if (character.current) {
+      character.current.dataset.moving = 'false'
+      character.current.dataset.facing = 'down'
+    }
     setActive(true)
     scene.current?.focus({ preventScroll: true })
   }
@@ -159,6 +163,7 @@ function PassageGame({
     if (!active) return
     const element = scene.current
     if (!element) return
+    const characterNode = character.current
     const keys = pressed.current
     let frame = 0
     let previousTime = performance.now()
@@ -166,8 +171,8 @@ function PassageGame({
     const agentNodes = element.querySelectorAll<HTMLElement>('[data-passage-agent]')
     const paintPlayer = () => {
       const point = player.current
-      if (character.current) {
-        character.current.style.transform = `translate(${((point.x - origin.x) * bounds.width) / 100}px, ${((point.y - origin.y) * bounds.height) / 100}px) translate(-50%, -100%)`
+      if (characterNode) {
+        characterNode.style.transform = `translate(${((point.x - origin.x) * bounds.width) / 100}px, ${((point.y - origin.y) * bounds.height) / 100}px) translate(-50%, -100%)`
       }
     }
     const paintAgents = () => {
@@ -177,6 +182,7 @@ function PassageGame({
         if (node.hidden) node.hidden = false
         node.style.transform = `translate(${(agent.x * bounds.width) / 100}px, ${(agent.y * bounds.height) / 100}px) translate(-50%, -100%)`
         if (node.dataset.ready !== String(agent.ready)) node.dataset.ready = String(agent.ready)
+        if (node.dataset.moving !== String(agent.ready)) node.dataset.moving = String(agent.ready)
       }
     }
     const measure = () => {
@@ -202,6 +208,7 @@ function PassageGame({
       y = Math.sign(y)
       const magnitude = Math.hypot(x, y)
       if (blue && !document.hidden) encounter.current += elapsed
+      let didMove = false
       if (magnitude && scene.current) {
         const { width, height } = bounds
         // Equal on-screen speed on both axes, independent of keyboard repeat and refresh rate.
@@ -214,6 +221,11 @@ function PassageGame({
             Math.min(84, previous.y + (y / magnitude) * distance * (width / (height || 1)))
           )
         }
+        didMove = next.x !== previous.x || next.y !== previous.y
+        if (characterNode) {
+          const facing = x ? (x < 0 ? 'left' : 'right') : y < 0 ? 'up' : 'down'
+          if (characterNode.dataset.facing !== facing) characterNode.dataset.facing = facing
+        }
         player.current = next
         paintPlayer()
         const zone = `${next.y <= 72 ? (next.x <= 23 ? 'exit' : next.x >= 72 ? 'dream' : '') : ''}:${next.y <= 68 ? (next.x <= 15 ? 'exit' : next.x >= 80 ? 'dream' : '') : ''}`
@@ -221,6 +233,9 @@ function PassageGame({
           previousZone = zone
           setPosition(next)
         }
+      }
+      if (characterNode && characterNode.dataset.moving !== String(didMove)) {
+        characterNode.dataset.moving = String(didMove)
       }
       if (blue && scene.current) {
         const { width, height } = bounds
@@ -258,6 +273,7 @@ function PassageGame({
     document.addEventListener('visibilitychange', clear)
     return () => {
       cancelAnimationFrame(frame)
+      if (characterNode) characterNode.dataset.moving = 'false'
       sizing.disconnect()
       wake.current = () => {}
       keys.clear()
@@ -385,10 +401,12 @@ function PassageGame({
         <span
           ref={character}
           className={styles.character}
+          data-moving="false"
+          data-facing="down"
           style={{ left: `${origin.x}%`, top: `${origin.y}%` }}
           aria-hidden="true"
         >
-          <NeoSprite />
+          <NeonSprite />
         </span>
         <span className={styles.status} role="status">
           {active

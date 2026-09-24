@@ -145,6 +145,47 @@ describe.each(['red', 'blue'] as const)('RealityPassage %s', (reality) => {
     expect(start).toHaveFocus()
   })
 
+  it('animates movement and resets the pose on release, exit and restart', () => {
+    const { scene, start } = setup(reality)
+    const sprite = scene.querySelector('[data-facing]')!
+    fireEvent.click(start)
+    fireEvent.keyDown(scene, { key: 'ArrowLeft' })
+    act(() => vi.advanceTimersByTime(100))
+    expect(sprite).toHaveAttribute('data-moving', 'true')
+    expect(sprite).toHaveAttribute('data-facing', 'left')
+    // The new renderer anchors the sprite once and moves it only by transform.
+    expect(sprite).toHaveStyle({ left: '36%', top: '66%' })
+    fireEvent.keyUp(window, { key: 'ArrowLeft' })
+    act(() => vi.advanceTimersByTime(32))
+    expect(sprite).toHaveAttribute('data-moving', 'false')
+    fireEvent.keyDown(scene, { key: 'ArrowRight' })
+    act(() => vi.advanceTimersByTime(100))
+    expect(sprite).toHaveAttribute('data-moving', 'true')
+    expect(sprite).toHaveAttribute('data-facing', 'right')
+    fireEvent.keyDown(scene, { key: 'Escape' })
+    expect(sprite).toHaveAttribute('data-moving', 'false')
+    fireEvent.click(start)
+    expect(sprite).toHaveAttribute('data-moving', 'false')
+    expect((sprite as HTMLElement).style.transform).toBe('')
+  })
+
+  it('faces all four directions and keeps the last direction after stopping', () => {
+    const { scene, start } = setup(reality)
+    const sprite = scene.querySelector('[data-facing]')!
+    fireEvent.click(start)
+    for (const [key, facing] of [
+      ['ArrowUp', 'up'],
+      ['ArrowDown', 'down'],
+      ['ArrowLeft', 'left'],
+      ['ArrowRight', 'right']
+    ]) {
+      hold(scene, key, 64)
+      act(() => vi.advanceTimersByTime(32))
+      expect(sprite).toHaveAttribute('data-facing', facing)
+      expect(sprite).toHaveAttribute('data-moving', 'false')
+    }
+  })
+
   it('does not remeasure the scene on every movement frame', () => {
     const { scene, start } = setup(reality)
     const measure = vi.spyOn(scene, 'getBoundingClientRect')
@@ -227,3 +268,15 @@ it.each([0, 3])(
     else expect(window.scrollTo).toHaveBeenCalled()
   }
 )
+
+it('animates agents only after materialization in the transform renderer', () => {
+  const { scene, start } = setup('blue')
+  fireEvent.click(start)
+  const agent = scene.querySelector('[data-passage-agent="0"]')!
+  expect(agent).toHaveAttribute('hidden')
+  act(() => vi.advanceTimersByTime(900))
+  expect(agent).not.toHaveAttribute('hidden')
+  expect(agent).toHaveAttribute('data-moving', 'false')
+  act(() => vi.advanceTimersByTime(450))
+  expect(agent).toHaveAttribute('data-moving', 'true')
+})
