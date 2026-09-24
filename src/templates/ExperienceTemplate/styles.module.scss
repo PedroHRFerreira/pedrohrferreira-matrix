@@ -203,3 +203,220 @@
   padding-block: 0;
   justify-content: center;
 }
+
+.shell.blue[data-corrupted='true'] {
+  --surface: #101b17;
+  --surface-raised: #17271e;
+  --glass: rgba(14, 28, 23, 0.78);
+  --text: #c2ddc4;
+  --muted: #9abd9f;
+  --accent: #9ad6a6;
+  --blue-blush: #a3caa6;
+  --blue-purple: #a4c6a5;
+  --line: rgba(111, 160, 121, 0.34);
+  color: #b6d9ba;
+  .portfolio {
+    background: linear-gradient(
+      90deg,
+      rgba(5, 12, 12, 0.42),
+      rgba(5, 12, 12, 0.16) 65%,
+      transparent
+    );
+  }
+  .portfolio :is(h1, h2, h3, h4, p, a, span, li, small, button, strong),
+  :global(footer) :is(p, a, span, small, button),
+  :global(nav) :is(a, button, span),
+  :global(nav) :is(a, button, span)[aria-current] {
+    color: #b8d9bd !important;
+  }
+  .portfolio :is(a, button) {
+    text-shadow: none;
+  }
+  .portfolio a[class*='primary'] {
+    background: #193c29;
+  }
+  :global([data-light-surface='true']) {
+    background: rgba(15, 29, 24, 0.9) !important;
+  }
+  :global(nav[data-reality='blue']) {
+    background: rgba(11, 24, 20, 0.93) !important;
+  }
+  :global(footer) {
+    background: rgba(9, 21, 18, 0.8);
+    color: #b8d9bd;
+  }
+  .portfolio :global([data-original-black='true']),
+  :global(nav) :global([data-original-black='true']),
+  :global(footer) :global([data-original-black='true']) {
+    color: #000 !important;
+    background: #c2d0bf !important;
+    box-decoration-break: clone;
+  }
+}
+
+.effectsToggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 80;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #7d9c80;
+  background: #15221c;
+  color: #d2e7cd;
+  font: 0.75rem var(--font-mono);
+  cursor: pointer;
+}
+.corruptionNotice {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 6rem 1.5rem 1.5rem;
+  text-align: center;
+  color: #bce1b9;
+  font-family: var(--font-mono);
+}
+
+.blueStorm {
+  position: fixed !important;
+  inset: 0;
+  pointer-events: none;
+}
+
+// Persistent layers derive from capture count; only the brief pulse restarts.
+.blue[data-corruption-level='1'] {
+  --invasion: 8%;
+  --interference: 0.14;
+  --split: 0.4px;
+  --glitch-shift: 0.3%;
+}
+.blue[data-corruption-level='2'] {
+  --invasion: 21%;
+  --interference: 0.26;
+  --split: 0.8px;
+  --glitch-shift: 0.7%;
+}
+.blue[data-corruption-level='3'] {
+  --invasion: 44%;
+  --interference: 0.38;
+  --split: 1.2px;
+  --glitch-shift: 1.4%;
+}
+.blue[data-corruption-level='1'],
+.blue[data-corruption-level='2'],
+.blue[data-corruption-level='3'] {
+  .portfolio :is(h1, h2) {
+    text-shadow:
+      var(--split) 0 #4cbb9980,
+      calc(-1 * var(--split)) 0 #af5d9680;
+  }
+  .corruptionNotice {
+    color: var(--text);
+  }
+}
+.blue[data-corruption-level='2'] {
+  --accent: #246748;
+  --blue-blush: #437664;
+  .backdrop {
+    filter: saturate(0.55) brightness(0.8);
+  }
+  .portfolio h2 {
+    animation: corrupted-text 11s step-end infinite;
+  }
+}
+.corruptionVeil {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  pointer-events: none;
+  overflow: hidden;
+  box-shadow: inset 0 0 9vw #061a1645;
+  background:
+    linear-gradient(
+      90deg,
+      #03251688,
+      transparent var(--invasion),
+      transparent calc(100% - var(--invasion)),
+      #03251688
+    ),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(0 30 15 / var(--interference)) 3px 4px);
+  border-radius: 2% / 1%;
+}
+.corruptionPulse {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 11%,
+    #58c69133 11% 13%,
+    transparent 13% 23%
+  );
+  animation: corruption-pulse 650ms steps(2, end) both;
+}
+.systemSignal {
+  position: absolute;
+  top: 6rem;
+  left: 1rem;
+  max-width: calc(100% - 2rem);
+  padding: 0.7rem;
+  background: #051c12;
+  color: #b3f7cb;
+  font: 0.75rem var(--font-mono);
+  animation: signal-flash 1.8s step-end both;
+}
+@keyframes corruption-pulse {
+  0% {
+    opacity: 0.8;
+    transform: skewX(-2deg) translateX(calc(-1 * var(--glitch-shift)));
+  }
+  40% {
+    opacity: 0.4;
+    transform: skewX(2deg) translateX(var(--glitch-shift));
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes signal-flash {
+  0%,
+  30% {
+    opacity: 1;
+  }
+  20%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes corrupted-text {
+  0%,
+  97%,
+  100% {
+    translate: 0;
+  }
+  98% {
+    translate: 1px;
+  }
+  99% {
+    translate: -1px;
+  }
+}
+.blue[data-effects-paused='true'] {
+  .corruptionPulse,
+  .systemSignal {
+    display: none;
+  }
+  .portfolio h2 {
+    animation-play-state: paused;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .corruptionPulse,
+  .systemSignal {
+    display: none;
+    animation: none;
+  }
+  .blue[data-corruption-level] .portfolio h2 {
+    animation: none;
+  }
+}

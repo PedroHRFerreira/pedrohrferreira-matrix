@@ -50,3 +50,60 @@
     animation: none;
   }
 }
+
+.rain[data-corrupted='true'] .codeColumn {
+  color: #86d69b;
+  animation-duration: 7s;
+  text-shadow: 0 0 8px #426950;
+}
+
+.rain[data-level='1'] {
+  --code-edge: 8%;
+  --code-opacity: 0.3;
+}
+.rain[data-level='2'] {
+  --code-edge: 21%;
+  --code-opacity: 0.48;
+}
+.rain[data-level='3'] {
+  --code-edge: 44%;
+  --code-opacity: 0.65;
+}
+.rain:not([data-level='0']) {
+  .codeColumn {
+    // Preserve room for the glyph glow inside each strip's mask.
+    box-sizing: border-box;
+    width: 3ch;
+    padding-inline: 1ch;
+    margin-left: -1ch;
+    color: #238c4b;
+    opacity: var(--code-opacity);
+    text-shadow: 0 0 6px #64de9770;
+    animation-name: invading-code;
+    animation-duration: 10s;
+  }
+}
+.rain[data-level='3'] .codeColumn {
+  color: #86d69b;
+  animation-duration: 7s;
+}
+@keyframes invading-code {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(100svh);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rain:not([data-level='0']) {
+    display: block;
+    .codeColumn {
+      animation: none;
+      top: 12%;
+    }
+    .codeColumn:nth-child(even) {
+      top: 55%;
+    }
+  }
+}

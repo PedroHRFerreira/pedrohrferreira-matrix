@@ -5,6 +5,9 @@ export type ExperienceEvent =
   | { type: 'INTRODUCTION_SKIPPED' }
   | { type: 'REALITY_CHOSEN'; reality: Reality }
   | { type: 'TRANSITION_COMPLETED' }
+  | { type: 'BLUE_CAPTURED' }
+  | { type: 'BLUE_SIMULATION_BROKEN' }
+  | { type: 'ZION_CHASE_COMPLETED' }
   | { type: 'RESET' }
   | { type: 'RECONSIDER' }
 
@@ -16,6 +19,8 @@ export interface TransitionResult {
 export const INITIAL_EXPERIENCE_STATE: ExperienceState = 'cold-boot'
 
 const sequenceState: Partial<Record<ExperienceState, ExperienceState>> = {
+  'blue-revelation-one': 'blue-revelation-two',
+  'blue-revelation-two': 'zion-chase',
   'dream-question': 'dream-waiting',
   'dream-waiting': 'dream-choice',
   'dream-choice': 'dream-selection',
@@ -33,6 +38,7 @@ const sequenceState: Partial<Record<ExperienceState, ExperienceState>> = {
 }
 
 const completedTransitionState: Partial<Record<ExperienceState, ExperienceState>> = {
+  'zion-loading': 'ready-zion',
   'transitioning-red': 'ready-red',
   'transitioning-blue': 'ready-blue'
 }
@@ -45,6 +51,14 @@ export function applyExperienceEvent(
   state: ExperienceState,
   event: ExperienceEvent
 ): TransitionResult {
+  if (event.type === 'BLUE_SIMULATION_BROKEN' && state === 'ready-blue') {
+    return { accepted: true, state: 'blue-revelation-one' }
+  }
+
+  if (event.type === 'ZION_CHASE_COMPLETED' && state === 'zion-chase') {
+    return { accepted: true, state: 'zion-loading' }
+  }
+
   if (event.type === 'RECONSIDER' && state === 'ready-blue') {
     return { accepted: true, state: 'return-question' }
   }
@@ -112,4 +126,37 @@ export function realityForState(state: ExperienceState): Reality | null {
   if (state.endsWith('-red')) return 'red'
   if (state.endsWith('-blue')) return 'blue'
   return null
+}
+
+/** Journey progress exists only in React memory; a fresh mount starts at entry. */
+export interface ExperienceJourney {
+  state: ExperienceState
+  blueCaptureCount: number
+}
+
+export const INITIAL_EXPERIENCE_JOURNEY: ExperienceJourney = {
+  state: INITIAL_EXPERIENCE_STATE,
+  blueCaptureCount: 0
+}
+
+export function transitionJourney(
+  journey: ExperienceJourney,
+  event: ExperienceEvent
+): ExperienceJourney {
+  if (event.type === 'RESET') return INITIAL_EXPERIENCE_JOURNEY
+
+  if (event.type === 'BLUE_CAPTURED') {
+    if (journey.state !== 'ready-blue') return journey
+    const blueCaptureCount = Math.min(journey.blueCaptureCount + 1, 4)
+    return {
+      blueCaptureCount,
+      state:
+        blueCaptureCount === 4
+          ? transitionExperience(journey.state, { type: 'BLUE_SIMULATION_BROKEN' })
+          : journey.state
+    }
+  }
+
+  const state = transitionExperience(journey.state, event)
+  return state === journey.state ? journey : { ...journey, state }
 }

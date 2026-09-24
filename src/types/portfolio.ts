@@ -22,6 +22,11 @@ export type ExperienceState =
   | 'transitioning-blue'
   | 'ready-red'
   | 'ready-blue'
+  | 'blue-revelation-one'
+  | 'blue-revelation-two'
+  | 'zion-chase'
+  | 'zion-loading'
+  | 'ready-zion'
 
 export type SectionId = 'about' | 'experience' | 'projects' | 'dialogue' | 'stack' | 'contact'
 

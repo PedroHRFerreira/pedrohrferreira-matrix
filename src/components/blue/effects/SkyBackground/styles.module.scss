@@ -132,3 +132,15 @@
     animation: none;
   }
 }
+
+.sky[data-corrupted='true'] {
+  background:
+    radial-gradient(ellipse at 65% 15%, #293c3b, transparent 60%),
+    linear-gradient(#090f15, #1b272c 58%, #10191c);
+  .cloudShape {
+    filter: brightness(0.22) saturate(0.15);
+  }
+}
+.sky[data-paused='true'] .cloudShape {
+  animation-play-state: paused;
+}

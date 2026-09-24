@@ -5,28 +5,28 @@ import { useCallback, useEffect, useReducer } from 'react'
 import type { ExperienceState, Reality } from '@/types'
 import {
   canChooseReality,
-  INITIAL_EXPERIENCE_STATE,
+  INITIAL_EXPERIENCE_JOURNEY,
   realityForState,
-  transitionExperience,
-  type ExperienceEvent
+  transitionJourney
 } from '@/utils/experienceMachine'
 
 export interface ExperienceController {
   state: ExperienceState
   reality: Reality | null
   canChoose: boolean
+  blueCaptureCount: number
+  blueCorrupted: boolean
+  registerBlueCapture: () => void
+  completeZionChase: () => void
   advanceSequence: () => void
   chooseReality: (reality: Reality) => void
   completeTransition: () => void
   reconsiderReality: () => void
 }
 
-function experienceReducer(state: ExperienceState, event: ExperienceEvent): ExperienceState {
-  return transitionExperience(state, event)
-}
-
 export function useExperience(): ExperienceController {
-  const [state, dispatch] = useReducer(experienceReducer, INITIAL_EXPERIENCE_STATE)
+  const [journey, dispatch] = useReducer(transitionJourney, INITIAL_EXPERIENCE_JOURNEY)
+  const { state, blueCaptureCount } = journey
 
   useEffect(() => {
     if (
@@ -37,6 +37,8 @@ export function useExperience(): ExperienceController {
     }
   }, [])
 
+  const registerBlueCapture = useCallback(() => dispatch({ type: 'BLUE_CAPTURED' }), [])
+  const completeZionChase = useCallback(() => dispatch({ type: 'ZION_CHASE_COMPLETED' }), [])
   const advanceSequence = useCallback(() => dispatch({ type: 'SEQUENCE_ADVANCED' }), [])
   const chooseReality = useCallback(
     (reality: Reality) => dispatch({ type: 'REALITY_CHOSEN', reality }),
@@ -53,6 +55,10 @@ export function useExperience(): ExperienceController {
   return {
     state,
     reality,
+    blueCaptureCount,
+    blueCorrupted: blueCaptureCount >= 3,
+    registerBlueCapture,
+    completeZionChase,
     canChoose: canChooseReality(state),
     advanceSequence,
     chooseReality,

@@ -5,6 +5,13 @@ import { RealityPassage } from './RealityPassage'
 beforeEach(() => {
   vi.useFakeTimers()
   vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      disconnect() {}
+    }
+  )
+  vi.stubGlobal(
     'matchMedia',
     vi.fn((query: string) => ({
       matches: query.includes('min-width'),
@@ -40,7 +47,7 @@ function setup(reality: 'red' | 'blue') {
   const scene = screen.getByRole('group', {
     name: reality === 'red' ? 'Corredor interativo' : 'Caminho entre nuvens'
   })
-  const start = screen.getByRole('button', { name: /Explorar/ })
+  const start = screen.getByRole('button', { name: /Iniciar minigame/ })
   return { reconsider, scene, start }
 }
 
@@ -95,7 +102,6 @@ describe.each(['red', 'blue'] as const)('RealityPassage %s', (reality) => {
     fireEvent.click(
       screen.getByRole('button', { name: reality === 'blue' ? /Volte a sonhar/ : /SAIR/ })
     )
-    fireEvent.click(start)
     fireEvent.pointerLeave(scene)
     expect(reconsider).not.toHaveBeenCalled()
     expect(scene).toHaveAttribute('data-active', 'true')
@@ -124,6 +130,38 @@ describe.each(['red', 'blue'] as const)('RealityPassage %s', (reality) => {
     )
   })
 
+  it('starts with Enter on the focused scene even without mouse hover', () => {
+    const { scene } = setup(reality)
+    scene.focus()
+    fireEvent.keyDown(scene, { key: 'Enter' })
+    expect(scene).toHaveAttribute('data-active', 'true')
+  })
+
+  it('allows the stop button in both themes', () => {
+    const { scene, start } = setup(reality)
+    fireEvent.click(start)
+    fireEvent.click(screen.getByRole('button', { name: 'Encerrar minigame' }))
+    expect(scene).toHaveAttribute('data-active', 'false')
+    expect(start).toHaveFocus()
+  })
+
+  it('does not remeasure the scene on every movement frame', () => {
+    const { scene, start } = setup(reality)
+    const measure = vi.spyOn(scene, 'getBoundingClientRect')
+    fireEvent.click(start)
+    measure.mockClear()
+    hold(scene, 'ArrowRight', 300)
+    expect(measure).not.toHaveBeenCalled()
+  })
+
+  it('ends the encounter while the document is hidden', () => {
+    const { scene, start } = setup(reality)
+    fireEvent.click(start)
+    vi.spyOn(document, 'hidden', 'get').mockReturnValue(true)
+    fireEvent(document, new Event('visibilitychange'))
+    expect(scene).toHaveAttribute('data-active', 'false')
+  })
+
   it('allows direct portal activation without playing', () => {
     const { reconsider } = setup(reality)
     fireEvent.click(screen.getByRole('button', { name: /E se você/ }))
@@ -142,17 +180,50 @@ it('returns to the blue top without animation when reduced motion is requested',
   expect(reconsider).not.toHaveBeenCalled()
 })
 
-it.each(['red', 'blue'] as const)(
-  'only renders the return button on touch screens: %s',
-  (reality) => {
-    vi.stubGlobal(
-      'matchMedia',
-      vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }))
+it.each(['red'] as const)('only renders the return button on touch screens: %s', (reality) => {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }))
+  )
+  const reconsider = vi.fn()
+  render(<RealityPassage reality={reality} onReconsider={reconsider} />)
+  expect(screen.queryByRole('group')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: /E se você/ }))
+  expect(reconsider).toHaveBeenCalledOnce()
+})
+
+it('keeps Blue exploration available on touch and releases held movement on cancellation', () => {
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }))
+  )
+  const { scene, start } = setup('blue')
+  fireEvent.click(start)
+  const right = screen.getByRole('button', { name: 'Direita' })
+  right.setPointerCapture = vi.fn()
+  fireEvent.pointerDown(right, { pointerId: 1 })
+  act(() => vi.advanceTimersByTime(400))
+  fireEvent.pointerCancel(right, { pointerId: 1 })
+  expect(scene).toHaveAttribute('data-active', 'true')
+  fireEvent.click(screen.getByRole('button', { name: /Encerrar minigame/ }))
+  expect(scene).toHaveAttribute('data-active', 'false')
+})
+it.each([0, 3])(
+  'reports a capture exactly once at count %s, without scrolling over the TV transition',
+  (captureCount) => {
+    const capture = vi.fn()
+    render(
+      <RealityPassage
+        reality="blue"
+        onReconsider={vi.fn()}
+        onCapture={capture}
+        captureCount={captureCount}
+      />
     )
-    const reconsider = vi.fn()
-    render(<RealityPassage reality={reality} onReconsider={reconsider} />)
-    expect(screen.queryByRole('group')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /E se você/ }))
-    expect(reconsider).toHaveBeenCalledOnce()
+    fireEvent.click(screen.getByRole('button', { name: /Iniciar minigame/ }))
+    act(() => vi.advanceTimersByTime(30000))
+    expect(capture).toHaveBeenCalledOnce()
+    if (captureCount === 3) expect(window.scrollTo).not.toHaveBeenCalled()
+    else expect(window.scrollTo).toHaveBeenCalled()
   }
 )

@@ -10,12 +10,21 @@ import styles from './styles.module.scss'
 
 export interface BlueFooterProps {
   onReconsider: () => void
+  onCapture?: () => void
+  captureCount?: number
   message: string
   copyright: string
   contacts?: readonly Contact[]
 }
 
-export function BlueFooter({ message, copyright, contacts = [], onReconsider }: BlueFooterProps) {
+export function BlueFooter({
+  message,
+  copyright,
+  contacts = [],
+  onReconsider,
+  onCapture,
+  captureCount
+}: BlueFooterProps) {
   const reduced = useReducedMotion()
   const footerRef = useRef<HTMLElement>(null)
 
@@ -89,7 +98,12 @@ export function BlueFooter({ message, copyright, contacts = [], onReconsider }: 
         <a className={styles.backToTop} href="#main-content">
           Voltar ao início ↑
         </a>
-        <RealityPassage reality="blue" onReconsider={onReconsider} />
+        <RealityPassage
+          reality="blue"
+          onReconsider={onReconsider}
+          onCapture={onCapture}
+          captureCount={captureCount}
+        />
         <small>{copyright}</small>
       </div>
     </footer>

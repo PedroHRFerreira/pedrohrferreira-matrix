@@ -5,6 +5,7 @@ import styles from './styles.module.scss'
 import { PassageArtwork } from './PassageArtwork'
 import { BluePassageArtwork } from './BluePassageArtwork'
 import { SmithAgents } from './SmithAgents'
+import { NeoSprite } from './PixelCharacters'
 import { pursueAgents, type Agent } from './agentEncounter'
 
 function returnToDream() {
@@ -36,10 +37,14 @@ const directions: Record<string, [number, number]> = {
 
 export function RealityPassage({
   onReconsider,
-  reality = 'red'
+  reality = 'red',
+  onCapture,
+  captureCount = 0
 }: {
   onReconsider: () => void
   reality?: 'red' | 'blue'
+  onCapture?: () => void
+  captureCount?: number
 }) {
   const [desktop, setDesktop] = useState(false)
   useEffect(() => {
@@ -49,26 +54,35 @@ export function RealityPassage({
     media.addEventListener('change', update)
     return () => media.removeEventListener('change', update)
   }, [])
-  if (!desktop)
+  if (!desktop && reality !== 'blue')
     return (
-      <div className={`${styles.mobileReturn} ${reality === 'blue' ? styles.mobileBlue : ''}`}>
+      <div className={styles.mobileReturn}>
         <button type="button" onClick={onReconsider}>
-          {reality === 'blue'
-            ? 'E se você tivesse escolhido diferente?'
-            : 'E se você pudesse voltar a sonhar?'}
+          E se você pudesse voltar a sonhar?
           <small>Voltar à escolha das pílulas ↗</small>
         </button>
       </div>
     )
-  return <PassageGame reality={reality} onReconsider={onReconsider} />
+  return (
+    <PassageGame
+      reality={reality}
+      onReconsider={onReconsider}
+      onCapture={onCapture}
+      captureCount={captureCount}
+    />
+  )
 }
 
 function PassageGame({
   onReconsider,
-  reality = 'red'
+  reality = 'red',
+  onCapture,
+  captureCount = 0
 }: {
   onReconsider: () => void
   reality?: 'red' | 'blue'
+  onCapture?: () => void
+  captureCount?: number
 }) {
   const blue = reality === 'blue'
   const instructionsId = useId()
@@ -78,7 +92,8 @@ function PassageGame({
   const player = useRef(origin)
   const encounter = useRef(0)
   const agents = useRef<Agent[]>([])
-  const [encounterView, setEncounterView] = useState<Agent[]>([])
+  const character = useRef<HTMLSpanElement>(null)
+  const wake = useRef<() => void>(() => {})
   const scene = useRef<HTMLDivElement>(null)
   const start = useRef<HTMLButtonElement>(null)
   const hovered = useRef(false)
@@ -95,7 +110,7 @@ function PassageGame({
     player.current = origin
     encounter.current = 0
     agents.current = []
-    setEncounterView([])
+    character.current?.style.removeProperty('transform')
     setPosition(origin)
     setActive(true)
     scene.current?.focus({ preventScroll: true })
@@ -109,7 +124,8 @@ function PassageGame({
 
   useEffect(() => {
     const invite = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Enter' || event.repeat || !hovered.current || active) return
+      if (event.key !== 'Enter' || event.repeat || active) return
+      if (!hovered.current && document.activeElement !== scene.current) return
       // Hover never overrides a focused link, form, or another keyboard control.
       if (document.activeElement !== document.body && document.activeElement !== scene.current)
         return
@@ -127,19 +143,53 @@ function PassageGame({
       if (Math.abs(window.scrollY - entryScroll.current) > 2) stop()
     }
     window.addEventListener('scroll', onScroll, { passive: true })
+    const onVisibility = () => {
+      if (document.hidden) stop()
+    }
     window.addEventListener('blur', stop)
+    document.addEventListener('visibilitychange', onVisibility)
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('blur', stop)
+      document.removeEventListener('visibilitychange', onVisibility)
     }
   }, [active])
 
   useEffect(() => {
     if (!active) return
+    const element = scene.current
+    if (!element) return
     const keys = pressed.current
     let frame = 0
     let previousTime = performance.now()
+    let bounds = element.getBoundingClientRect()
+    const agentNodes = element.querySelectorAll<HTMLElement>('[data-passage-agent]')
+    const paintPlayer = () => {
+      const point = player.current
+      if (character.current) {
+        character.current.style.transform = `translate(${((point.x - origin.x) * bounds.width) / 100}px, ${((point.y - origin.y) * bounds.height) / 100}px) translate(-50%, -100%)`
+      }
+    }
+    const paintAgents = () => {
+      for (const agent of agents.current) {
+        const node = agentNodes[agent.id]
+        if (!node) continue
+        if (node.hidden) node.hidden = false
+        node.style.transform = `translate(${(agent.x * bounds.width) / 100}px, ${(agent.y * bounds.height) / 100}px) translate(-50%, -100%)`
+        if (node.dataset.ready !== String(agent.ready)) node.dataset.ready = String(agent.ready)
+      }
+    }
+    const measure = () => {
+      bounds = element.getBoundingClientRect()
+      paintPlayer()
+      paintAgents()
+    }
+    const sizing = new ResizeObserver(measure)
+    sizing.observe(element)
+    // React owns door/status changes; the frame loop only moves existing sprites.
+    let previousZone = ''
     const tick = (time: number) => {
+      frame = 0
       const elapsed = Math.min((time - previousTime) / 1000, 0.04)
       previousTime = time
       let x = 0
@@ -153,7 +203,7 @@ function PassageGame({
       const magnitude = Math.hypot(x, y)
       if (blue && !document.hidden) encounter.current += elapsed
       if (magnitude && scene.current) {
-        const { width, height } = scene.current.getBoundingClientRect()
+        const { width, height } = bounds
         // Equal on-screen speed on both axes, independent of keyboard repeat and refresh rate.
         const distance = 25 * elapsed
         const previous = player.current
@@ -165,10 +215,15 @@ function PassageGame({
           )
         }
         player.current = next
-        setPosition(next)
+        paintPlayer()
+        const zone = `${next.y <= 72 ? (next.x <= 23 ? 'exit' : next.x >= 72 ? 'dream' : '') : ''}:${next.y <= 68 ? (next.x <= 15 ? 'exit' : next.x >= 80 ? 'dream' : '') : ''}`
+        if (zone !== previousZone) {
+          previousZone = zone
+          setPosition(next)
+        }
       }
       if (blue && scene.current) {
-        const { width, height } = scene.current.getBoundingClientRect()
+        const { width, height } = bounds
         const result = pursueAgents(
           agents.current,
           player.current,
@@ -177,14 +232,20 @@ function PassageGame({
           width && height ? width / height : 3
         )
         agents.current = result.agents
-        setEncounterView(result.agents)
+        paintAgents()
         if (result.caught) {
           keys.clear()
           setActive(false)
-          returnToDream()
+          onCapture?.()
+          if (captureCount < 3) returnToDream()
           return
         }
       }
+      if (blue || keys.size) frame = requestAnimationFrame(tick)
+    }
+    wake.current = () => {
+      if (frame) return
+      previousTime = performance.now()
       frame = requestAnimationFrame(tick)
     }
     const release = (event: globalThis.KeyboardEvent) => {
@@ -197,12 +258,14 @@ function PassageGame({
     document.addEventListener('visibilitychange', clear)
     return () => {
       cancelAnimationFrame(frame)
+      sizing.disconnect()
+      wake.current = () => {}
       keys.clear()
       window.removeEventListener('keyup', release)
       window.removeEventListener('blur', clear)
       document.removeEventListener('visibilitychange', clear)
     }
-  }, [active, blue])
+  }, [active, blue, onCapture, captureCount])
 
   useEffect(() => {
     if (!active || !crossing) return
@@ -236,6 +299,7 @@ function PassageGame({
       if (!direction) return
       event.preventDefault()
       pressed.current.add(event.key.length === 1 ? event.key.toLowerCase() : event.key)
+      wake.current()
     }
   }
 
@@ -245,13 +309,13 @@ function PassageGame({
       aria-label={blue ? 'Passagem além do sonho' : 'Passagem para o sonho'}
       data-keyboard-only={active}
       onPointerDownCapture={(event) => {
-        if (!active) return
+        if (!active || (event.target as HTMLElement).closest('[data-game-control]')) return
         event.preventDefault()
         event.stopPropagation()
         scene.current?.focus({ preventScroll: true })
       }}
       onClickCapture={(event) => {
-        if (!active) return
+        if (!active || (event.target as HTMLElement).closest('[data-game-control]')) return
         event.preventDefault()
         event.stopPropagation()
       }}
@@ -276,7 +340,11 @@ function PassageGame({
           hovered.current = false
         }}
         onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget)) leave()
+          if (
+            !event.currentTarget.contains(event.relatedTarget) &&
+            !(event.relatedTarget as HTMLElement | null)?.closest('[data-game-control]')
+          )
+            leave()
         }}
       >
         <Artwork openDoor={active ? destination : null} />
@@ -313,25 +381,14 @@ function PassageGame({
             )}
           </span>
         </button>
-        {blue && active && <SmithAgents agents={encounterView} />}
+        {blue && active && <SmithAgents />}
         <span
+          ref={character}
           className={styles.character}
-          style={{ left: `${position.x}%`, top: `${position.y}%` }}
+          style={{ left: `${origin.x}%`, top: `${origin.y}%` }}
           aria-hidden="true"
         >
-          <svg viewBox="0 0 20 32" shapeRendering="crispEdges">
-            <path
-              fill="#05090c"
-              d="M7 0h7v2h2v7h-2v3h2v3h2v8h-2l3 6h-6v3H5v-3H1l3-8H2v-6h2v-4h3z"
-            />
-            <path fill="#171f25" d="M6 11h9v8l3 9h-6l-2-5-2 5H3l3-11z" />
-            <path fill="#c1b5a2" d="M7 3h7v6h-7z" />
-            <path fill="#080d13" d="M6 4h9v3H6zM7 0h6v2H7zM6 1h9v2H6z" />
-            <path fill="#61737c" d="M7 4h2v1H7zM12 4h2v1h-2z" />
-            <path fill="#2f3d43" d="M6 11h2v13H6zM14 13h1v10h-1zM4 24h2v3H4z" />
-            <path fill="#0b1218" d="M9 10h3v17H9zM6 28h3v4H6zM12 28h3v4h-3z" />
-            <path fill="#b8ae9c" d="M2 20h2v3H2zM16 20h2v3h-2z" />
-          </svg>
+          <NeoSprite />
         </span>
         <span className={styles.status} role="status">
           {active
@@ -351,20 +408,66 @@ function PassageGame({
       </div>
       <div className={styles.controls}>
         <button
+          data-game-control
+          className={styles.startButton}
+          aria-describedby={instructionsId}
           ref={start}
-          aria-disabled={active}
-          tabIndex={active ? -1 : 0}
           type="button"
           onClick={() => (active ? leave(true) : enter())}
         >
-          {active
-            ? 'Encerrar exploração · Esc'
-            : blue
-              ? 'Explorar as nuvens · Enter'
-              : 'Explorar o corredor · Enter'}
+          <span aria-hidden="true">{active ? '■' : '▶'}</span>
+          {active ? 'Encerrar minigame' : 'Iniciar minigame'}
         </button>
-        <p id={instructionsId}>WASD / setas para mover · Atravesse uma porta · Esc para sair</p>
-        <p className={styles.touchHint}>Toque em uma porta para escolher seu caminho.</p>
+        <p id={instructionsId}>
+          <span className={styles.startHint}>
+            Clique para jogar ou pressione <kbd>Enter</kbd> com o jogo selecionado.
+            <br />
+          </span>
+          WASD / setas para mover · Atravesse uma porta · <kbd>Esc</kbd> para sair
+        </p>
+        {blue && (
+          <div className={styles.directionPad} aria-label="Controles de movimento">
+            {(
+              [
+                ['ArrowLeft', 'Esquerda', '←'],
+                ['ArrowUp', 'Cima', '↑'],
+                ['ArrowDown', 'Baixo', '↓'],
+                ['ArrowRight', 'Direita', '→']
+              ] as const
+            ).map(([key, label, symbol]) => (
+              <button
+                key={key}
+                type="button"
+                data-game-control
+                aria-label={label}
+                disabled={!active}
+                onPointerDown={(event) => {
+                  event.preventDefault()
+                  event.currentTarget.setPointerCapture(event.pointerId)
+                  pressed.current.add(key)
+                  wake.current()
+                }}
+                onPointerUp={() => pressed.current.delete(key)}
+                onPointerCancel={() => pressed.current.delete(key)}
+                onLostPointerCapture={() => pressed.current.delete(key)}
+                onKeyDown={(event) => {
+                  if (event.key === ' ' || event.key === 'Enter') {
+                    event.preventDefault()
+                    pressed.current.add(key)
+                    wake.current()
+                  }
+                }}
+                onKeyUp={() => pressed.current.delete(key)}
+                onBlur={() => pressed.current.delete(key)}
+              >
+                {symbol}
+              </button>
+            ))}
+          </div>
+        )}
+        <p className={styles.touchHint}>
+          Toque em “Iniciar minigame” para jogar. Use os botões de direção para mover Neon.
+        </p>
       </div>
     </section>
   )

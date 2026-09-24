@@ -7,6 +7,8 @@ import styles from './styles.module.scss'
 
 export interface SkyBackgroundProps {
   className?: string
+  corrupted?: boolean
+  paused?: boolean
 }
 
 const clouds = [
@@ -20,14 +22,18 @@ const clouds = [
   { top: 88, left: 62, size: 35, duration: 26, delay: -14, opacity: 0.6, depth: 0.9 }
 ] as const
 
-export function SkyBackground({ className }: SkyBackgroundProps) {
+export function SkyBackground({
+  className,
+  corrupted = false,
+  paused = false
+}: SkyBackgroundProps) {
   const reducedMotion = useReducedMotion()
   const fieldRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const field = fieldRef.current
     if (!field || reducedMotion) return
     const updateVisibility = () => {
-      field.dataset.playing = String(!document.hidden)
+      field.dataset.playing = String(!document.hidden && !paused)
     }
     const start = window.setTimeout(updateVisibility, 300)
     document.addEventListener('visibilitychange', updateVisibility)
@@ -36,7 +42,7 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
     let x = 0
     let y = 0
     const move = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse' || !precise.matches) return
+      if (paused || document.hidden || event.pointerType !== 'mouse' || !precise.matches) return
       x = event.clientX
       y = event.clientY
       if (frame) return
@@ -55,10 +61,15 @@ export function SkyBackground({ className }: SkyBackgroundProps) {
       field.style.removeProperty('--parallax-x')
       field.style.removeProperty('--parallax-y')
     }
-  }, [reducedMotion])
+  }, [reducedMotion, paused])
 
   return (
-    <div className={[styles.sky, className].filter(Boolean).join(' ')} aria-hidden="true">
+    <div
+      className={[styles.sky, className].filter(Boolean).join(' ')}
+      aria-hidden="true"
+      data-corrupted={corrupted}
+      data-paused={paused}
+    >
       <div className={styles.cloudField} ref={fieldRef}>
         {clouds.map((cloud, index) => (
           <span

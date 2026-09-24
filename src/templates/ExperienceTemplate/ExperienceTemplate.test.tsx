@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getPortfolioContent } from '@/config'
 import type { ExperienceController } from '@/hooks/useExperience'
@@ -8,7 +8,9 @@ const mocks = vi.hoisted(() => ({
   useExperience: vi.fn<() => ExperienceController>(),
   entry: vi.fn(),
   red: vi.fn(),
-  blue: vi.fn()
+  blue: vi.fn(),
+  zion: vi.fn(),
+  sequence: vi.fn()
 }))
 
 vi.mock('@/hooks/useExperience', () => ({ useExperience: mocks.useExperience }))
@@ -31,7 +33,22 @@ vi.mock('./BlueTemplate', () => ({
   }
 }))
 
+vi.mock('./ZionTemplate', () => ({
+  ZionTemplate: (props: unknown) => {
+    mocks.zion(props)
+    return <div data-testid="zion" />
+  }
+}))
+vi.mock('@/components/shared/ZionSequence/ZionSequence', () => ({
+  ZionSequence: (props: unknown) => {
+    mocks.sequence(props)
+    return <div data-testid="zion-sequence" />
+  }
+}))
+
 import { ExperienceTemplate } from './ExperienceTemplate'
+
+afterEach(cleanup)
 
 const noop = () => undefined
 
@@ -42,6 +59,10 @@ function controller(
   return {
     state,
     reality,
+    blueCaptureCount: 0,
+    blueCorrupted: false,
+    registerBlueCapture: noop,
+    completeZionChase: noop,
     canChoose: state === 'pill-selection',
     advanceSequence: noop,
     chooseReality: noop,
@@ -83,4 +104,19 @@ describe('ExperienceTemplate', () => {
     expect(screen.queryByTestId(absent)).not.toBeInTheDocument()
     expect(screen.queryByTestId('entry')).not.toBeInTheDocument()
   })
+})
+
+it.each(['blue-revelation-one', 'blue-revelation-two', 'zion-chase', 'zion-loading'] as const)(
+  'routes %s into the TV sequence',
+  (state) => {
+    mocks.useExperience.mockReturnValue(controller(state, null))
+    render(<ExperienceTemplate />)
+    expect(screen.getByTestId('zion-sequence')).toBeInTheDocument()
+    expect(screen.queryByTestId('entry')).not.toBeInTheDocument()
+  }
+)
+it('mounts the new portfolio after escaping', () => {
+  mocks.useExperience.mockReturnValue(controller('ready-zion', null))
+  render(<ExperienceTemplate />)
+  expect(screen.getByTestId('zion')).toBeInTheDocument()
 })

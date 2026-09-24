@@ -292,3 +292,79 @@
   color: #d3f5e2;
   font-family: var(--font-mono);
 }
+
+.directionPad {
+  display: flex;
+  gap: 0.5rem;
+  button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: none;
+    user-select: none;
+  }
+  button:disabled {
+    opacity: 0.4;
+  }
+}
+.passage[data-keyboard-only='true'] [data-game-control] {
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 1;
+}
+@media (hover: none), (pointer: coarse) {
+  .blue .controls > button {
+    display: block;
+    min-height: 44px;
+  }
+}
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+  .directionPad {
+    display: none;
+  }
+}
+@media (max-width: 36rem) {
+  .blue .scene {
+    height: 17rem;
+  }
+  .blue .coordinates {
+    font-size: 0.45rem;
+    letter-spacing: 0;
+  }
+  .blue .heading {
+    flex-wrap: wrap;
+  }
+}
+
+.controls .startButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 48px;
+  padding: 0.8rem 1.15rem;
+  border: 1px solid #8ccba0;
+  background: #173922;
+  color: #e0f6e5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 0 0 3px #6ce39312;
+}
+.blue .controls .startButton {
+  border-color: #547795;
+  background: #d4e5f2;
+  color: #203c53;
+  box-shadow: 0 0 0 3px #54779514;
+}
+.controls kbd {
+  padding: 0.1rem 0.3rem;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font: inherit;
+}
+.controls .startHint {
+  font-weight: 600;
+}
+.scene[data-active='true'] .character,
+.scene[data-active='true'] .agent:not([hidden]) {
+  will-change: transform;
+}

@@ -1,0 +1,23 @@
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.atmosphere canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(ellipse at 58% 8%, #e5e5d1 0%, #a4b5b1 24%, transparent 75%);
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere {
+    display: none;
+  }
+}
