@@ -371,7 +371,7 @@
   will-change: transform;
 }
 // Sprites use a 3× integer scale (2× on narrow desktop layouts).
-.character[data-facing='left'] svg {
+:is(.character, .animatedSprite)[data-facing='left'] svg {
   transform: scaleX(-1);
 }
 
@@ -381,7 +381,7 @@
 .scene:not([data-active='true']) .cape {
   animation: none;
 }
-.character[data-moving='true'],
+:is(.character, .animatedSprite)[data-moving='true'],
 .agent[data-moving='true'] {
   .spriteBody {
     animation: sprite-bob 480ms steps(1, end) infinite;
@@ -457,7 +457,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .character[data-moving],
+  :is(.character, .animatedSprite)[data-moving],
   .agent[data-moving] {
     .spriteBody,
     .leftLeg,
@@ -470,12 +470,19 @@
   }
 }
 
-.character [data-pose] {
+:is(.character, .animatedSprite) [data-pose] {
   display: none;
 }
-.character[data-facing='down'] [data-pose='front'],
-.character[data-facing='up'] [data-pose='back'],
-.character[data-facing='left'] [data-pose='side'],
-.character[data-facing='right'] [data-pose='side'] {
+:is(.character, .animatedSprite)[data-facing='down'] [data-pose='front'],
+:is(.character, .animatedSprite)[data-facing='up'] [data-pose='back'],
+:is(.character, .animatedSprite)[data-facing='left'] [data-pose='side'],
+:is(.character, .animatedSprite)[data-facing='right'] [data-pose='side'] {
   display: inline;
+}
+
+.animatedSprite svg {
+  overflow: visible;
+}
+.animatedSprite[data-paused='true'] .cape {
+  animation: none;
 }

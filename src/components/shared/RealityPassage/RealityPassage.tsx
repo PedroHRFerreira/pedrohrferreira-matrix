@@ -8,7 +8,7 @@ import { NeonSprite } from './NeonSprite'
 import { SmithAgents } from './SmithAgents'
 import { pursueAgents, type Agent } from './agentEncounter'
 
-function returnToDream() {
+function returnToDream(immediate = false) {
   const main = document.getElementById('main-content')
   if (main) {
     if (!main.hasAttribute('tabindex')) {
@@ -19,7 +19,10 @@ function returnToDream() {
   }
   window.scrollTo({
     top: 0,
-    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+    behavior:
+      immediate || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth'
   })
 }
 
@@ -251,8 +254,8 @@ function PassageGame({
         if (result.caught) {
           keys.clear()
           setActive(false)
+          returnToDream(captureCount >= 3)
           onCapture?.()
-          if (captureCount < 3) returnToDream()
           return
         }
       }

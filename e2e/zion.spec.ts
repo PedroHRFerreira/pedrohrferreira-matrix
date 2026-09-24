@@ -134,6 +134,31 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
       else await position.toBeLessThanOrEqual(target)
       await page.keyboard.up(key)
     }
+    // Check rendered poses and actual limb motion, not only player coordinates.
+    for (const [key, facing, pose] of [
+      ['ArrowRight', 'right', 'side'],
+      ['ArrowLeft', 'left', 'side'],
+      ['ArrowUp', 'up', 'back'],
+      ['ArrowDown', 'down', 'front']
+    ]) {
+      await page.keyboard.down(key)
+      await expect(player).toHaveAttribute('data-facing', facing)
+      await expect(player).toHaveAttribute('data-moving', 'true')
+      const visiblePose = player.locator(`[data-pose="${pose}"]`)
+      await expect(visiblePose).toBeVisible()
+      await expect(player.locator('[data-pose]:visible')).toHaveCount(1)
+      const leg = visiblePose.locator('path[class*="leftLeg"]')
+      const initial = await leg.evaluate((node) => getComputedStyle(node).transform)
+      await expect
+        .poll(() => leg.evaluate((node) => getComputedStyle(node).transform), {
+          intervals: [30],
+          timeout: 600
+        })
+        .not.toBe(initial)
+      await page.keyboard.up(key)
+      await expect(player).toHaveAttribute('data-moving', 'false')
+      await expect(player).toHaveAttribute('data-facing', facing)
+    }
     await move('ArrowRight', 'data-x', 62, true)
     await move('ArrowUp', 'data-y', 32, false)
     await move('ArrowLeft', 'data-x', 50, false)

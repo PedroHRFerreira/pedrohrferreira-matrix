@@ -249,8 +249,8 @@ it('keeps Blue exploration available on touch and releases held movement on canc
   fireEvent.click(screen.getByRole('button', { name: /Encerrar minigame/ }))
   expect(scene).toHaveAttribute('data-active', 'false')
 })
-it.each([0, 3])(
-  'reports a capture exactly once at count %s, without scrolling over the TV transition',
+it.each([0, 1, 2, 3])(
+  'returns to the top on every capture at count %s before the TV transition',
   (captureCount) => {
     const capture = vi.fn()
     render(
@@ -264,8 +264,13 @@ it.each([0, 3])(
     fireEvent.click(screen.getByRole('button', { name: /Iniciar minigame/ }))
     act(() => vi.advanceTimersByTime(30000))
     expect(capture).toHaveBeenCalledOnce()
-    if (captureCount === 3) expect(window.scrollTo).not.toHaveBeenCalled()
-    else expect(window.scrollTo).toHaveBeenCalled()
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      behavior: captureCount === 3 ? 'instant' : 'smooth'
+    })
+    expect(vi.mocked(window.scrollTo).mock.invocationCallOrder[0]).toBeLessThan(
+      capture.mock.invocationCallOrder[0]
+    )
   }
 )
 

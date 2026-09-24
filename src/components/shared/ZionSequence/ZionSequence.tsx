@@ -63,6 +63,8 @@ function SequencePhase({ state, onAdvance, onEscape, onLoaded }: Props) {
   const [paused, setPaused] = useState(false)
   const [encounter, setEncounter] = useState(createZionEncounter)
   const encounterRef = useRef(encounter)
+  const [facing, setFacing] = useState('up')
+  const [moving, setMoving] = useState(false)
   const [asset, setAsset] = useState<'pending' | 'ready' | 'failed'>('pending')
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [readable, setReadable] = useState(false)
@@ -95,6 +97,8 @@ function SequencePhase({ state, onAdvance, onEscape, onLoaded }: Props) {
     encounterRef.current = next
     keys.current.clear()
     setEncounter(next)
+    setFacing('up')
+    setMoving(false)
     setPaused(false)
     root.current?.focus({ preventScroll: true })
   }, [])
@@ -155,6 +159,11 @@ function SequencePhase({ state, onAdvance, onEscape, onLoaded }: Props) {
         vector,
         previous ? (time - previous) / 1000 : 0
       )
+      const oldPlayer = encounterRef.current.player
+      setMoving(next.player.x !== oldPlayer.x || next.player.y !== oldPlayer.y)
+      if (vector.x || vector.y) {
+        setFacing(vector.x ? (vector.x < 0 ? 'left' : 'right') : vector.y < 0 ? 'up' : 'down')
+      }
       previous = time
       encounterRef.current = next
       setEncounter(next)
@@ -366,7 +375,8 @@ function SequencePhase({ state, onAdvance, onEscape, onLoaded }: Props) {
             {encounter.agents.map((a) => (
               <span
                 key={a.id}
-                className={styles.character}
+                data-moving={!paused && encounter.status === 'playing'}
+                className={`${styles.character} ${passageStyles.animatedSprite}`}
                 style={{ left: `${a.x}%`, top: `${(a.y / ZION_ARENA.height) * 100}%` }}
                 aria-hidden="true"
               >
@@ -374,8 +384,11 @@ function SequencePhase({ state, onAdvance, onEscape, onLoaded }: Props) {
               </span>
             ))}
             <span
-              className={styles.character}
+              className={`${styles.character} ${passageStyles.animatedSprite}`}
               data-testid="zion-neon"
+              data-facing={facing}
+              data-moving={!paused && encounter.status === 'playing' && moving}
+              data-paused={paused || encounter.status !== 'playing'}
               data-x={encounter.player.x}
               data-y={encounter.player.y}
               style={{

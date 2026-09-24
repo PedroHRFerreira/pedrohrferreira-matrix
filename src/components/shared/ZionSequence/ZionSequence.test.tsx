@@ -42,6 +42,32 @@ describe('ZionSequence', () => {
     fireEvent.keyUp(window, { key: 'ArrowRight' })
   })
 
+  it('updates the walking pose in every direction and stops when released or paused', () => {
+    vi.useFakeTimers()
+    render(<ZionSequence state="zion-chase" {...props()} />)
+    const player = screen.getByTestId('zion-neon')
+    for (const [key, facing] of [
+      ['ArrowRight', 'right'],
+      ['ArrowLeft', 'left'],
+      ['ArrowUp', 'up'],
+      ['ArrowDown', 'down']
+    ]) {
+      fireEvent.keyDown(window, { key })
+      act(() => vi.advanceTimersByTime(80))
+      expect(player).toHaveAttribute('data-facing', facing)
+      expect(player).toHaveAttribute('data-moving', 'true')
+      fireEvent.keyUp(window, { key })
+      act(() => vi.advanceTimersByTime(32))
+      expect(player).toHaveAttribute('data-moving', 'false')
+      expect(player).toHaveAttribute('data-facing', facing)
+    }
+    fireEvent.keyDown(window, { key: 'ArrowRight' })
+    act(() => vi.advanceTimersByTime(80))
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar' }))
+    expect(player).toHaveAttribute('data-moving', 'false')
+    expect(player).toHaveAttribute('data-paused', 'true')
+  })
+
   it('types messages before allowing a fresh Enter and never skips two phases', () => {
     vi.useFakeTimers()
     const callbacks = props()
