@@ -181,6 +181,11 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
   )
   await snapshot('loading-message')
   await expect(page.locator('[data-reality="zion"]')).toBeVisible({ timeout: 15000 })
+  const cityImage = page.locator('[data-reality="zion"] img[src="/images/zion-city.webp"]')
+  await expect(cityImage).toBeVisible()
+  await expect
+    .poll(() => cityImage.evaluate((image: HTMLImageElement) => image.naturalWidth))
+    .toBeGreaterThan(0)
   await expect(page.getByRole('link', { name: 'Mundo real — início' })).toBeVisible()
   for (const [width, height] of [
     [320, 740],
