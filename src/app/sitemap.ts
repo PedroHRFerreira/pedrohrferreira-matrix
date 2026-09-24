@@ -1,9 +1,11 @@
 import type { MetadataRoute } from 'next'
 
+export const dynamic = 'force-static'
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://pedrohr.dev',
+      url: 'https://pedrohrferreira.com',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1

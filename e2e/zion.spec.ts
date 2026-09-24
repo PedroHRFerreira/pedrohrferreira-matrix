@@ -28,15 +28,19 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
       await page.setViewportSize({ width, height })
       // Wait for the media query to update before inspecting the responsive branch.
       await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(width)
-      for (const element of await locator.all()) {
-        if (!(await element.isVisible())) continue
-        await element.scrollIntoViewIfNeeded()
-        const box = await element.boundingBox()
-        expect(box).not.toBeNull()
-        expect(box!.x).toBeGreaterThanOrEqual(-1)
-        expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1)
-        expect(box!.y).toBeGreaterThanOrEqual(-1)
-        expect(box!.y + box!.height).toBeLessThanOrEqual(height + 1)
+      const boxes = await locator.evaluateAll((elements) =>
+        elements
+          .filter((element) => element.getClientRects().length > 0)
+          .map((element) => {
+            const { x, y, width, height } = element.getBoundingClientRect()
+            return { x, y, width, height }
+          })
+      )
+      for (const box of boxes) {
+        expect(box.x).toBeGreaterThanOrEqual(-1)
+        expect(box.x + box.width).toBeLessThanOrEqual(width + 1)
+        expect(box.y).toBeGreaterThanOrEqual(-1)
+        expect(box.y + box.height).toBeLessThanOrEqual(height + 1)
       }
       await snapshot(`${await sequence.getAttribute('data-state')}-${width}`)
     }
