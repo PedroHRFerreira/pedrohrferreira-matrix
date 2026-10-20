@@ -42,4 +42,9 @@ A realidade escolhida é salva no navegador. Em uma nova visita, a experiência 
 
 ## Lançamento
 
+Após configurar as credenciais, commits na `main` são publicados no Cloudflare Pages pelo
+workflow **Deploy Cloudflare Pages**.
+O projeto de produção é `pedrohrferreira`, responsável por `pedrohrferreira.com` e `www`.
+Veja a [configuração de credenciais e o fluxo de deploy](docs/cloudflare-deploy.md).
+
 Veja [docs/launch-checklist.md](docs/launch-checklist.md).
