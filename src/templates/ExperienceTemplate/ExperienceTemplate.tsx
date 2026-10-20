@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { ZionSequence } from '@/components/shared/ZionSequence/ZionSequence'
 import { ZionTemplate } from './ZionTemplate'
 import { EntryExperience } from '@/components/shared/EntryExperience'
+import { MobileTvExperience } from '@/components/shared/EntryExperience/MobileTvExperience'
 import { getPortfolioContent } from '@/config'
 import { useExperience } from '@/hooks/useExperience'
 import { useMotionVisibility } from '@/hooks/useMotionVisibility'
@@ -20,22 +21,6 @@ export function ExperienceTemplate() {
   }, [experience.state])
 
   if (experience.state === 'ready-zion') return <ZionTemplate content={content} />
-  if (
-    experience.state === 'blue-revelation-one' ||
-    experience.state === 'blue-revelation-two' ||
-    experience.state === 'zion-chase' ||
-    experience.state === 'zion-loading'
-  ) {
-    return (
-      <ZionSequence
-        state={experience.state}
-        onAdvance={experience.advanceSequence}
-        onEscape={experience.completeZionChase}
-        onLoaded={experience.completeTransition}
-      />
-    )
-  }
-
   if (experience.state === 'ready-red') {
     return <RedTemplate content={content} onReconsider={experience.reconsiderReality} />
   }
@@ -53,12 +38,26 @@ export function ExperienceTemplate() {
   }
 
   return (
-    <EntryExperience
-      content={content}
-      state={experience.state}
-      onAdvanceSequence={experience.advanceSequence}
-      onChooseReality={experience.chooseReality}
-      onTransitionComplete={experience.completeTransition}
-    />
+    <MobileTvExperience>
+      {experience.state === 'blue-revelation-one' ||
+      experience.state === 'blue-revelation-two' ||
+      experience.state === 'zion-chase' ||
+      experience.state === 'zion-loading' ? (
+        <ZionSequence
+          state={experience.state}
+          onAdvance={experience.advanceSequence}
+          onEscape={experience.completeZionChase}
+          onLoaded={experience.completeTransition}
+        />
+      ) : (
+        <EntryExperience
+          content={content}
+          state={experience.state}
+          onAdvanceSequence={experience.advanceSequence}
+          onChooseReality={experience.chooseReality}
+          onTransitionComplete={experience.completeTransition}
+        />
+      )}
+    </MobileTvExperience>
   )
 }

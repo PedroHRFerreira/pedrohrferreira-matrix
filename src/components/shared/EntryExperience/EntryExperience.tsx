@@ -186,17 +186,6 @@ export function EntryExperience({
   )
 
   useEffect(() => {
-    const previousRootOverflow = document.documentElement.style.overflow
-    document.documentElement.style.overflow = 'hidden'
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.documentElement.style.overflow = previousRootOverflow
-      document.body.style.overflow = previousOverflow
-    }
-  }, [])
-
-  useEffect(() => {
     if (
       state !== 'cold-boot' &&
       state !== 'static-noise' &&

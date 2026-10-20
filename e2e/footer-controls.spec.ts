@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { startTv } from './helpers/startTv'
 
 test('minigame has clear start/stop controls and supports focused Enter', async ({
   page
@@ -6,6 +7,7 @@ test('minigame has clear start/stop controls and supports focused Enter', async 
   for (const reality of info.project.name === 'mobile' ? ['blue'] : ['red', 'blue']) {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
+    await startTv(page)
     await page
       .getByRole('button', {
         name: reality === 'red' ? 'Pílula vermelha' : 'Pílula azul',

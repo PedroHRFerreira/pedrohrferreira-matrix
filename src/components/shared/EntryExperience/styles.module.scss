@@ -608,6 +608,19 @@
   }
 }
 
+@media (orientation: landscape) and (pointer: coarse),
+  (orientation: landscape) and (max-width: 48rem) {
+  .television {
+    width: min(100%, calc((100svh - 0.7rem) * 16 / 9));
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .screen {
+    border-radius: 48% / 8%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bootFlash,
   .bootScan,

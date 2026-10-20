@@ -1,4 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test'
+import { startTv } from './helpers/startTv'
 
 test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo', async ({
   page
@@ -9,6 +10,7 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
   page.on('pageerror', (e) => errors.push(e.message))
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await startTv(page)
   await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
   const originalViewport = page.viewportSize()!
   const sequence = page.getByTestId('zion-sequence')
@@ -62,10 +64,12 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
         'data-corrupted',
         String(i === 3)
       )
-    } else
+    } else {
+      await startTv(page)
       await expect(sequence).toHaveAttribute('data-state', 'blue-revelation-one', {
         timeout: 10000
       })
+    }
   }
   const heading = sequence.getByRole('heading')
   await expect.poll(async () => (await heading.textContent())!.length).toBeGreaterThan(0)
@@ -204,6 +208,7 @@ test('mundo real: mensagens digitadas, fuga desktop e acesso direto responsivo',
   await expect(page.locator('#projects article')).toHaveCount(4)
   expect(errors).toEqual([])
   await page.reload()
+  await startTv(page)
   await expect(page.locator('main[data-state="cold-boot"]')).toBeVisible()
   await expect(page.locator('[data-reality="zion"]')).toHaveCount(0)
 })

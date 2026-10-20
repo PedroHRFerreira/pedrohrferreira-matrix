@@ -1,0 +1,112 @@
+.frame {
+  background: #010201;
+
+  &:fullscreen {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.gate {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  overflow-y: auto;
+  place-items: center;
+  padding: max(1.5rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left));
+  color: #dfffe7;
+  background: radial-gradient(ellipse at center, #0c1c1280, transparent 70%), #010201;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.card {
+  width: min(100%, 25rem);
+  margin: auto;
+
+  h1 {
+    margin: 1rem 0;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 450;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+}
+
+.channel {
+  margin: 0 0 2rem;
+  color: #86a58e;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+}
+
+.phone {
+  width: 5rem;
+  height: 5rem;
+  stroke: #7caf88;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.description {
+  margin: 0;
+  color: #b7d8bf;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-wrap: balance;
+}
+
+.start,
+.continue {
+  min-height: 3rem;
+  margin-top: 1.75rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #7caf88;
+  border-radius: 0.25rem;
+  color: #dfffe7;
+  background: #11291a;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #1b3926;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #dfffe7;
+    outline-offset: 5px;
+  }
+}
+
+.continue {
+  background: transparent;
+}
+
+.hint {
+  margin: 1.75rem 0 0;
+  color: #86a58e;
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
+@media (max-height: 30rem) and (orientation: landscape) {
+  .channel {
+    margin-bottom: 0.5rem;
+  }
+
+  .phone {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .start,
+  .continue,
+  .hint {
+    margin-top: 1rem;
+  }
+}

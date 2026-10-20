@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { startTv } from './helpers/startTv'
 
 test('Blue accumulates corruption after every capture and retains it while paused', async ({
   page
@@ -8,6 +9,7 @@ test('Blue accumulates corruption after every capture and retains it while pause
   page.on('pageerror', (error) => errors.push(error.message))
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await startTv(page)
   await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
   const shell = page.locator('[data-corruption-level]')
   await expect(shell).toHaveAttribute('data-corruption-percent', '0')
@@ -40,6 +42,7 @@ test('Blue accumulates corruption after every capture and retains it while pause
   await finalStart.scrollIntoViewIfNeeded()
   await page.waitForTimeout(300)
   await finalStart.click()
+  await startTv(page)
   await expect(page.getByTestId('zion-sequence')).toHaveAttribute(
     'data-state',
     'blue-revelation-one',
@@ -47,6 +50,7 @@ test('Blue accumulates corruption after every capture and retains it while pause
   )
   expect(errors).toEqual([])
   await page.reload()
+  await startTv(page)
   await page.getByRole('button', { name: 'Pílula azul', exact: true }).click()
   await expect(page.locator('[data-corruption-level]')).toHaveAttribute(
     'data-corruption-percent',

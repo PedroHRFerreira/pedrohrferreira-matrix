@@ -1,9 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
+import { startTv } from './helpers/startTv'
 
 const REALITY_TIMEOUT = 10_000
 
 async function openFreshExperience(page: Page) {
   await page.goto('/')
+  await startTv(page)
 }
 
 async function openReality(
@@ -13,6 +15,7 @@ async function openReality(
 ) {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
+  await startTv(page)
   await expect(page.locator('main[data-state="pill-selection"]')).toBeVisible({
     timeout: REALITY_TIMEOUT
   })
@@ -31,6 +34,7 @@ test.beforeEach(async ({ page }) => {
 test('introdução completa chega à Blue sem pular as etapas', async ({ page }) => {
   test.setTimeout(90_000)
   await page.goto('/')
+  await startTv(page)
   for (const state of ['static-noise', 'signal-reveal', 'waiting-first-enter']) {
     await expect(page.locator(`main[data-state="${state}"]`)).toBeVisible({ timeout: 40_000 })
   }
@@ -78,6 +82,7 @@ test('mantém a introdução obrigatória e publica o conteúdo profissional em 
 test('reinicia toda a experiência após atualizar a página', async ({ page }) => {
   await openReality(page, 'blue')
   await page.reload()
+  await startTv(page)
   await expect(page.locator('main[data-state="cold-boot"]')).toBeVisible()
   await expect(page.locator('[data-reality="blue"]')).toHaveCount(0)
 })
@@ -430,6 +435,7 @@ test('blue reconhece o retorno e permite reconsiderar a pílula', async ({ page 
   await expect(page.getByText('Você já esteve aqui', { exact: true })).toBeVisible()
   await page.locator('footer').scrollIntoViewIfNeeded()
   await page.getByRole('button', { name: /E se você tivesse escolhido diferente/ }).click()
+  await startTv(page)
   await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
   await expect(
     page.getByRole('heading', { name: 'O que é real? Como você define o real?', exact: true })
@@ -451,6 +457,7 @@ test('blue reconhece o retorno e permite reconsiderar a pílula', async ({ page 
 test('red retorna à TV com as frases do mundo dos sonhos', async ({ page }) => {
   await openReality(page, 'red', 'reduce')
   await page.getByRole('button', { name: /E se você pudesse voltar a sonhar/ }).click()
+  await startTv(page)
   await expect(page.locator('main[data-state="waiting-return-enter"]')).toBeVisible()
   await expect(
     page.getByRole('heading', {
