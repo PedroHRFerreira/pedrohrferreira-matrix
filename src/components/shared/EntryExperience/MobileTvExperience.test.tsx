@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { MobileTvExperience } from './MobileTvExperience'
@@ -83,6 +84,17 @@ async function start() {
 }
 
 describe('MobileTvExperience', () => {
+  it('does not show the mobile prompt before the client identifies the viewport', () => {
+    const html = renderToString(
+      <MobileTvExperience>
+        <p>Transmissão da TV</p>
+      </MobileTvExperience>
+    )
+    expect(html).not.toContain('Entre na experiência')
+    expect(html).not.toContain('Iniciar')
+    expect(html).not.toContain('Transmissão da TV')
+  })
+
   it('preserves automatic desktop playback without requesting orientation or fullscreen', () => {
     mobile = false
     const { unmount } = renderTv()

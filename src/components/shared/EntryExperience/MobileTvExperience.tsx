@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 
 import styles from './mobileTv.module.scss'
 
-const mobileQuery = '(max-width: 48rem), (pointer: coarse)'
+const mobileQuery = '(max-width: 64rem) and (pointer: coarse)'
 const landscapeQuery = '(orientation: landscape)'
 const subscribeMobile = (notify: () => void) => {
   const media = window.matchMedia?.(mobileQuery)
@@ -66,7 +66,7 @@ export function MobileTvExperience({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!playing) actionRef.current?.focus({ preventScroll: true })
-  }, [phase, playing])
+  }, [mobile, phase, playing])
 
   useEffect(() => {
     const rootOverflow = document.documentElement.style.overflow
@@ -119,7 +119,7 @@ export function MobileTvExperience({ children }: { children: ReactNode }) {
 
   return (
     <div className={styles.frame} ref={rootRef} data-tv-immersion>
-      {playing ? (
+      {mobile === null ? null : playing ? (
         children
       ) : (
         <main className={styles.gate} aria-labelledby="tv-start-title">
