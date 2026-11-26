@@ -91,6 +91,24 @@ export const portfolioContent = {
       ]
     },
     {
+      id: 'rods',
+      period: 'Jun 2026 — presente',
+      title: 'Founder & Software Engineer',
+      organization: 'Rods',
+      summary:
+        'Criei a Rods para desenvolver e manter produtos que uso no meu dia a dia como desenvolvedor. Cuido da arquitetura, implementação, publicação e evolução das três ferramentas.',
+      highlights: [
+        '23/06/2026 · Rods Themes — coleção de temas para VS Code, JetBrains e Zed.',
+        '02/07/2026 · Rods SDK — CLI, integração MCP e busca de contexto em repositórios para agentes de código.',
+        '05/09/2026 · Rods Leet — plataforma de prática de programação com desafios, trilhas e progresso.',
+        '26/09/2026 · Rods SDK — adição do marketplace do plugin para Codex.',
+        '01/10/2026 · Rods Leet — lições de fundamentos antes dos desafios.',
+        '02/10/2026 · Rods Leet — prática de JavaScript e TypeScript no navegador.',
+        '21/10/2026 · Rods SDK — menus de configuração inicial e diagnósticos de planejamento.',
+        '24/10/2026 · Rods Themes — lançamento da versão 0.1.0.'
+      ]
+    },
+    {
       id: 'freelancer',
       period: 'Mar 2023 — presente',
       title: 'Desenvolvedor Full Stack',
@@ -99,8 +117,7 @@ export const portfolioContent = {
         'Desenvolvimento de produtos completos, de sites institucionais a sistemas de gestão.',
       highlights: [
         'ERP EMPI Autocenter com Go, Echo, GORM, Nuxt 4 e PostgreSQL',
-        'Site institucional EMPI com Next.js e TypeScript',
-        'Rods Themes publicado nos marketplaces do VS Code e JetBrains'
+        'Site institucional EMPI com Next.js e TypeScript'
       ]
     },
     {
@@ -127,6 +144,15 @@ export const portfolioContent = {
       status: 'Open source'
     },
     {
+      slug: 'rods-leet',
+      title: 'Rods Leet',
+      summary:
+        'Plataforma para praticar programação com desafios, trilhas de estudo e acompanhamento de progresso.',
+      technologies: ['React', 'TypeScript'],
+      links: [{ label: 'Abrir Rods Leet', href: 'https://rodsleet.com/' }],
+      status: 'Publicado'
+    },
+    {
       slug: 'erp-empi-autocenter',
       title: 'ERP EMPI Autocenter',
       summary:
@@ -145,8 +171,8 @@ export const portfolioContent = {
     {
       slug: 'rods-themes',
       title: 'Rods Themes',
-      summary: 'Extensão de temas publicada para VS Code e JetBrains.',
-      technologies: ['VS Code', 'JetBrains', 'Developer Tools'],
+      summary: 'Coleção de temas para VS Code, IDEs da JetBrains e Zed.',
+      technologies: ['VS Code', 'JetBrains', 'Zed'],
       links: [{ label: 'Ver repositório', href: `${githubUrl}/rods-themes` }],
       status: 'Publicado'
     }
