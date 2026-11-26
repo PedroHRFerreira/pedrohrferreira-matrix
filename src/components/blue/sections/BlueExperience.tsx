@@ -1,3 +1,4 @@
+import { ExperienceMilestones } from '@/components/shared/ExperienceMilestones'
 import type { PortfolioContent } from '@/types'
 
 import styles from './BlueExperience/styles.module.scss'
@@ -25,11 +26,15 @@ export function BlueExperience({ content }: BlueExperienceProps) {
               <h3>{entry.title}</h3>
               {entry.organization && <p className={styles.organization}>{entry.organization}</p>}
               <p>{entry.summary}</p>
-              <ul className={styles.highlights}>
-                {entry.highlights.map((highlight) => (
-                  <li key={highlight}>{highlight}</li>
-                ))}
-              </ul>
+              {entry.milestones ? (
+                <ExperienceMilestones milestones={entry.milestones} />
+              ) : (
+                <ul className={styles.highlights}>
+                  {entry.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
+                  ))}
+                </ul>
+              )}
             </article>
           </li>
         ))}

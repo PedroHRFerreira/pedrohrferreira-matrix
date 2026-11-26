@@ -1,3 +1,4 @@
+import { ExperienceMilestones } from '@/components/shared/ExperienceMilestones'
 import type { PortfolioContent } from '@/types'
 
 import styles from './RedExperience/styles.module.scss'
@@ -39,11 +40,15 @@ export function RedExperience({ content }: RedExperienceProps) {
               </div>
               <h3>{entry.title}</h3>
               <p className={styles.summary}>{entry.summary}</p>
-              <ul className={styles.highlights}>
-                {entry.highlights.map((highlight) => (
-                  <li key={highlight}>{highlight}</li>
-                ))}
-              </ul>
+              {entry.milestones ? (
+                <ExperienceMilestones milestones={entry.milestones} />
+              ) : (
+                <ul className={styles.highlights}>
+                  {entry.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
+                  ))}
+                </ul>
+              )}
             </article>
           </li>
         ))}

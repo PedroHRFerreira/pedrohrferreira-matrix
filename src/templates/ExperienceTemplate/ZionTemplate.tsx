@@ -1,5 +1,6 @@
 'use client'
 
+import { ExperienceMilestones } from '@/components/shared/ExperienceMilestones'
 import Image from 'next/image'
 import { useState } from 'react'
 import { StormAtmosphere } from '@/components/zion/StormAtmosphere'
@@ -178,11 +179,15 @@ export function ZionTemplate({ content }: { content: PortfolioContent }) {
                   <div>
                     <h3>{entry.title}</h3>
                     <p>{entry.summary}</p>
-                    <ul>
-                      {entry.highlights.map((highlight) => (
-                        <li key={highlight}>{highlight}</li>
-                      ))}
-                    </ul>
+                    {entry.milestones ? (
+                      <ExperienceMilestones milestones={entry.milestones} />
+                    ) : (
+                      <ul>
+                        {entry.highlights.map((highlight) => (
+                          <li key={highlight}>{highlight}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </article>
               ))}

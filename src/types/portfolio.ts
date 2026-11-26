@@ -89,6 +89,7 @@ export interface ExperienceEntry {
   organization?: string
   summary: string
   highlights: readonly string[]
+  milestones?: readonly { date: string; title: string; description: string }[]
 }
 
 export interface SkillGroup {

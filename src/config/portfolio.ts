@@ -97,15 +97,56 @@ export const portfolioContent = {
       organization: 'Rods',
       summary:
         'Criei a Rods para desenvolver e manter produtos que uso no meu dia a dia como desenvolvedor. Cuido da arquitetura, implementação, publicação e evolução das três ferramentas.',
-      highlights: [
-        '23/06/2026 · Rods Themes — coleção de temas para VS Code, JetBrains e Zed.',
-        '02/07/2026 · Rods SDK — CLI, integração MCP e busca de contexto em repositórios para agentes de código.',
-        '05/09/2026 · Rods Leet — plataforma de prática de programação com desafios, trilhas e progresso.',
-        '26/09/2026 · Rods SDK — adição do marketplace do plugin para Codex.',
-        '01/10/2026 · Rods Leet — lições de fundamentos antes dos desafios.',
-        '02/10/2026 · Rods Leet — prática de JavaScript e TypeScript no navegador.',
-        '21/10/2026 · Rods SDK — menus de configuração inicial e diagnósticos de planejamento.',
-        '24/10/2026 · Rods Themes — lançamento da versão 0.1.0.'
+      highlights: [],
+      milestones: [
+        {
+          date: '2026-06-23',
+          title: 'Rods Themes · Criação',
+          description:
+            'Criei uma coleção de temas para VS Code, IDEs da JetBrains e Zed. As paletas compartilhadas mantêm a identidade visual consistente entre os editores.'
+        },
+        {
+          date: '2026-07-02',
+          title: 'Rods SDK · Criação',
+          description:
+            'Criei um toolkit de código aberto para organizar fluxos com agentes de código. A CLI e a integração MCP dão acesso à busca de contexto em repositórios, e o pacote está disponível no npm.'
+        },
+        {
+          date: '2026-09-05',
+          title: 'Rods Leet · Criação',
+          description:
+            'Criei uma plataforma para praticar lógica, algoritmos e estruturas de dados com desafios, trilhas de estudo e acompanhamento de progresso. A plataforma está disponível em rodsleet.com.'
+        },
+        {
+          date: '2026-09-26',
+          title: 'Rods SDK · Marketplace para Codex',
+          description:
+            'Disponibilizei o plugin em um marketplace para Codex, com instruções para configurar o Rods no projeto e localizar contexto relevante no repositório.'
+        },
+        {
+          date: '2026-10-01',
+          title: 'Rods Leet · Lições de fundamentos',
+          description:
+            'Introduzi lições e questões conceituais com feedback antes dos desafios de código. Essa etapa ajuda quem está começando a entender o conceito que vai aplicar no exercício.'
+        },
+        {
+          date: '2026-10-02',
+          title: 'Rods Leet · Prática no navegador',
+          description:
+            'Adicionei um modo de prática que executa JavaScript e TypeScript diretamente no navegador. Ele permite experimentar soluções e conferir os resultados antes de fazer uma submissão oficial.'
+        },
+        {
+          date: '2026-10-21',
+          title: 'Rods SDK · Configuração e planejamento',
+          description:
+            'Adicionei menus de configuração inicial à CLI e diagnósticos na etapa de planejamento para orientar a configuração do projeto e explicar por que o planejamento é solicitado.'
+        },
+        {
+          date: '2026-10-24',
+          title: 'Rods Themes · Cinco paletas compartilhadas',
+          description:
+            'Redesenhei a coleção na versão 0.1.0. Os temas inspirados em países deram lugar a cinco paletas compartilhadas, com variantes consistentes para VS Code, IDEs da JetBrains e Zed.'
+        }
       ]
     },
     {
